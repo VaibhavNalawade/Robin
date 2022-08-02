@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.Robin" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+    <style name="CalenderViewCustom" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorAccent">@color/md_theme_dark_tertiary</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+    </style>
+</resources>

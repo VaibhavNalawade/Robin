@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "343237937236",
+    "firebase_url": "https://projectrobin-a74a8-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "projectrobin-a74a8",
+    "storage_bucket": "projectrobin-a74a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343237937236:android:5947d1a82b99ce560ac5c1",
+        "android_client_info": {
+          "package_name": "com.vaibhav.robin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343237937236-b5rgfk0q88smal1st6a79knjabnjcfj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vaibhav.robin",
+            "certificate_hash": "712185ec992db1a9ca055b72399d540ba58af398"
+          }
+        },
+        {
+          "client_id": "343237937236-198l6u6mpoonvvnrt0ookg9r4k29g54h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCio4r_6zSClceNJpCe4Cu4MVCFYnMe56E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343237937236-198l6u6mpoonvvnrt0ookg9r4k29g54h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.App.Start" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#000</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.Robin</item>
+        <item name="windowSplashScreenIconBackgroundColor">@drawable/ic_launcher_background</item>
+    </style>
+</resources>
