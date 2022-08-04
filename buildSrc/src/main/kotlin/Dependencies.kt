@@ -9,7 +9,7 @@ object Dependencies {
     private const val KTOR_VERSION = "2.0.3"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.3"
-    private const val AGP_VERSION = "7.4.0-alpha08"
+    private const val AGP_VERSION = "7.4.0-alpha09"
 
     /**
      * Projects Third party Support Section

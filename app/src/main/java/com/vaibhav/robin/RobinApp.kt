@@ -16,7 +16,7 @@ class RobinApp:Application() {
             isPersistenceEnabled = true
         }
         if (BuildConfig.DEBUG) {
-            Firebase.auth.useEmulator("127.0.0.1", 8080)
+            Firebase.auth.useEmulator("10.0.0.2", 9090)
         }
     }
 }
