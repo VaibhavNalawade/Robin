@@ -7,7 +7,8 @@ buildscript {
     dependencies {
         classpath(Dependencies.Gradle.androidGradlePlugin)
         classpath(Dependencies.Gradle.kotlinGradlePlugin)
-        classpath(Dependencies.Gradle.GOOGLE_SERVICE)
+        classpath(Dependencies.Gradle.googleService)
+        classpath (Dependencies.Gradle.daaggerHilt)
     }
 }
 allprojects {

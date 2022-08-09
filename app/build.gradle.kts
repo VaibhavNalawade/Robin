@@ -4,6 +4,8 @@ plugins {
     id(Dependencies.Gradle.Id.android)
     id(Dependencies.Gradle.Id.kotlinAndroid)
     id(Dependencies.Gradle.Id.googleService)
+    id(Dependencies.Gradle.Id.daggerHilt)
+    kotlin(Dependencies.Gradle.Id.kapt)
     kotlin(Dependencies.Gradle.Id.pluginSerialization) version Dependencies.KOTLIN_VERSION
 }
 
@@ -28,11 +30,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            val usesCleartextTraffic="false"
         }
 
         debug{
-            val usesCleartextTraffic="true"
+
         }
     }
     compileOptions {
@@ -69,6 +70,9 @@ android {
     defaultConfig {
         buildConfigField("String", "API_KEY", property.getProperty("API_KEY"))
     }
+}
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -114,12 +118,20 @@ dependencies {
     implementation(Dependencies.AndroidX.Material.materialIconExtended)
     implementation(Dependencies.AndroidX.Material.material3Compose)
 
+    implementation(Dependencies.Google.DaggerHilt.daggerHilt)
+    kapt(Dependencies.Google.DaggerHilt.kapt)
+    implementation (Dependencies.Google.DaggerHilt.composeNavigationSupport)
+
     testImplementation(Dependencies.Test.junit)
     testImplementation(Dependencies.Test.coroutines)
     testImplementation(Dependencies.Test.mockito)
+    testImplementation(Dependencies.Test.robolectric)
+    androidTestImplementation(Dependencies.Test.AndroidTest.core)
     androidTestImplementation(Dependencies.Test.AndroidTest.ext)
     androidTestImplementation(Dependencies.Test.AndroidTest.espresso)
     androidTestImplementation(Dependencies.Test.AndroidTest.composeUITest)
     debugImplementation(Dependencies.Test.Debug.uiToolingDebug)
     debugImplementation(Dependencies.Test.Debug.uiTestManifest)
+
+
 }
