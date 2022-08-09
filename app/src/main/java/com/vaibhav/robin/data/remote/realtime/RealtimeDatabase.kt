@@ -9,11 +9,11 @@ import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.entities.remote.BannerImage
 import com.vaibhav.robin.entities.remote.CartItems
 import com.vaibhav.robin.entities.remote.TrendingChipData
-import com.vaibhav.robin.ui.cart.CartItemsUiState
-import com.vaibhav.robin.ui.cart.RemoveItemsState
-import com.vaibhav.robin.ui.common.TrendingChipState
-import com.vaibhav.robin.ui.product.AddCartItemUiState
-import com.vaibhav.robin.userExist
+import com.vaibhav.robin.presentation.cart.CartItemsUiState
+import com.vaibhav.robin.presentation.cart.RemoveItemsState
+import com.vaibhav.robin.presentation.common.TrendingChipState
+import com.vaibhav.robin.presentation.product.AddCartItemUiState
+import com.vaibhav.robin.navigation.userExist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
 
@@ -62,7 +62,7 @@ class RealtimeDatabase constructor(flag:Int=-1) {
                 val snapshot =Firebase.database.reference.child("Cart")
                     .child(uid).child(productID).get().await()
                 if (snapshot.exists())
-                    cartItemUiState.value=AddCartItemUiState.AlreadyExits
+                    cartItemUiState.value= AddCartItemUiState.AlreadyExits
                 else cartItemUiState.value= AddCartItemUiState.Ready
             } catch (exception:Exception){
                 Log.e(TAG, exception.message ?: exception.stackTraceToString())
@@ -75,7 +75,7 @@ class RealtimeDatabase constructor(flag:Int=-1) {
     ) {
        return try {
             Firebase.database.reference.child("Cart").child(uid).child(cartItems.productId).removeValue().await()
-           removeItemsState.value=RemoveItemsState.Success(cartItems)
+           removeItemsState.value= RemoveItemsState.Success(cartItems)
         }
         catch (exception:Exception){
             Log.e(TAG, exception.message ?: exception.stackTraceToString())

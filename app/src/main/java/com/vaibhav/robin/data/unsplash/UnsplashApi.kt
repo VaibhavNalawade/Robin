@@ -2,7 +2,7 @@ package com.vaibhav.robin.data.unsplash
 
 import android.util.Log
 import com.vaibhav.robin.BuildConfig
-import com.vaibhav.robin.data.repo.RobinDataSource
+import com.vaibhav.robin.data.repository.RobinDataSource
 import com.vaibhav.robin.data.unsplash.model.Results
 import com.vaibhav.robin.data.unsplash.model.UnsplashGet
 import com.vaibhav.robin.network.RobinHttpClient

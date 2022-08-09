@@ -9,11 +9,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.vaibhav.robin.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.entities.ui.common.DropdownOption
 import com.vaibhav.robin.entities.ui.state.DropdownState
-import com.vaibhav.robin.ui.UiText
-import com.vaibhav.robin.ui.common.ExposedDropdownMenuBox
+import com.vaibhav.robin.presentation.UiText
+import com.vaibhav.robin.presentation.common.ExposedDropdownMenuBox
 import org.junit.Rule
 import org.junit.Test
 

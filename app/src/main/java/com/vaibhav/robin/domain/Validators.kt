@@ -5,7 +5,7 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.entities.ui.state.DropdownState
 import com.vaibhav.robin.entities.ui.state.SelectableState
 import com.vaibhav.robin.entities.ui.state.TextFieldState
-import com.vaibhav.robin.ui.UiText
+import com.vaibhav.robin.presentation.UiText
 
 /*
 * ToDo Need to implement pin-code and phone number validation*/

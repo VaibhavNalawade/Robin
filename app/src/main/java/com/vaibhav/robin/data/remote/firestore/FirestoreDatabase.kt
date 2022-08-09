@@ -4,8 +4,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.data.repo.RobinDataSource
-import com.vaibhav.robin.ui.product.ProductUiState
+import com.vaibhav.robin.data.repository.RobinDataSource
+import com.vaibhav.robin.presentation.product.ProductUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
 

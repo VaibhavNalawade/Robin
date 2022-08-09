@@ -49,4 +49,8 @@
     <string name="postcode_Invalid">Postcode is Wrong</string>
     <string name="email_already">This email is already connected</string>
     <string name="email_already_message">This email is already connected to an account. Log in or try another email.</string>
+    <string name="sign_in">Sign In</string>
+    <string name="agreement_short">By continuing, you agree to our User Agreement and Privacy Policy.</string>
+    <string name="email">Email</string>
+    <string name="forgot_password">Forgot your username or password ?</string>
 </resources>

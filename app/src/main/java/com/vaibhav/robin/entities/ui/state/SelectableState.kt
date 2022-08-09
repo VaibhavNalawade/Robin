@@ -1,6 +1,6 @@
 package com.vaibhav.robin.entities.ui.state
 
-import com.vaibhav.robin.ui.UiText
+import com.vaibhav.robin.presentation.UiText
 
 data class SelectableState(
     val text: String = "",

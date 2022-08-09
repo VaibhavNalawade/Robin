@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.vaibhav.robin.ui.common.DatePicker
+import com.vaibhav.robin.presentation.common.DatePicker
 import org.junit.Rule
 import org.junit.Test
 import java.text.SimpleDateFormat

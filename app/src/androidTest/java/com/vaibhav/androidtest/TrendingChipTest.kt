@@ -6,10 +6,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
-import com.vaibhav.robin.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.entities.remote.TrendingChipData
-import com.vaibhav.robin.ui.common.TrendingChipRow
-import com.vaibhav.robin.ui.common.TrendingChipState
+import com.vaibhav.robin.presentation.common.TrendingChipRow
+import com.vaibhav.robin.presentation.common.TrendingChipState
 import org.junit.Rule
 import org.junit.Test
 
