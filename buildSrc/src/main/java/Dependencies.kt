@@ -10,6 +10,7 @@ object Dependencies {
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.3"
     private const val AGP_VERSION = "7.4.0-alpha09"
+    private const val DAGGERHILT_VERSION="2.42"
 
     /**
      * Projects Third party Support Section
@@ -44,6 +45,11 @@ object Dependencies {
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
         }
+        object DaggerHilt{
+            const val daggerHilt="com.google.dagger:hilt-android:$DAGGERHILT_VERSION"
+            const val kapt="com.google.dagger:hilt-android-compiler:$DAGGERHILT_VERSION"
+            const val composeNavigationSupport="androidx.hilt:hilt-navigation-compose:1.0.0"
+        }
     }
 
     /**
@@ -52,13 +58,16 @@ object Dependencies {
     object Gradle {
         const val androidGradlePlugin = "com.android.tools.build:gradle:$AGP_VERSION"
         const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
-        const val GOOGLE_SERVICE = "com.google.gms:google-services:$GSM_VERSION"
+        const val googleService = "com.google.gms:google-services:$GSM_VERSION"
+        const val daaggerHilt="com.google.dagger:hilt-android-gradle-plugin:$DAGGERHILT_VERSION"
 
         object Id {
             const val android = "com.android.application"
             const val kotlinAndroid = "org.jetbrains.kotlin.android"
             const val googleService = "com.google.gms.google-services"
             const val pluginSerialization = "plugin.serialization"
+            const val daggerHilt="dagger.hilt.android.plugin"
+            const val kapt="kapt"
         }
     }
 
@@ -108,9 +117,11 @@ object Dependencies {
         const val junit = "junit:junit:4.13.2"
         const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0"
         const val mockito = "org.mockito.kotlin:mockito-kotlin:4.0.0"
+        const val robolectric="org.robolectric:robolectric:4.8"
 
         object AndroidTest {
-            const val ext = "androidx.test.ext:junit:1.1.3"
+            const val core="androidx.test:core-ktx:1.4.0"
+            const val ext = "androidx.test.ext:junit-ktx:1.1.3"
             const val espresso = "androidx.test.espresso:espresso-core:3.4.0"
             const val composeUITest = "androidx.compose.ui:ui-test-junit4:$COMPOSE_VERSION"
 
@@ -121,7 +132,6 @@ object Dependencies {
             const val uiTestManifest = "androidx.compose.ui:ui-test-manifest:$COMPOSE_VERSION"
         }
     }
-
     /**
      * Firebase Section
      */

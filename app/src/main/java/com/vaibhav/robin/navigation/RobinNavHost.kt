@@ -1,4 +1,4 @@
-package com.vaibhav.robin
+package com.vaibhav.robin.navigation
 
 
 import android.util.Log
@@ -14,18 +14,16 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.ui.account.*
-import com.vaibhav.robin.ui.cart.Cart
-import com.vaibhav.robin.ui.home.Home
-import com.vaibhav.robin.ui.product.ProductDetails
-import com.vaibhav.robin.ui.search.SearchBar
-
+import com.vaibhav.robin.presentation.account.*
+import com.vaibhav.robin.presentation.cart.Cart
+import com.vaibhav.robin.presentation.home.Home
+import com.vaibhav.robin.presentation.product.ProductDetails
+import com.vaibhav.robin.presentation.search.SearchBar
+import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun RobinNavHost(navController: NavHostController) {
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val viewModel: AccountSharedViewModel = viewModel()
-
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
     ) {
@@ -49,31 +47,31 @@ fun RobinNavHost(navController: NavHostController) {
 
             composable(RobinDestinations.LOGIN) {
                 Login(
-                    navController = navController, viewModel = viewModel()
+                    navController = navController, viewModel = hiltViewModel()
                 )
             }
             composable(RobinDestinations.SIGN_UP) {
 
                 SignUp(
-                    navController = navController, viewModel = viewModel
+                    navController = navController, viewModel = hiltViewModel()
                 )
             }
             composable(RobinDestinations.PERSONAL_DETAILS) {
 
                 PersonalDetails(
-                    navController = navController, viewModel = viewModel
+                    navController = navController, viewModel = viewModel()
                 )
             }
             composable(RobinDestinations.DATE_AND_GENDER) {
 
                 DateAndGenderSelect(
-                    navController = navController, viewModel = viewModel
+                    navController = navController, viewModel = viewModel()
                 )
             }
             composable(RobinDestinations.ADDRESS_AND_PHONE) {
 
                 AddressAndPhoneDetails(
-                    navController = navController, viewModel = viewModel
+                    navController = navController, viewModel = viewModel()
                 )
             }
         }

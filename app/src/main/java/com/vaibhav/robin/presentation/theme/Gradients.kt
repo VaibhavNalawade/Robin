@@ -1,4 +1,4 @@
-package com.vaibhav.robin.ui.theme
+package com.vaibhav.robin.presentation.theme
 
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color

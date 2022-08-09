@@ -1,4 +1,4 @@
-package com.vaibhav.robin.ui.account
+package com.vaibhav.robin.presentation.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,68 +22,66 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.RobinAppPreviewScaffold
-import com.vaibhav.robin.RobinDestinations
-import com.vaibhav.robin.auth.AuthState
-import com.vaibhav.robin.ui.common.*
-import com.vaibhav.robin.ui.theme.Values
-import com.vaibhav.robin.userExist
+import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.common.*
+import com.vaibhav.robin.presentation.theme.Values.Dimens.gird_two
 import kotlinx.coroutines.launch
 
 @Composable
-fun Login(navController: NavController, viewModel: LoginViewModel) {
+fun Login(navController: NavController, viewModel: SignInViewModel) {
 
-    val authState = viewModel.authState.collectAsState().value
+    val response = viewModel.signInResponse
 
-    /*BackHandler {
-            if(!userExist() &&navController.previousBackStackEntry?.destination?.route == RobinDestinations.CART)
-            navController.popBackStack(RobinDestinations.HOME,false)
-            else navController.popBackStack()
-    }*/
-    LaunchedEffect(key1 = true ,block ={
-       // viewModel.checkEmail(this)
+    Row(modifier = Modifier.fillMaxSize()) {
 
-    } )
-
-    Row(
-        modifier = Modifier.fillMaxSize(),
-    ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(0.15f)
-                .background(Color.DarkGray)
-        ) {}
+                .background(Color.DarkGray),
+            content = {}
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Values.Dimens.gird_two)
+                .padding(gird_two)
         ) {
 
             SpacerVerticalFour()
+
             Text(
-                text = "Login",
+                text = stringResource(id = R.string.sign_in),
                 style = typography.headlineMedium
             )
+
             SpacerVerticalTwo()
+
             Text(
-                text = "By continuing, you agree to our User Agreement and Privacy Policy.",
+                text = stringResource(R.string.agreement_short),
                 style = typography.bodyMedium
             )
+
             SpacerVerticalFour()
+
             /**
              * todo Validation need to be implemented when error message functionality added to M3
-             * todo currently waiting for TBD
+             * todo currently waiting TBD
              */
+
             RobinTextField(
                 state = viewModel.email,
-                label = { Text("Email") },
+                label = {
+                    Text(text = stringResource(R.string.email))
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -92,38 +89,61 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                 leadingIcon = {
                     Icon(
                         Icons.Rounded.Email,
-                        contentDescription = "Localized description"
+                        contentDescription = null
                     )
                 },
             )
+
             SpacerVerticalTwo()
+
             PasswordTextField(
                 state = viewModel.password,
-                label = { Text("Password") },
+                label = {
+                    Text(stringResource(id = R.string.password))
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    viewModel.viewModelScope.launch { viewModel.signWithEmailPassword() }
+                    viewModel.viewModelScope.launch {
+                        viewModel.signWithEmailPassword()
+                    }
                 })
             )
 
             SpacerVerticalFour()
-            Button(modifier = Modifier.fillMaxWidth(),
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
                 shape = RectangleShape,
-                onClick = { viewModel.viewModelScope.launch { viewModel.signWithEmailPassword() } }) {
-                LoginButtonState(authState, navController)
-            }
+                onClick = {
+                    viewModel.viewModelScope.launch {
+                        viewModel.signWithEmailPassword()
+                    }
+                },
+                content = {
+                    LoginButtonState(response, navController)
+                }
+            )
+
             SpacerVerticalTwo()
-            Text(text = "Forgot your username or password ?", style = typography.bodySmall)
+
+            Text(
+                text = stringResource(R.string.forgot_password),
+                style = typography.bodySmall
+            )
+
             SpacerVerticalTwo()
+
             HyperlinkText(
                 fullText = "New to Robin? SIGN UP",
                 onClick = { navController.navigate(RobinDestinations.SIGN_UP) },
                 linkText = listOf("SIGN UP")
             )
+
             SpacerVerticalTwo()
+
             SpaceBetweenContainer(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -186,35 +206,40 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 }
 
 @Composable
-fun LoginButtonState(authState: AuthState, navController: NavController) {
-    when (authState) {
-        is AuthState.Loading -> {
-            Icon(
-                Icons.Filled.Login,
-                contentDescription = stringResource(R.string.complete_the_payment),
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+fun LoginButtonState(response: Response<Boolean>, navController: NavController) {
+    when (response) {
+        is Loading -> {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
                 color = colorScheme.onPrimary,
-                strokeWidth = 2.dp
+                strokeWidth = 5.dp
             )
         }
-        is AuthState.Successful -> {
-            if (userExist())
-                navController.popBackStack()
+        is Success -> {
+            if (response.data) {
+                LaunchedEffect(key1 = true, block = {
+                    navController.popBackStack()
+                })
+            }
+            else DefaultButtonAppearance()
         }
-        else -> {
-            Icon(
-                Icons.Filled.Login,
-                contentDescription = stringResource(R.string.complete_the_payment),
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(text = "Login")
+        is Error -> {
+            DefaultButtonAppearance()
         }
     }
+}
+
+@Composable
+fun DefaultButtonAppearance() {
+    Icon(
+        Icons.Filled.Login,
+        contentDescription = stringResource(R.string.complete_the_payment),
+        modifier = Modifier.size(ButtonDefaults.IconSize)
+    )
+
+    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+
+    Text(text = "Login")
 }
 
 @Preview

@@ -1,4 +1,4 @@
-package com.vaibhav.robin
+package com.vaibhav.robin.presentation
 
 import android.animation.ObjectAnimator
 import android.os.Build
@@ -10,8 +10,9 @@ import androidx.activity.compose.setContent
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()

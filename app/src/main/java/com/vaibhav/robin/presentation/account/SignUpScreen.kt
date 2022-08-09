@@ -1,4 +1,4 @@
-package com.vaibhav.robin.ui.account
+package com.vaibhav.robin.presentation.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,36 +11,36 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuthException
-import com.vaibhav.robin.RobinAppPreviewScaffold
-import com.vaibhav.robin.RobinDestinations
-import com.vaibhav.robin.auth.AuthState
-import com.vaibhav.robin.ui.AuthExceptionDecode
-import com.vaibhav.robin.ui.common.*
-import com.vaibhav.robin.ui.product.LoadingStateLight
-import com.vaibhav.robin.ui.theme.Values
+import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.common.*
+import com.vaibhav.robin.presentation.theme.Values
 
 @Composable
-fun SignUp(navController: NavHostController, viewModel: AccountSharedViewModel) {
-    val authState by viewModel.authState.collectAsState()
+fun SignUp(navController: NavHostController, viewModel: SignUpViewModel) {
+    val response = viewModel.signUpResponse
     InitUi(viewModel, navController)
-    when (authState) {
-        is AuthState.Successful -> {
-            navController.navigate(RobinDestinations.PERSONAL_DETAILS)
+    when (response) {
+        is Success -> {
+            if (response.data)
+            LaunchedEffect(key1 = true, block = {
+                navController.navigate(RobinDestinations.PERSONAL_DETAILS)
+            })
         }
-        is AuthState.Error -> {
+        is Error -> {
             val openDialog = remember { mutableStateOf(true) }
-            val decode = remember {
-                mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
-            }
-            if (openDialog.value) {
+            /* val decode = remember {
+                 mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
+             }*/
+            if (openDialog.value)
                 AlertDialog(
                     onDismissRequest = {
 
@@ -54,31 +54,26 @@ fun SignUp(navController: NavHostController, viewModel: AccountSharedViewModel) 
                         )
                     },
                     title = {
-                        Text(text = decode.value.title.asString())
+                        Text(text = "Oh Snap!!!")
                     },
                     text = {
                         Text(
-                            decode.value.message.asString() +
-                                    "\n error code ${decode.value.errorCode}"
+                            text = response.message
                         )
                     },
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                viewModel.authState.value = AuthState.Init
                                 openDialog.value = false
                             },
                         ) {
                             Text("Retry")
                         }
-                    },
-
-                    )
-            }
+                    }
+                )
         }
-        AuthState.Init -> {}
-        is AuthState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(),contentAlignment = Alignment.Center) {
+        is Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Loading(
                     Modifier
                         .height(68.dp)
@@ -90,7 +85,7 @@ fun SignUp(navController: NavHostController, viewModel: AccountSharedViewModel) 
 }
 
 @Composable
-private fun InitUi(viewModel: AccountSharedViewModel, navController: NavHostController) {
+private fun InitUi(viewModel: SignUpViewModel, navController: NavHostController) {
     Column(modifier = Modifier.padding(horizontal = Values.Dimens.gird_two)) {
         SpacerVerticalFour()
         Text(
@@ -136,7 +131,7 @@ private fun InitUi(viewModel: AccountSharedViewModel, navController: NavHostCont
         )
         SpacerVerticalFour()
         Button(modifier = Modifier.fillMaxWidth(),
-            onClick = { viewModel.predateSignUp { } }) {
+            onClick = { viewModel.predateSignUp()}) {
             Text(text = "Sign up")
         }
     }
@@ -147,6 +142,6 @@ private fun InitUi(viewModel: AccountSharedViewModel, navController: NavHostCont
 @Composable
 fun SignupPreview() {
     RobinAppPreviewScaffold {
-        SignUp(NavHostController(LocalContext.current), AccountSharedViewModel())
+        SignUp(NavHostController(LocalContext.current), viewModel = viewModel())
     }
 }
