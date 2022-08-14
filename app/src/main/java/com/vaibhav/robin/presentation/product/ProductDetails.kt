@@ -197,7 +197,7 @@ fun fabState(
                 )
             },
             OnClick = {
-                viewModel.addProductToCart(navController)
+
             }
         )
     }

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.entities.remote.CartItems
 import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.data.repository.UserRepository
 import com.vaibhav.robin.presentation.product.showSnackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -39,7 +38,6 @@ class CartViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            UserRepository().fetchCartItems(_cartItemsUiState)
         }
     }
 
@@ -59,7 +57,6 @@ class CartViewModel : ViewModel() {
         delay(4000)
         if (!cancel)
         viewModelScope.launch(Dispatchers.IO) {
-            UserRepository().removeCartItem(cartItems, _removeItemState)
             removeItemsState.collect{
                 when(it){
                     is RemoveItemsState.Error -> showSnackbar("Something Went Wrong With Remove item from cart", snackbarHostState = state)
@@ -73,7 +70,6 @@ class CartViewModel : ViewModel() {
     }
     suspend fun refreshCart(){
         _cartItemsUiState.value= CartItemsUiState.Loading()
-        UserRepository().fetchCartItems(_cartItemsUiState)
     }
 }
 

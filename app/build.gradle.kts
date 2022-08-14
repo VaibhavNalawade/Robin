@@ -94,7 +94,6 @@ dependencies {
 
     implementation(platform(Dependencies.Firebase.BOM))
     implementation(Dependencies.Firebase.firestore)
-    implementation(Dependencies.Firebase.database)
     implementation(Dependencies.Firebase.auth)
 
     implementation(Dependencies.RobinAppSupport.coil)

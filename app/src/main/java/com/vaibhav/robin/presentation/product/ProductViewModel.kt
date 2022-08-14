@@ -4,10 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.vaibhav.robin.entities.remote.CartItems
-import com.vaibhav.robin.entities.ui.model.Product
 import com.vaibhav.robin.data.repository.ProductRepository
-import com.vaibhav.robin.data.repository.UserRepository
+import com.vaibhav.robin.entities.ui.model.Product
 import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.navigation.userExist
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +20,9 @@ class ProductViewModel : ViewModel() {
         if (_productId.value != str)
             _productId.value = str
     }
+
     private val _selectedType = mutableStateOf(0)
-    val selectedType=_selectedType
+    val selectedType = _selectedType
 
 
     private val selectedSize = mutableStateOf("")
@@ -42,41 +41,24 @@ class ProductViewModel : ViewModel() {
                     ProductRepository().fetchProduct(it, _productUiState)
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            if (userExist())
-                UserRepository().checkCartItemExist(_productId.value, _addCartItemUiState)
-            else _addCartItemUiState.value = AddCartItemUiState.Ready
-        }
-    }
 
-     private fun launchAddCartItemWorker() {
-        val product = (productUiState.value as ProductUiState.Success).product
-        viewModelScope.launch(Dispatchers.IO) {
-            UserRepository().addToCart(
-                _addCartItemUiState,
-                CartItems(
-                    _productId.value,
-                    product.name,
-                    product.type[selectedType.value].media.images[0],
-                    product.type[selectedType.value].price,
-                    selectedType.value,
-                    selectedSize.value
-                )
-            )
-        }
-    }
 
-    fun addProductToCart(navController: NavHostController) {
-        if (userExist()) {
-            _addCartItemUiState.value = AddCartItemUiState.Loading
-            launchAddCartItemWorker()
-        } else {
-            navController.navigate(RobinDestinations.LOGIN)
+        fun launchAddCartItemWorker() {
+            val product = (productUiState.value as ProductUiState.Success).product
+            viewModelScope.launch(Dispatchers.IO) {
+            }
         }
-    }
 
-    private fun throwNullPointerException(): Nothing = run { throw NullPointerException() }
-    private fun checkCartItem() = _addCartItemUiState.value !is AddCartItemUiState.Success
+        fun addProductToCart(navController: NavHostController) {
+            if (userExist()) {
+                _addCartItemUiState.value = AddCartItemUiState.Loading
+                launchAddCartItemWorker()
+            } else {
+                navController.navigate(RobinDestinations.LOGIN)
+            }
+        }
+
+    }
 }
 
 
