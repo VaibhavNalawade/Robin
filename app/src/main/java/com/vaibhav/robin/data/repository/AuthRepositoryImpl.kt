@@ -1,7 +1,9 @@
 package com.vaibhav.robin.data.repository
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
@@ -31,16 +33,14 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     override suspend fun signOut(): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
-            auth.currentUser?.apply {
                 Firebase.auth.signOut()
                 emit(Success(true))
-            }
         } catch (e: Exception) {
             emit(Error(e.message ?: e.toString()))
         }
     }
 
-    override suspend fun firbaseSignUpWithEmailPassword(
+    override suspend fun firebaseSignUpWithEmailPassword(
         email: String,
         password: String
     ): Flow<Response<Boolean>> = flow {
@@ -60,6 +60,45 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         auth.addAuthStateListener(authStateListener)
         awaitClose {
             auth.removeAuthStateListener(authStateListener)
+        }
+    }
+
+    override suspend fun firebaseProfileChange(
+        displayName: String?,
+        photoUri: String?
+    ): Flow<Response<Boolean>> = flow {
+        emit(Loading)
+        val profileUpdates = userProfileChangeRequest {
+            displayName?.let { this.displayName = displayName }
+            photoUri?.let { this.photoUri = Uri.parse(photoUri) }
+        }
+        try {
+            auth.currentUser?.updateProfile(profileUpdates)?.await()
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e.message ?: e.toString()))
+        }
+    }
+    override suspend fun firebasePasswordReset(
+        email: String,
+    ): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Loading)
+            auth.sendPasswordResetEmail(email).await()
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e.message ?: e.toString()))
+        }
+    }
+
+    override suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>> = flow{
+        try {
+            emit(Loading)
+            auth.currentUser!!.sendEmailVerification()
+            emit(Success(true))
+        }
+        catch (e:Exception){
+            emit(Error(e.message ?: e.toString()))
         }
     }
 }

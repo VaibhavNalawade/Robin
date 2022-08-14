@@ -5,7 +5,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.vaibhav.robin.data.paging.SearchPagingSource
-import com.vaibhav.robin.data.remote.realtime.RealtimeDatabase
 import com.vaibhav.robin.entities.remote.BannerImage
 import com.vaibhav.robin.data.unsplash.UnsplashApi
 import com.vaibhav.robin.data.unsplash.model.Results
@@ -21,8 +20,4 @@ class Repository {
             }
         ).flow
     }
-
-    fun getBannerData(_bannerImage: MutableState<List<BannerImage>>) =
-         RealtimeDatabase().fetchBannerData(_bannerImage)
-
 }

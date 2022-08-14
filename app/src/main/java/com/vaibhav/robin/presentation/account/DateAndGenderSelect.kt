@@ -2,19 +2,19 @@ package com.vaibhav.robin.presentation.account
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Boy
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Girl
 import androidx.compose.material.icons.twotone.CalendarMonth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,9 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.entities.ui.common.DropdownOption
 import com.vaibhav.robin.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.presentation.common.*
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 import java.text.SimpleDateFormat
@@ -36,7 +37,67 @@ import java.util.*
 
 @Composable
 fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGenderViewModel) {
+    InitUi(viewModel = viewModel)
+    val response=viewModel.response
+    when (response) {
+        is Response.Success -> {
+            if (response.data)
+                LaunchedEffect(key1 = true, block = {
+                    navController.navigate(RobinDestinations.ADDRESS_AND_PHONE)
+                })
+        }
+        is Response.Error -> {
+            val openDialog = remember { mutableStateOf(true) }
+            /* val decode = remember {
+                 mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
+             }*/
+            if (openDialog.value)
+                AlertDialog(
+                    onDismissRequest = {
 
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.Error,
+                            modifier = Modifier.size(48.dp),
+                            contentDescription = null,
+                            tint = colorScheme.error
+                        )
+                    },
+                    title = {
+                        Text(text = "Oh Snap!!!")
+                    },
+                    text = {
+                        Text(
+                            text = response.message
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.retry()
+                                openDialog.value = false
+                            },
+                        ) {
+                            Text("Retry")
+                        }
+                    }
+                )
+        }
+        is Response.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Loading(
+                    Modifier
+                        .height(68.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun InitUi(viewModel: DateAndGenderViewModel) {
     val date = viewModel.date
     val gender = viewModel.gender
     Column(
@@ -142,9 +203,7 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
         Button(
             modifier = Modifier.align(Alignment.End),
             onClick = {
-                viewModel.predateDateGender(array) {
-                    navController.navigate(RobinDestinations.ADDRESS_AND_PHONE)
-                }
+                viewModel.updateDateAndGender(array)
             },
             content = {
                 Text(text = "Next")

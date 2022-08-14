@@ -59,19 +59,19 @@ fun RobinNavHost(navController: NavHostController) {
             composable(RobinDestinations.PERSONAL_DETAILS) {
 
                 PersonalDetails(
-                    navController = navController, viewModel = viewModel()
+                    navController = navController, viewModel = hiltViewModel()
                 )
             }
             composable(RobinDestinations.DATE_AND_GENDER) {
 
                 DateAndGenderSelect(
-                    navController = navController, viewModel = viewModel()
+                    navController = navController, viewModel = hiltViewModel()
                 )
             }
             composable(RobinDestinations.ADDRESS_AND_PHONE) {
 
                 AddressAndPhoneDetails(
-                    navController = navController, viewModel = viewModel()
+                    navController = navController, viewModel = hiltViewModel()
                 )
             }
         }

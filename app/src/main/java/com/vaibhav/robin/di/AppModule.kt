@@ -3,10 +3,19 @@ package com.vaibhav.robin.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.vaibhav.robin.data.remote.FirestoreSource
 import com.vaibhav.robin.data.repository.AuthRepositoryImpl
+import com.vaibhav.robin.data.repository.FirestoreRepositoryImpl
 import com.vaibhav.robin.domain.repository.AuthRepository
-import com.vaibhav.robin.domain.use_case.*
+import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
+import com.vaibhav.robin.domain.use_case.auth.*
+import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
+import com.vaibhav.robin.domain.use_case.database.InitializeProfile
+import com.vaibhav.robin.domain.use_case.database.UpdateAddressAndPhone
+import com.vaibhav.robin.domain.use_case.database.UpdateProfileDateAndGender
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,18 +29,41 @@ class AppModule {
     fun provideFirebaseAuth() = Firebase.auth
 
     @Provides
+    fun provideFirebaseFirestore() = Firebase.firestore
+
+    @Provides
+    fun provideFirestoreSource() = FirestoreSource()
+
+    @Provides
     fun provideAuthRepository(
         auth: FirebaseAuth
     ): AuthRepository = AuthRepositoryImpl(auth)
 
     @Provides
-    fun provideUseCases(
+    fun provideFirestoreRepository(
+        firestore: FirebaseFirestore,
+        authRepo: AuthRepository,
+        source: FirestoreSource
+    ): FirestoreDatabaseRepository = FirestoreRepositoryImpl(firestore, source, authRepo)
+
+    @Provides
+    fun provideAuthUseCases(
         repo: AuthRepository
-    ) = UseCases(
+    ) = AuthUseCases(
         isUserAuthenticated = IsUserAuthenticated(repo),
         signInWithEmailPassword = SignInWithEmailPassword(repo),
         signOut = SignOut(repo),
-        getAuthState  = GetAuthState(repo),
-        signUpWithEmailPassword = SignUpWithEmailPassword(repo)
+        getAuthState = GetAuthState(repo),
+        signUpWithEmailPassword = SignUpWithEmailPassword(repo),
+        personalDetailsUpdate = PersonalDetailsUpdate(repo)
     )
+
+    @Provides
+    fun provideDatabaseUseCases(repo: FirestoreDatabaseRepository) =
+        DatabaseUseCases(
+            updateProfileDateAndGender = UpdateProfileDateAndGender(repo),
+            updateAddressAndPhone = UpdateAddressAndPhone(repo),
+            initializeProfile = InitializeProfile(repo)
+        )
+
 }

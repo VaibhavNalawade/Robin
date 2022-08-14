@@ -5,16 +5,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.use_case.UseCases
+import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
+import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import com.vaibhav.robin.entities.ui.state.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(private val useCases: UseCases) : ViewModel() {
+class SignUpViewModel @Inject constructor(
+    private val authUseCases: AuthUseCases,
+    private val databaseUseCases: DatabaseUseCases
+) : ViewModel() {
 
     private val _signUpEmail = mutableStateOf(TextFieldState())
     val signUpEmail get() = _signUpEmail
@@ -28,15 +35,49 @@ class SignUpViewModel @Inject constructor(private val useCases: UseCases) : View
     var signUpResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
         private set
 
+    var initializeProfileResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
+        private set
 
-    fun predateSignUp() = viewModelScope.launch(Dispatchers.IO) {
-            useCases.signUpWithEmailPassword.invoke(
-                _signUpEmail,
-                _signUpPassword,
-                _signUpConfirmPassword
-            ).collect{ response->
-                signUpResponse = response
+    var responseMain by mutableStateOf<Response<Boolean>>(Response.Success(false))
+        private set
+
+    fun signUp() = viewModelScope.launch(Dispatchers.IO) {
+        responseMain =Response.Loading
+        authUseCases.signUpWithEmailPassword.invoke(
+            _signUpEmail,
+            _signUpPassword,
+            _signUpConfirmPassword
+        ).collect { response ->
+            signUpResponse = response
+            when(response){
+                is Response.Error -> responseMain=response
+                Response.Loading -> {}
+                is Response.Success -> if(response.data)createProfile()
             }
+        }
+    }
+
+    fun retry() {
+        signUpResponse = Response.Success(false)
+        initializeProfileResponse = Response.Success(false)
+    }
+
+    private fun createProfile() = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.initializeProfile().collect {
+            initializeProfileResponse=it
+            when(it){
+                is Response.Error -> {
+                    if(authUseCases.isUserAuthenticated())
+                        Firebase.auth.apply {
+                            currentUser?.delete()
+                            signOut()
+                        }
+                    responseMain=it
+                }
+                Response.Loading -> {}
+                is Response.Success -> responseMain=it
+            }
+        }
     }
 }
 

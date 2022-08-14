@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
@@ -26,14 +27,15 @@ import com.vaibhav.robin.presentation.theme.Values
 
 @Composable
 fun SignUp(navController: NavHostController, viewModel: SignUpViewModel) {
-    val response = viewModel.signUpResponse
+    val response=viewModel.responseMain
     InitUi(viewModel, navController)
     when (response) {
         is Success -> {
-            if (response.data)
-            LaunchedEffect(key1 = true, block = {
-                navController.navigate(RobinDestinations.PERSONAL_DETAILS)
-            })
+            if (response.data){
+                LaunchedEffect(key1 = true, block ={
+                    navController.navigate(RobinDestinations.PERSONAL_DETAILS)
+                } )
+            }
         }
         is Error -> {
             val openDialog = remember { mutableStateOf(true) }
@@ -64,6 +66,7 @@ fun SignUp(navController: NavHostController, viewModel: SignUpViewModel) {
                     confirmButton = {
                         TextButton(
                             onClick = {
+                                viewModel.retry()
                                 openDialog.value = false
                             },
                         ) {
@@ -131,7 +134,7 @@ private fun InitUi(viewModel: SignUpViewModel, navController: NavHostController)
         )
         SpacerVerticalFour()
         Button(modifier = Modifier.fillMaxWidth(),
-            onClick = { viewModel.predateSignUp()}) {
+            onClick = { viewModel.signUp()}) {
             Text(text = "Sign up")
         }
     }

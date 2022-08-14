@@ -13,10 +13,19 @@ interface AuthRepository {
 
     suspend fun signOut(): Flow<Response<Boolean>>
 
-    suspend fun firbaseSignUpWithEmailPassword(
+    suspend fun firebaseSignUpWithEmailPassword(
         email: String,
         password: String
     ): Flow<Response<Boolean>>
 
     fun getFirebaseAuthState(): Flow<Boolean>
+
+    suspend fun firebasePasswordReset(email: String): Flow<Response<Boolean>>
+
+    suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>>
+
+    suspend fun firebaseProfileChange(
+        displayName: String?,
+        photoUri: String?
+    ): Flow<Response<Boolean>>
 }
