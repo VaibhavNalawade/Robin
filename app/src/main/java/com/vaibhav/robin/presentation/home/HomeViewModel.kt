@@ -1,19 +1,26 @@
 package com.vaibhav.robin.presentation.home
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vaibhav.robin.data.unsplash.model.Results
+import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
+import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import com.vaibhav.robin.entities.remote.BannerImage
 import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.data.repository.ProductRepository
-import com.vaibhav.robin.data.unsplash.UnsplashApi
-import com.vaibhav.robin.data.unsplash.model.Results
 import com.vaibhav.robin.presentation.common.TrendingChipState
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val authUseCases: AuthUseCases, private val databaseUseCases: DatabaseUseCases
+) : ViewModel() {
+
     private val _trendingProducts = mutableStateOf(emptyList<Results>())
     val trendingProducts = _trendingProducts
 
@@ -23,19 +30,28 @@ class HomeViewModel : ViewModel() {
     private val _bannerImageData = mutableStateOf(emptyList<BannerImage>())
     val bannerImageData = _bannerImageData
 
-    private val _productlist= MutableStateFlow(emptyList<Product>())
-    val productlist= _productlist
+    private val _productlist = MutableStateFlow(emptyList<Product>())
+    val productlist = _productlist
 
     private val _trendingItemsState = MutableStateFlow<TrendingChipState>(TrendingChipState.Loading)
-    val trendingItemsState=_trendingItemsState
+    val trendingItemsState = _trendingItemsState
+
+    var userAuthenticated by mutableStateOf(authUseCases.isUserAuthenticated())
+        private set
+
+    var profileData by mutableStateOf(authUseCases.getProfileData())
+        private set
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _tradingProductRequest.value = UnsplashApi().getCollection("UIkSJwNi_e4", 30, 1)
-            _trendingProducts.value = UnsplashApi().getCollection("TO7iP5kRiFA", 30, 1)
-            ProductRepository().fetchTrendingItems(_trendingItemsState)
-         //   Repository().getBannerData(_bannerImageData)
-            //Repository(FirestoreDatabase()).fetchProduct(_productlist)
+        viewModelScope.launch {
+            authUseCases.getAuthState().collect {
+                userAuthenticated = it
+                if (true) profileData = authUseCases.getProfileData()
+            }
         }
     }
+
+    suspend fun signOut() = authUseCases.signOut()
+
+
 }

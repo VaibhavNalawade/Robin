@@ -55,7 +55,8 @@ class AppModule {
         signOut = SignOut(repo),
         getAuthState = GetAuthState(repo),
         signUpWithEmailPassword = SignUpWithEmailPassword(repo),
-        personalDetailsUpdate = PersonalDetailsUpdate(repo)
+        personalDetailsUpdate = PersonalDetailsUpdate(repo) ,
+        getProfileData=GetUserProfileData(repo)
     )
 
     @Provides

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -19,7 +20,7 @@ import com.vaibhav.robin.presentation.cart.Cart
 import com.vaibhav.robin.presentation.home.Home
 import com.vaibhav.robin.presentation.product.ProductDetails
 import com.vaibhav.robin.presentation.search.SearchBar
-import androidx.hilt.navigation.compose.hiltViewModel
+
 @Composable
 fun RobinNavHost(navController: NavHostController) {
 
@@ -27,7 +28,7 @@ fun RobinNavHost(navController: NavHostController) {
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
     ) {
-        composable(RobinDestinations.HOME) { Home(navController, snackBarHostState) }
+        composable(RobinDestinations.HOME) { Home(navController, snackBarHostState, hiltViewModel()) }
 
         composable(
             RobinDestinations.searchQuery("{query}"),

@@ -354,9 +354,11 @@ fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewMode
         product.type.forEachIndexed { i , it->
 
             SpacerHorizontalTwo()
-            RoundImage(modifier = Modifier
+            CircularImage(
+                modifier = Modifier
                 .size(48.dp)
-                .clickable { viewModel.selectedType.value = i },contentDescrption = "", Image =it.media.selection, contentScale = ContentScale.Crop )
+                .clickable { viewModel.selectedType.value = i },
+                contentDescrption = "", Image =it.media.selection, contentScale = ContentScale.Crop )
         }
     }
     SpacerVerticalTwo()
@@ -411,7 +413,7 @@ fun BrandPrice(productData: Product, selectedType: Int) {
         ) {
             SpaceBetweenContainer(verticalAlignment = Alignment.CenterVertically)
             {
-                RoundImage(
+                CircularImage(
                     Modifier.size(brandingImageSize),
                     contentDescrption = stringResource(id = R.string.branding_Image),
                     Image = productData.brand.url

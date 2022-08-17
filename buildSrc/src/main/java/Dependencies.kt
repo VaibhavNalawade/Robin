@@ -1,14 +1,14 @@
 object Dependencies {
 
     const val KOTLIN_VERSION = "1.7.10"
-    const val COMPOSE_VERSION = "1.3.0-alpha02"
-    const val COMPOSE_COMPILER_VERSION = "1.3.0-rc01"
-    private const val MDC3_VERSION = "1.0.0-alpha15"
+    const val COMPOSE_VERSION = "1.3.0-alpha03"
+    const val COMPOSE_COMPILER_VERSION = "1.3.0"
+    private const val MDC3_VERSION = "1.0.0-alpha16"
     private const val GSM_VERSION = "4.3.13"
-    private const val ACCOMPANIST_VERSION = "0.24.12-rc"
-    private const val KTOR_VERSION = "2.0.3"
+    private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
+    private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
-    private const val COROUTINES_VERSION="1.6.3"
+    private const val COROUTINES_VERSION="1.6.4"
     private const val AGP_VERSION = "7.4.0-alpha09"
     private const val DAGGERHILT_VERSION="2.42"
 
@@ -30,7 +30,7 @@ object Dependencies {
                 "io.ktor:ktor-serialization-kotlinx-json:$KTOR_VERSION"
         }
 
-        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC"
         object Coroutines {
             const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
             const val playServiceSupport = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$COROUTINES_VERSION"
@@ -78,8 +78,8 @@ object Dependencies {
 
 
         object Core {
-            const val core = "androidx.core:core-ktx:1.9.0-alpha05"
-            const val splashScreen = "androidx.core:core-splashscreen:1.0.0-rc01"
+            const val core = "androidx.core:core-ktx:1.9.0-beta01"
+            const val splashScreen = "androidx.core:core-splashscreen:1.0.0"
         }
 
         object Lifecycle {
@@ -89,12 +89,12 @@ object Dependencies {
         }
 
         object Paging {
-            const val runtime = "androidx.paging:paging-runtime-ktx:3.2.0-alpha01"
-            const val compose = "androidx.paging:paging-compose:1.0.0-alpha15"
+            const val runtime = "androidx.paging:paging-runtime-ktx:3.2.0-alpha02"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha16"
         }
         object Material{
-            const val material="com.google.android.material:material:1.7.0-alpha03"
-            const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.2.0-rc01"
+            const val material="com.google.android.material:material:1.7.0-beta01"
+            const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.3.0-alpha03"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
         }
 
@@ -105,8 +105,8 @@ object Dependencies {
             const val ui = "androidx.compose.ui:ui:$COMPOSE_VERSION"
             const val foundation="androidx.compose.foundation:foundation:$COMPOSE_VERSION"
             const val UI_TOOLING = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
-            const val NAVIGATION = "androidx.navigation:navigation-compose:2.5.0"
-            const val ACTIVITY = "androidx.activity:activity-compose:1.6.0-alpha05"
+            const val NAVIGATION = "androidx.navigation:navigation-compose:2.5.1"
+            const val ACTIVITY = "androidx.activity:activity-compose:1.6.0-beta01"
         }
     }
 

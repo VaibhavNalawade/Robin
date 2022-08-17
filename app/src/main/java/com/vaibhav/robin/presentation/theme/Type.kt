@@ -21,7 +21,7 @@ val RobinTypography = Typography(
     ),
     displayMedium = TextStyle(
         fontFamily = RobotoFlex,
-        fontWeight = FontWeight.W400,
+        fontWeight = FontWeight.W600,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,

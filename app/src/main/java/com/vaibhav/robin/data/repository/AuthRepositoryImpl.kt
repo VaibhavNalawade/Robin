@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.repository.AuthRepository
@@ -33,16 +34,15 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     override suspend fun signOut(): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
-                Firebase.auth.signOut()
-                emit(Success(true))
+            Firebase.auth.signOut()
+            emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e.message ?: e.toString()))
         }
     }
 
     override suspend fun firebaseSignUpWithEmailPassword(
-        email: String,
-        password: String
+        email: String, password: String
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
@@ -55,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
 
     override fun getFirebaseAuthState() = callbackFlow {
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser == null)
+            trySend(auth.currentUser != null)
         }
         auth.addAuthStateListener(authStateListener)
         awaitClose {
@@ -64,8 +64,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     }
 
     override suspend fun firebaseProfileChange(
-        displayName: String?,
-        photoUri: String?
+        displayName: String?, photoUri: String?
     ): Flow<Response<Boolean>> = flow {
         emit(Loading)
         val profileUpdates = userProfileChangeRequest {
@@ -79,6 +78,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             emit(Error(e.message ?: e.toString()))
         }
     }
+
     override suspend fun firebasePasswordReset(
         email: String,
     ): Flow<Response<Boolean>> = flow {
@@ -91,14 +91,30 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>> = flow{
+    override suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
             auth.currentUser!!.sendEmailVerification()
             emit(Success(true))
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             emit(Error(e.message ?: e.toString()))
+        }
+    }
+
+    override fun firebaseUserProfileData(): ProfileData? {
+        try {
+            auth.currentUser!!.apply {
+                return ProfileData(
+                    displayName,
+                    photoUrl,
+                    email,
+                    isEmailVerified,
+                    phoneNumber,
+                    providerData
+                )
+            }
+        } catch (e: Exception) {
+            return null
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.vaibhav.robin.domain.repository
 
+import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import kotlinx.coroutines.flow.Flow
 
@@ -7,15 +8,13 @@ interface AuthRepository {
     fun isUserAuthenticatedInFirebase(): Boolean
 
     suspend fun firebaseSignInWithEmailPassword(
-        email: String,
-        password: String
+        email: String, password: String
     ): Flow<Response<Boolean>>
 
     suspend fun signOut(): Flow<Response<Boolean>>
 
     suspend fun firebaseSignUpWithEmailPassword(
-        email: String,
-        password: String
+        email: String, password: String
     ): Flow<Response<Boolean>>
 
     fun getFirebaseAuthState(): Flow<Boolean>
@@ -25,7 +24,9 @@ interface AuthRepository {
     suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>>
 
     suspend fun firebaseProfileChange(
-        displayName: String?,
-        photoUri: String?
+        displayName: String?, photoUri: String?
     ): Flow<Response<Boolean>>
+
+    fun firebaseUserProfileData(): ProfileData?
+
 }

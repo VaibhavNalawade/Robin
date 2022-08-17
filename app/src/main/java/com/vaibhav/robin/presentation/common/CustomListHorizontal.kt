@@ -107,7 +107,7 @@ fun ItemCard(unsplashGet: Results, placeHolder: Boolean = false) {
                     contentDescription = stringResource(id = R.string.product_image)
                 )
 
-                RoundImage(
+                CircularImage(
                     modifier = Modifier.size(brandingImageSize),
                     Image = unsplashGet.user?.profileImage?.small?:"null",
                     contentDescrption =  stringResource(id = R.string.branding_Image)

@@ -6,5 +6,6 @@ data class AuthUseCases(
     val signOut: SignOut,
     val getAuthState: GetAuthState,
     val signUpWithEmailPassword: SignUpWithEmailPassword,
-    val personalDetailsUpdate: PersonalDetailsUpdate
+    val personalDetailsUpdate: PersonalDetailsUpdate,
+    val getProfileData:GetUserProfileData
 )

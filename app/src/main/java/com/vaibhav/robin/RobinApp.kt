@@ -14,7 +14,7 @@ class RobinApp : Application() {
         super.onCreate()
             Firebase.initialize(this)
             if (BuildConfig.DEBUG) {
-                val host = "192.168.142.174"
+                val host = "192.168.69.69"
                 Firebase.firestore.useEmulator(host, 8080)
                 Firebase.auth.useEmulator(host, 9099)
             } else Firebase.firestore.firestoreSettings = firestoreSettings {

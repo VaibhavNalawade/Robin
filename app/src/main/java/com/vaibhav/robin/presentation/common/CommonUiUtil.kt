@@ -4,6 +4,8 @@ import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
@@ -18,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +46,27 @@ fun SpaceBetweenContainer(
 }
 
 @Composable
-fun RoundImage(
+fun CircularImage(
+    modifier: Modifier = Modifier,
+    contentDescription: String,
+    borderStroke: BorderStroke = BorderStroke(
+        color = MaterialTheme.colorScheme.onSurface,
+        width = 2.dp
+    ),
+    Image: Painter,
+    contentScale: ContentScale=ContentScale.Fit
+
+) {
+        Image(
+            modifier = modifier
+                .fillMaxSize().clip(CircleShape).border(borderStroke, CircleShape),
+            contentDescription = contentDescription,
+            painter = Image,
+            contentScale = contentScale
+        )
+}
+@Composable
+fun CircularImage(
     modifier: Modifier = Modifier,
     contentDescrption: String,
     borderStroke: BorderStroke = BorderStroke(
@@ -54,19 +77,13 @@ fun RoundImage(
     contentScale: ContentScale=ContentScale.Fit
 
 ) {
-    Surface(
-        modifier = modifier,
-        shape = CircleShape,
-        border = borderStroke,
-    ) {
-        RobinAsyncImage(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentDescription = contentDescrption,
-            model = Image,
-            contentScale = contentScale
-        )
-    }
+    RobinAsyncImage(
+        modifier = modifier
+            .fillMaxSize().clip(CircleShape).border(borderStroke, CircleShape),
+        contentDescription = contentDescrption,
+        model = Image,
+        contentScale = contentScale
+    )
 }
 
 @Composable

@@ -4,8 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.constraintlayout.widget.Placeholder
 import coil.compose.AsyncImage
+import com.vaibhav.robin.R
 
 
 @Composable
@@ -17,11 +21,26 @@ fun RobinAsyncImage(
 ) {
     val placeholder = remember { mutableStateOf(true) }
     AsyncImage(
-        modifier = modifier
-            .placeholder(placeholder.value),
+        modifier = modifier.placeholder(placeholder.value),
         contentScale = contentScale,
         model = model,
         onSuccess = { placeholder.value = false },
+        contentDescription = contentDescription
+    )
+}
+@Composable
+fun RobinAsyncImage(
+    modifier: Modifier,
+    contentDescription: String?,
+    model: Any?,
+    placeholder: Painter?,
+    contentScale: ContentScale = ContentScale.Fit
+) {
+    AsyncImage(
+        modifier = modifier,
+        contentScale = contentScale,
+        placeholder= placeholder,
+        model = model,
         contentDescription = contentDescription
     )
 }
