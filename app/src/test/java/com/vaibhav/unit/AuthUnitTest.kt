@@ -22,11 +22,11 @@ class AuthUnitTest {
 
     @Test
     fun `create Account with email test`() = runTest {
-        authRepo.firebaseSignUpWithEmailPassword(email(), password()).collect {
+        authRepo.signUpWithEmailPassword(email(), password()).collect {
             when (it) {
                 is Loading -> {}
                 is Error -> throw Exception(it.message)
-                is Success -> assert(authRepo.isUserAuthenticatedInFirebase())
+                is Success -> assert(authRepo.isUserAuthenticated())
             }
         }
     }
@@ -60,11 +60,11 @@ class AuthUnitTest {
         job.join()
         if (job.isCompleted)
             testScope.launch {
-                authRepo.firebaseSignInWithEmailPassword(email, password).collect { response ->
+                authRepo.signInWithEmailPassword(email, password).collect { response ->
                     when (response) {
                         is Loading -> {}
                         is Error -> throw Exception(response.message)
-                        is Success -> assert(authRepo.isUserAuthenticatedInFirebase())
+                        is Success -> assert(authRepo.isUserAuthenticated())
                     }
                 }
             }
@@ -81,7 +81,7 @@ class AuthUnitTest {
         job.join()
         if (job.isCompleted)
             testScope.launch {
-                authRepo.firebaseProfileChange("tango mango", "http://wwe.cy/4.jpg")
+                authRepo.UpdateProfile("tango mango", "http://wwe.cy/4.jpg")
                     .collect { response ->
                         when (response) {
                             is Loading -> {}
@@ -105,7 +105,7 @@ class AuthUnitTest {
         job.join()
         if (job.isCompleted)
             testScope.launch {
-                authRepo.firebaseSendVerificationMail().collect { response ->
+                authRepo.sendVerificationMail().collect { response ->
                     when (response) {
                         is Loading -> {}
                         is Error -> throw Exception(response.message)
@@ -127,7 +127,7 @@ class AuthUnitTest {
         job.join()
         if (job.isCompleted)
             testScope.launch {
-                authRepo.firebasePasswordReset(email).collect { response ->
+                authRepo.passwordReset(email).collect { response ->
                     when (response) {
                         is Loading -> {}
                         is Error -> throw Exception(response.message)
@@ -141,7 +141,7 @@ class AuthUnitTest {
     }
 
     suspend fun predateSignup(email: String, password: String) {
-        authRepo.firebaseSignUpWithEmailPassword(email, password).collect {
+        authRepo.signUpWithEmailPassword(email, password).collect {
             if (it is Error) throw Exception(it.message)
         }
     }

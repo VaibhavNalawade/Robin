@@ -20,17 +20,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.unsplash.model.Results
 import com.vaibhav.robin.presentation.theme.RobinTypography
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RowItem(
-    unsplashGet: Results = Results(),
-    placeholder: Boolean = false,
+   placeholder: Boolean = false,
     onClick: () -> Unit = {}
-) {
+){/*
 
     val onSurface = MaterialTheme.colorScheme.onSurface
     OutlinedCard(onClick,
@@ -146,4 +144,4 @@ fun RowItem(
             }
         }
     }
-}
+*/}

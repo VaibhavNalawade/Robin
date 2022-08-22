@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.entities.remote.CartItems
 import com.vaibhav.robin.presentation.common.*
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 
@@ -34,7 +33,7 @@ import com.vaibhav.robin.presentation.theme.Values.Dimens
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Cart(navController: NavController, snackBarHostState: SnackbarHostState) {
+fun Cart(navController: NavController, snackBarHostState: SnackbarHostState){}/* {
 
     val viewModel: CartViewModel = viewModel()
     val cartItemsUiStateState = viewModel.cartItemsUiState.collectAsState().value
@@ -173,7 +172,7 @@ fun Cart(navController: NavController, snackBarHostState: SnackbarHostState) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(Dimens.gird_two),
-                    onClick = { /*TODO need do direct to payment gateway*/ },
+                    onClick = { *//*TODO need do direct to payment gateway*//* },
                     enabled = paymentButton.value
                 ) {
                     Icon(
@@ -214,11 +213,11 @@ fun Cart(navController: NavController, snackBarHostState: SnackbarHostState) {
             }
         }
     }
-}
+}*/
 
 @Composable
-fun CartItem(cartItems: CartItems, viewModel: CartViewModel, snackBarHostState: SnackbarHostState) {
-    Row(
+fun CartItem( viewModel: CartViewModel, snackBarHostState: SnackbarHostState) {
+   /* Row(
         modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = { viewModel.removeItem(cartItems, snackBarHostState) }) {
@@ -240,7 +239,7 @@ fun CartItem(cartItems: CartItems, viewModel: CartViewModel, snackBarHostState: 
             Text(text = cartItems.productName ?: "", style = typography.titleMedium)
             //ExposedDropdownMenuBox()
         }
-    }
+    }*/
 }
 
 @Composable
@@ -290,7 +289,7 @@ fun EmptyCart() {
 @Composable
 fun CartDark() {
     RobinAppPreviewScaffold {
-        EmptyCart()
+       // EmptyCart()
     }
 
 }

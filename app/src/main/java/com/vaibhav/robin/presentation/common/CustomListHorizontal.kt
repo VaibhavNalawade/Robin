@@ -1,3 +1,4 @@
+/*
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
 package com.vaibhav.robin.presentation.common
@@ -39,7 +40,9 @@ fun CustomListHorizontal(text: String = "Title", listResults: List<Results>) {
             text = text,
             style = typography.headlineLarge.copy(color = colorScheme.onSurface),
         )
-        TextButton(modifier = Modifier, onClick = { /* Do something! */ }) { Text("SEE ALL") }
+        TextButton(modifier = Modifier, onClick = { */
+/* Do something! *//*
+ }) { Text("SEE ALL") }
     }
 
     LazyRow(
@@ -154,3 +157,4 @@ fun ItemCard(unsplashGet: Results, placeHolder: Boolean = false) {
 }
 
 
+*/

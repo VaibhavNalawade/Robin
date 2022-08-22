@@ -28,7 +28,7 @@ class SignUpWithEmailPassword @Inject constructor(
             (!passwordState.value.error) &&
             (!confirmPasswordState.value.error)
         )
-            repository.firebaseSignUpWithEmailPassword(
+            repository.signUpWithEmailPassword(
                 emailState.value.text,
                 passwordState.value.text
             )

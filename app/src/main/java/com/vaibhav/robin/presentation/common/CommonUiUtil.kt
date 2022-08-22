@@ -45,43 +45,23 @@ fun SpaceBetweenContainer(
     }
 }
 
+
 @Composable
 fun CircularImage(
     modifier: Modifier = Modifier,
-    contentDescription: String,
+    contentDescription: String?,
     borderStroke: BorderStroke = BorderStroke(
         color = MaterialTheme.colorScheme.onSurface,
         width = 2.dp
     ),
-    Image: Painter,
-    contentScale: ContentScale=ContentScale.Fit
-
-) {
-        Image(
-            modifier = modifier
-                .fillMaxSize().clip(CircleShape).border(borderStroke, CircleShape),
-            contentDescription = contentDescription,
-            painter = Image,
-            contentScale = contentScale
-        )
-}
-@Composable
-fun CircularImage(
-    modifier: Modifier = Modifier,
-    contentDescrption: String,
-    borderStroke: BorderStroke = BorderStroke(
-        color = MaterialTheme.colorScheme.onSurface,
-        width = 2.dp
-    ),
-    Image: String,
-    contentScale: ContentScale=ContentScale.Fit
-
+    image: Any,
+    contentScale: ContentScale=ContentScale.Crop
 ) {
     RobinAsyncImage(
         modifier = modifier
             .fillMaxSize().clip(CircleShape).border(borderStroke, CircleShape),
-        contentDescription = contentDescrption,
-        model = Image,
+        contentDescription = contentDescription,
+        model = image,
         contentScale = contentScale
     )
 }

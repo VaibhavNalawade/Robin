@@ -19,9 +19,9 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : AuthRepository {
-    override fun isUserAuthenticatedInFirebase() = auth.currentUser != null
+    override fun isUserAuthenticated() = auth.currentUser != null
 
-    override suspend fun firebaseSignInWithEmailPassword(email: String, password: String) = flow {
+    override suspend fun signInWithEmailPassword(email: String, password: String) = flow {
         try {
             emit(Loading)
             auth.signInWithEmailAndPassword(email, password).await()
@@ -41,7 +41,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun firebaseSignUpWithEmailPassword(
+    override suspend fun signUpWithEmailPassword(
         email: String, password: String
     ): Flow<Response<Boolean>> = flow {
         try {
@@ -53,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override fun getFirebaseAuthState() = callbackFlow {
+    override fun getAuthState() = callbackFlow {
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
             trySend(auth.currentUser != null)
         }
@@ -63,7 +63,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun firebaseProfileChange(
+    override suspend fun UpdateProfile(
         displayName: String?, photoUri: String?
     ): Flow<Response<Boolean>> = flow {
         emit(Loading)
@@ -79,7 +79,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun firebasePasswordReset(
+    override suspend fun passwordReset(
         email: String,
     ): Flow<Response<Boolean>> = flow {
         try {
@@ -91,7 +91,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun firebaseSendVerificationMail(): Flow<Response<Boolean>> = flow {
+    override suspend fun sendVerificationMail(): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
             auth.currentUser!!.sendEmailVerification()
@@ -101,7 +101,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override fun firebaseUserProfileData(): ProfileData? {
+    override fun getProfileData(): ProfileData? {
         try {
             auth.currentUser!!.apply {
                 return ProfileData(
@@ -117,4 +117,6 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             return null
         }
     }
+
+    override fun getUserUid(): String?=auth.currentUser?.uid
 }

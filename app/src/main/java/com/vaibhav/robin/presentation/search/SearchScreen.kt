@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.vaibhav.robin.presentation.common.GridVertical
+
 import com.vaibhav.robin.presentation.common.RobinBar
 import com.vaibhav.robin.presentation.theme.RobinTypography
 
@@ -30,7 +30,7 @@ import com.vaibhav.robin.presentation.theme.RobinTypography
 @Composable
 fun SearchBar(navController: NavHostController) {
 
-    val viewModel: SearchViewModel = viewModel()
+/*    val viewModel: SearchViewModel = viewModel()
     val topAppBarScrollState = rememberTopAppBarState()
     val textState by viewModel.searchQuery.collectAsState()
     var navArgumentSearched by remember { mutableStateOf(false) }
@@ -122,5 +122,5 @@ fun SearchBar(navController: NavHostController) {
             )
         }
 
-    }
+    }*/
 }

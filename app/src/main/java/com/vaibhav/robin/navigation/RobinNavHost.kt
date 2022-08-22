@@ -41,7 +41,7 @@ fun RobinNavHost(navController: NavHostController) {
         composable(
             RobinDestinations.product("{Id}"),
             listOf(navArgument("Id") { type = NavType.StringType })
-        ) { ProductDetails(navController, snackBarHostState) }
+        ) { ProductDetails(navController=navController,snackBarHostState= snackBarHostState, viewModel = hiltViewModel()) }
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
         ) {

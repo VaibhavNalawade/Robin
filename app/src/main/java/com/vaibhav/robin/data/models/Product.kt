@@ -1,4 +1,4 @@
-package com.vaibhav.robin.entities.ui.model
+package com.vaibhav.robin.data.models
 
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.PropertyName
@@ -24,12 +24,13 @@ data class SubProductType(
     val name: String = "",
     val media: Media = Media(),
     @set:PropertyName("expect_type") @get:PropertyName("expect_type")var expectType: Int = 0,
-    val details: List<DetailsPoint> = emptyList(),
+    val details:Map<String,String> = emptyMap(),
     val description: Description = Description()
 )
 data class Description(
     val description:String?=null,
-    @set:PropertyName("sub_des") @get:PropertyName("sub_des") var subDescription:List<DetailsPoint> = emptyList()
+    @set:PropertyName("sub_des") @get:PropertyName("sub_des")
+    var subDescription:Map<String,String> = emptyMap()
 )
 
 data class DetailsPoint(
@@ -45,15 +46,4 @@ data class DetailsPoint(
     @set:PropertyName("10") @get:PropertyName("10") var ten: String? = null
 )
 
-data class Media(
-    val images: List<String> = emptyList(),
-    val videos: List<String> = emptyList(),
-    val selection: String = ""
-)
 
-data class Price(
-    val currency: String = "",
-    val price: Double = 0.0,
-    val shipping: Double = 0.0,
-    val tax: Double = 0.0
-)

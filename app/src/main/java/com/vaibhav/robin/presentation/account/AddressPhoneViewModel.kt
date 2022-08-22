@@ -29,7 +29,7 @@ class AddressPhoneViewModel @Inject constructor( private val databaseUseCases: D
     private val _phone= mutableStateOf(TextFieldState())
     val phone get() = _phone
 
-    var response by mutableStateOf<Response<Boolean>>(Response.Success(false))
+    var response by mutableStateOf<Response<Boolean>>(Success(false))
     private set
 
     fun updateAddressAndPhone()=viewModelScope.launch(Dispatchers.IO) {

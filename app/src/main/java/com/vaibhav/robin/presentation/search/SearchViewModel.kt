@@ -4,15 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.vaibhav.robin.data.repository.Repository
-import com.vaibhav.robin.data.unsplash.model.Results
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    private val _searchQuery = MutableStateFlow("")
+/*    private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery
 
     private val _searchedImages = MutableStateFlow<PagingData<Results>>(PagingData.empty())
@@ -32,5 +30,5 @@ class SearchViewModel : ViewModel() {
             }
         }
     }
-    fun updateQuery(string: String)= run { _searchQuery.value=string }
+    fun updateQuery(string: String)= run { _searchQuery.value=string }*/
 }

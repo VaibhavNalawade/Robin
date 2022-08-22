@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetAuthState @Inject constructor(
     private val repository: AuthRepository
 ) {
-    operator fun invoke() = repository.getFirebaseAuthState()
+    operator fun invoke() = repository.getAuthState()
 }

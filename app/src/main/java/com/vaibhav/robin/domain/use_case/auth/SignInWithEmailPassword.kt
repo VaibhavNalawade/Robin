@@ -19,7 +19,7 @@ class SignInWithEmailPassword @Inject constructor(
         emailState.value = Validators.email(emailState.value)
         passwordState.value = Validators.password(passwordState.value)
         return if (!emailState.value.error && !passwordState.value.error)
-            repository.firebaseSignInWithEmailPassword(
+            repository.signInWithEmailPassword(
                 emailState.value.text,
                 passwordState.value.text
             )

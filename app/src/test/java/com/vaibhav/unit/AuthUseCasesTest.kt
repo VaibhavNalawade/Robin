@@ -27,7 +27,8 @@ class AuthUseCasesTest @Inject constructor() {
         signOut = SignOut(repo),
         getAuthState = GetAuthState(repo),
         signUpWithEmailPassword = SignUpWithEmailPassword(repo),
-        personalDetailsUpdate = PersonalDetailsUpdate(repo)
+        personalDetailsUpdate = PersonalDetailsUpdate(repo),
+        getProfileData = GetUserProfileData(repo)
     )
     private val rightEmail = mutableStateOf(TextFieldState(text = email()))
     private val wrongEmail = mutableStateOf(TextFieldState(text = "vn14989gmail.com"))

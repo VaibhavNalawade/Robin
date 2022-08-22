@@ -2,11 +2,10 @@
 
 package com.vaibhav.robin.presentation.product
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +19,6 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,78 +27,70 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.entities.ui.model.DetailsPoint
-import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.data.repository.MockProvider
 import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.Color.subtextAlpha
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 import com.vaibhav.robin.presentation.theme.Values.Dimens.appbarSize
-import com.vaibhav.robin.presentation.theme.Values.Dimens.brandingImageSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import com.vaibhav.robin.domain.model.Response.*
 import kotlin.random.Random
+
 //Todo Add video support on back layer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun ProductDetails(navController: NavHostController, snackBarHostState: SnackbarHostState) {
+fun ProductDetails(
+    viewModel: ProductViewModel,
+    navController: NavHostController,
+    snackBarHostState: SnackbarHostState
+) {
+    val productResponse = viewModel.productResponse
 
-    val viewModel: ProductViewModel = viewModel()
-    val productDataUiState = viewModel.productUiState.collectAsState().value
 
-    val addToCart = viewModel.addCartItemUiState.collectAsState().value
-
-    /**
-     * [id] is product id
-     */
     val id = navController.currentBackStackEntry?.arguments?.getString("Id") ?: ""
     viewModel.setProductId(id)
+    Log.e("e",id)
     val bottomSheetState = rememberBottomSheetScaffoldState()
     val listState = rememberLazyListState()
-// The FAB is initially expanded. Once the first visible item is past the first item we
-// collapse the FAB. We use a remmbered derived state to minimize unnecessary compositions.
     val expandedFab by remember { derivedStateOf { bottomSheetState.bottomSheetState.isCollapsed } }
 
-    Scaffold(
-        floatingActionButton = {
-            val fabState = fabState(addToCart = addToCart,viewModel,navController,snackBarHostState,
-                rememberCoroutineScope())
+    Scaffold(floatingActionButton = {
+        /*    val fabState = fabState(addToCart = addToCart,viewModel,navController,snackBarHostState,
+                rememberCoroutineScope())*/
 
-            ExtendedFloatingActionButton(
-                onClick = fabState.OnClick,
-                expanded = expandedFab,
-                icon = fabState.icon,
-                text = { Text(text = fabState.text) },
-            )
-        }, snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+        ExtendedFloatingActionButton(
+            onClick = {}, /*fabState.OnClick*/
+            expanded = expandedFab,
+            icon = /*fabState.icon*/{
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = stringResource(R.string.added_to_cart),
+                    tint = Color.Green
+                )
+            },
+            text = { Text(text = /*fabState.text*/"Add to cart") },
+        )
+    },
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         floatingActionButtonPosition = FabPosition.End,
-        content = {
+        content = { paddingValue ->
             BottomSheet(
-                productDataUiState,
-                viewModel,
-                navController,
-                snackBarHostState,
-                bottomSheetState
+                viewModel = viewModel,
+                navController = navController,
+                snackBarHostState = snackBarHostState,
+                bottomSheetState = bottomSheetState,
+                padding = paddingValue
             )
-        }
-    )
+        })
 }
-
+/*
 data class FabState(
-    val text: String = "",
-    val icon: @Composable () -> Unit = {},
-    val OnClick: () -> Unit = {}
+    val text: String = "", val icon: @Composable () -> Unit = {}, val OnClick: () -> Unit = {}
 )
 
 @Composable
@@ -112,8 +102,7 @@ fun fabState(
     scope: CoroutineScope
 ): FabState {
     return when (addToCart) {
-        is AddCartItemUiState.Success -> FabState(
-            text = stringResource(R.string.added_to_cart),
+        is AddCartItemUiState.Success -> FabState(text = stringResource(R.string.added_to_cart),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
@@ -122,34 +111,29 @@ fun fabState(
                 )
             },
             OnClick = {
-               scope.launch { showSnackbar(
-                   message = "Item Added To Cart",
-                   actionLabel = "Go to Cart",
-                   snackBarHostState,
-                   actionPerformed = {
-                       navController.navigate(RobinDestinations.CART)
-                   }
-               ) }
-            }
-        )
-        is AddCartItemUiState.Loading -> FabState(
-            text = stringResource(R.string.loading),
-            icon = {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp
-                )
-            },
-            OnClick = {
-                scope.launch { showSnackbar(
+                scope.launch {
+                    showSnackbar(message = "Item Added To Cart",
+                        actionLabel = "Go to Cart",
+                        snackBarHostState,
+                        actionPerformed = {
+                            navController.navigate(RobinDestinations.CART)
+                        })
+                }
+            })
+        is AddCartItemUiState.Loading -> FabState(text = stringResource(R.string.loading), icon = {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp), strokeWidth = 2.dp
+            )
+        }, OnClick = {
+            scope.launch {
+                showSnackbar(
                     message = "Loading...",
                     snackbarHostState = snackBarHostState,
 
-                ) }
+                    )
             }
-        )
-        is AddCartItemUiState.Error -> FabState(
-            text = stringResource(R.string.error_occurred),
+        })
+        is AddCartItemUiState.Error -> FabState(text = stringResource(R.string.error_occurred),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Error,
@@ -158,18 +142,16 @@ fun fabState(
                 )
             },
             OnClick = {
-                scope.launch { showSnackbar(
-                    message = "Something Went Wrong",
-                    actionLabel = "Reload",
-                    snackBarHostState,
-                    actionPerformed = {
-                        TODO()
-                    }
-                ) }
-            }
-        )
-        is AddCartItemUiState.AlreadyExits -> FabState(
-            text = stringResource(R.string.already_exist_in_cart),
+                scope.launch {
+                    showSnackbar(message = "Something Went Wrong",
+                        actionLabel = "Reload",
+                        snackBarHostState,
+                        actionPerformed = {
+                            TODO()
+                        })
+                }
+            })
+        is AddCartItemUiState.AlreadyExits -> FabState(text = stringResource(R.string.already_exist_in_cart),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
@@ -178,18 +160,16 @@ fun fabState(
                 )
             },
             OnClick = {
-                scope.launch { showSnackbar(
-                    message = "Item already in Cart",
-                    actionLabel = "Go to Cart",
-                    snackBarHostState,
-                    actionPerformed = {
-                        navController.navigate(RobinDestinations.CART)
-                    }
-                ) }
-            }
-        )
-        is AddCartItemUiState.Ready -> FabState(
-            text = stringResource(R.string.add_to_cart),
+                scope.launch {
+                    showSnackbar(message = "Item already in Cart",
+                        actionLabel = "Go to Cart",
+                        snackBarHostState,
+                        actionPerformed = {
+                            navController.navigate(RobinDestinations.CART)
+                        })
+                }
+            })
+        is AddCartItemUiState.Ready -> FabState(text = stringResource(R.string.add_to_cart),
             icon = {
                 Icon(
                     imageVector = Icons.Filled.AddShoppingCart,
@@ -198,46 +178,44 @@ fun fabState(
             },
             OnClick = {
 
-            }
-        )
+            })
     }
-}
+}*/
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheet(
-    productUiState: ProductUiState,
     viewModel: ProductViewModel,
     navController: NavHostController,
     snackBarHostState: SnackbarHostState,
-    bottomSheetState: BottomSheetScaffoldState
+    bottomSheetState: BottomSheetScaffoldState,
+    padding: PaddingValues
 ) {
     val onObjectHeight = remember { mutableStateOf(0) }
+    val response = viewModel.productResponse
 
     BottomSheetScaffold(
+        modifier = Modifier
+            .padding(padding),
         sheetContent = {
-            when (productUiState) {
-                is ProductUiState.Success -> {
-                    FrontLayer(productUiState.product,viewModel)
+            when (response) {
+                is Success -> {
+                    FrontLayer( viewModel)
                 }
-                is ProductUiState.Loading -> {
+                is Loading -> {
                     FrontScreenLoading()
                 }
-                is ProductUiState.Error -> {
+                is Error -> {
 
                 }
             }
         },
         scaffoldState = bottomSheetState,
         content = {
-                    BackLayer(
-                        productUiState,
-                        viewModel,
-                        onObjectHeight,
-                        navController,
-                        snackBarHostState
-                    )
+            BackLayer(
+                viewModel, onObjectHeight, navController,
+            )
         },
         sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
         sheetPeekHeight = calculatePeakHeight(onObjectHeight.value)
@@ -247,25 +225,23 @@ fun BottomSheet(
 
 @Composable
 fun BackLayer(
-    productUiState: ProductUiState,
     viewModel: ProductViewModel,
     sheetPeekHeight: MutableState<Int>,
     navController: NavHostController,
-    snackBarHostState: SnackbarHostState
 ) {
+    val response = viewModel.productResponse
     Surface(color = colorScheme.surfaceVariant) {
         Box(
             modifier = Modifier
                 .fillMaxHeight(.7f)
                 .onGloballyPositioned { sheetPeekHeight.value = it.size.height },
         ) {
-            when(productUiState){
-                is ProductUiState.Error -> {}
-                is ProductUiState.Loading -> {}
-                is ProductUiState.Success -> {
+            when (response) {
+                is Error -> {}
+                is Loading -> {}
+                is Success -> {
                     ImageSlider(
-                        bannerImage = productUiState.product.type[viewModel.selectedType.value]
-                            .media.images,
+                        bannerImage = response.data.type[0].media.images,
                         contentScale = ContentScale.Crop,
                         urlParam = "&w=640&q=80",
                     ) {}
@@ -276,8 +252,7 @@ fun BackLayer(
                     .statusBarsPadding()
                     .fillMaxWidth()
                     .height(appbarSize)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
             ) {
                 ButtonContainer {
                     IconButton(onClick = {
@@ -308,11 +283,9 @@ fun BackLayer(
 
 
 @Composable
-fun FrontLayer(product: Product, viewModel: ProductViewModel) {
+fun FrontLayer( viewModel: ProductViewModel) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(calculateFrontLayoutHeight(height = appbarSize))
+        modifier = Modifier.fillMaxWidth().height(calculateFrontLayoutHeight(height = appbarSize))
             .background(color = colorScheme.surface)
     ) {
         SpacerVerticalOne()
@@ -320,49 +293,53 @@ fun FrontLayer(product: Product, viewModel: ProductViewModel) {
         SpacerVerticalOne()
         val scrollState = rememberScrollState()
         Column(modifier = Modifier.verticalScroll(scrollState)) {
-            val selectedType by viewModel.selectedType
-            BrandPrice(product,selectedType)
+/*            val selectedType by viewModel.selectedType
+            BrandPrice(product, selectedType)
             DividerHorizontal()
-            TitleDescription(product,selectedType)
+            TitleDescription(product, selectedType)
             DividerHorizontal()
-            Size(this, product,selectedType)
+            Size(this, product, selectedType)
             DividerHorizontal()
-            Color(columnScope = this, product,viewModel)
+            Color(columnScope = this, product, viewModel)
             DividerHorizontal()
-            Specification(product,selectedType)
+            Specification(product, selectedType)
 
-            ReviewRateing(LocalConfiguration.current.screenWidthDp)
+            ReviewRateing(LocalConfiguration.current.screenWidthDp)*/
         }
     }
 }
-
+/*
 @Composable
-fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewModel) = with(columnScope) {
+fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewModel) =
+    with(columnScope) {
 
-    SpacerVerticalOne()
-    Text(
-        modifier = Modifier.padding(horizontal = Dimens.gird_two),
-        text = "Select Color",
-        style = typography.titleLarge
-    )
+        SpacerVerticalOne()
+        Text(
+            modifier = Modifier.padding(horizontal = Dimens.gird_two),
+            text = "Select Color",
+            style = typography.titleLarge
+        )
 
-    SpacerVerticalOne()
+        SpacerVerticalOne()
 
-    val state = rememberScrollState(0)
-    Row(Modifier.horizontalScroll(state)) {
+        val state = rememberScrollState(0)
+        Row(Modifier.horizontalScroll(state)) {
 
-        product.type.forEachIndexed { i , it->
+            product.type.forEachIndexed { i, it ->
 
-            SpacerHorizontalTwo()
-            CircularImage(
-                modifier = Modifier
-                .size(48.dp)
-                .clickable { viewModel.selectedType.value = i },
-                contentDescrption = "", Image =it.media.selection, contentScale = ContentScale.Crop )
+                SpacerHorizontalTwo()
+                CircularImage(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable { viewModel.selectedType.value = i },
+                    contentDescrption = "",
+                    Image = it.media.selection,
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
+        SpacerVerticalTwo()
     }
-    SpacerVerticalTwo()
-}
 
 @Composable
 fun Size(columnScope: ColumnScope, product: Product, selectedType: Int) = with(columnScope) {
@@ -383,10 +360,14 @@ fun Size(columnScope: ColumnScope, product: Product, selectedType: Int) = with(c
 
             Spacer(modifier = Modifier.width(Dimens.gird_one))
 
-            /** Todo Waiting for Chips replace button */
+            */
+/** Todo Waiting for Chips replace button *//*
+
             TextButton(
                 modifier = Modifier.size(42.dp),
-                onClick = { /*TODO*/ },
+                onClick = { */
+/*TODO*//*
+ },
                 border = BorderStroke(
                     2.dp,
                     color = colorScheme.primary
@@ -570,7 +551,7 @@ fun BulletPoints(productData: Product, selectedType: Int) {
         }
     }
 }
-
+*/
 @Composable
 fun ButtonContainer(content: @Composable () -> Unit) {
     Surface(
@@ -647,17 +628,23 @@ suspend fun showSnackbar(
 
 
 
+
 /**
  *Fixme same problem as peak height
  */
+
 @Composable
 fun calculateFrontLayoutHeight(height: Dp) = LocalConfiguration.current.screenHeightDp.dp - height
+
 
 /**
  *Calculate Peak & @return
  * @param onObjectHeight */
+
+
 /** FIXME: Bug Detected on Secondary Display height peak calculation not working also on some phones.
 FIXME:Debug the Calculation of height sightly wrong*/
+
 @Composable
 fun calculatePeakHeight(onObjectHeight: Int) = with(LocalDensity.current) {
     (LocalConfiguration.current.screenHeightDp.dp - onObjectHeight.toDp()) +
@@ -665,6 +652,7 @@ fun calculatePeakHeight(onObjectHeight: Int) = with(LocalDensity.current) {
             Dimens.bottomSheetOnTop
 }
 
+/*
 @Preview(group = "LoadingState")
 @Composable
 fun LoadingStateLight() {
@@ -768,3 +756,4 @@ fun SpecificationDark() {
         Specification(Product(),0)
     }
 }
+*/

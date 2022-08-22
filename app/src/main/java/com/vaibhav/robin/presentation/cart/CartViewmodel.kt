@@ -3,15 +3,13 @@ package com.vaibhav.robin.presentation.cart
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vaibhav.robin.entities.remote.CartItems
-import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.presentation.product.showSnackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class CartViewModel : ViewModel() {
+class CartViewModel : ViewModel() {}
+/*
     private val _cartItemsUiState = MutableStateFlow<CartItemsUiState>(CartItemsUiState.Loading())
     val cartItemsUiState = _cartItemsUiState
 
@@ -83,4 +81,4 @@ sealed class RemoveItemsState {
     data class Success(val cartItems: CartItems) : RemoveItemsState()
     data class Error(val exception: Exception) : RemoveItemsState()
     object Init: RemoveItemsState()
-}
+}*/

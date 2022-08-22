@@ -10,14 +10,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.entities.remote.TrendingChipData
 import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinVectorLoader
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrendingChipRow(trendingChipState: TrendingChipState, navController: NavController) {
+fun TrendingChipRow( navController: NavController) {}
+/*
     when (trendingChipState) {
         is TrendingChipState.Loading -> {
             LazyRow(
@@ -70,13 +70,6 @@ fun TrendingChipRow(trendingChipState: TrendingChipState, navController: NavCont
 
 }
 
-sealed class TrendingChipState {
-    object Loading : TrendingChipState()
-    data class Complete(val chipData: List<TrendingChipData>) : TrendingChipState()
-    data class Error(val exception: Exception) : TrendingChipState()
-}
-
-
 @Preview
 @Composable
 fun TrendingChipLoading() {
@@ -103,4 +96,5 @@ fun TrendingChipComplete() {
         )
     }
 }
+*/
 

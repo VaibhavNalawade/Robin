@@ -5,12 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vaibhav.robin.data.unsplash.model.Results
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.entities.remote.BannerImage
-import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.presentation.common.TrendingChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +17,7 @@ class HomeViewModel @Inject constructor(
     private val authUseCases: AuthUseCases, private val databaseUseCases: DatabaseUseCases
 ) : ViewModel() {
 
-    private val _trendingProducts = mutableStateOf(emptyList<Results>())
+/*    private val _trendingProducts = mutableStateOf(emptyList<Results>())
     val trendingProducts = _trendingProducts
 
     private val _tradingProductRequest = mutableStateOf(emptyList<Results>())
@@ -31,10 +27,10 @@ class HomeViewModel @Inject constructor(
     val bannerImageData = _bannerImageData
 
     private val _productlist = MutableStateFlow(emptyList<Product>())
-    val productlist = _productlist
+    val productlist = _productlist*/
 
-    private val _trendingItemsState = MutableStateFlow<TrendingChipState>(TrendingChipState.Loading)
-    val trendingItemsState = _trendingItemsState
+/*    private val _trendingItemsState = MutableStateFlow<TrendingChipState>(TrendingChipState.Loading)
+    val trendingItemsState = _trendingItemsState*/
 
     var userAuthenticated by mutableStateOf(authUseCases.isUserAuthenticated())
         private set

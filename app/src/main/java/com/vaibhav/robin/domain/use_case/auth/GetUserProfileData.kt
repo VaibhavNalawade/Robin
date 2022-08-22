@@ -4,5 +4,5 @@ import com.vaibhav.robin.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class GetUserProfileData @Inject constructor(private val repository: AuthRepository) {
-    operator fun invoke() = repository.firebaseUserProfileData()
+    operator fun invoke() = repository.getProfileData()
 }

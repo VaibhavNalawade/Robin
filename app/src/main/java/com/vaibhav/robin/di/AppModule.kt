@@ -12,10 +12,7 @@ import com.vaibhav.robin.data.repository.FirestoreRepositoryImpl
 import com.vaibhav.robin.domain.repository.AuthRepository
 import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
 import com.vaibhav.robin.domain.use_case.auth.*
-import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.domain.use_case.database.InitializeProfile
-import com.vaibhav.robin.domain.use_case.database.UpdateAddressAndPhone
-import com.vaibhav.robin.domain.use_case.database.UpdateProfileDateAndGender
+import com.vaibhav.robin.domain.use_case.database.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,7 +61,8 @@ class AppModule {
         DatabaseUseCases(
             updateProfileDateAndGender = UpdateProfileDateAndGender(repo),
             updateAddressAndPhone = UpdateAddressAndPhone(repo),
-            initializeProfile = InitializeProfile(repo)
+            initializeProfile = InitializeProfile(repo),
+            getProduct = GetProduct(repo)
         )
 
 }

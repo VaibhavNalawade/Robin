@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.*
 import com.vaibhav.robin.R
-import com.vaibhav.robin.entities.remote.BannerImage
 import com.vaibhav.robin.presentation.UiUtil
 import com.vaibhav.robin.presentation.theme.Values
 import kotlin.math.absoluteValue
@@ -71,7 +70,7 @@ fun ImageSlider(
         }
     }
 }
-
+/*
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ImageSlider(bannerImage: MutableState<List<BannerImage>>, onClick: () -> Unit) {
@@ -117,7 +116,7 @@ fun ImageSlider(bannerImage: MutableState<List<BannerImage>>, onClick: () -> Uni
             }
         }
     }
-}
+}*/
 
 fun cardGraphicsLayer(graphicsLayerScope: GraphicsLayerScope, pageOffset: Float) =
     with(graphicsLayerScope) {

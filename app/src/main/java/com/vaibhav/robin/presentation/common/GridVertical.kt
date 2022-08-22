@@ -1,3 +1,4 @@
+/*
 package com.vaibhav.robin.presentation.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -54,11 +55,13 @@ fun GridCellItem(unsplashGet: Results): Unit {
                     model = unsplashGet.urls?.small,
                     contentDescription = ""
                 )
-                /*Image(
+                */
+/*Image(
                     painter = painterResource(id = R.drawable.apple),
                     contentDescription = "",
                     modifier = Modifier.size(28.dp)
-                )*/
+                )*//*
+
             }
             unsplashGet.user?.name?.let {
                 Text(
@@ -73,3 +76,4 @@ fun GridCellItem(unsplashGet: Results): Unit {
         }
     }
 }
+*/

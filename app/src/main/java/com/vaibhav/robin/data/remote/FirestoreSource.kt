@@ -7,24 +7,14 @@ import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Success
-import com.vaibhav.robin.entities.ui.model.Product
-import com.vaibhav.robin.presentation.product.ProductUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class FirestoreSource {
-    suspend fun fetchProduct(id: String, product: MutableStateFlow<ProductUiState>) {
-        try {
-            val snapshot = Firebase.firestore.collection("Product").document(id).get().await()
-            product.emit(ProductUiState.Success(snapshot.toObject<Product>()!!))
-        } catch (exception: Exception) {
-            product.emit(ProductUiState.Error(exception))
-        }
-    }
 
-    suspend inline fun <reified T> fetchFromReferenceObject(
+    suspend inline fun <reified T> fetchFromReferenceToObject(
         document: DocumentReference
     ): Flow<Response<T>> = flow {
         try {
@@ -39,11 +29,11 @@ class FirestoreSource {
 
 
 
-    suspend fun fetchFromReference(document: DocumentReference): Flow<Response<Map<String,Any>?>> = flow {
+    suspend fun fetchFromReference(document: DocumentReference): Flow<Response<Map<String,Any>>> = flow {
         try {
             emit(Response.Loading)
             document.get().await().apply {
-                emit(Success(data))
+                emit(Success(data!!))
             }
         } catch (e: Exception) {
             emit(Error(e.message ?: e.toString()))
