@@ -63,13 +63,6 @@ android {
             isIncludeAndroidResources = true
         }
     }
-
-    val property = Properties()
-    property.load(project.rootProject.file("local.properties").inputStream())
-
-    defaultConfig {
-        buildConfigField("String", "API_KEY", property.getProperty("API_KEY"))
-    }
 }
 kapt {
     correctErrorTypes = true

@@ -1,4 +1,4 @@
-package com.vaibhav.unit
+package com.vaibhav.unit.firestoresource
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,11 +16,8 @@ import org.robolectric.annotation.Config
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class FirestoreSourceTest {
-
-    companion object {
         private val firestore = Firebase.firestore
         private val firestoreDatabase = FirestoreSource()
-    }
     @Test
     fun `write To Database Test`()= runTest {
         val ref = firestore.collection("Test").document("Test")
@@ -46,4 +43,21 @@ class FirestoreSourceTest {
             }
         }
     }
+
+    @Test
+    fun `read from Database Serialization test`()=runTest {
+        val ref = firestore.collection("Test").document("Test")
+        firestoreDatabase.fetchFromReferenceToObject<TestClass>(ref,).collect{
+            when(it){
+                is Success-> {
+                   if ( it.data.test.equals("OK"))
+                       assert(true)
+                    else assert(false)
+                }
+                is Error -> throw Exception(it.message)
+                Loading -> {}
+            }
+        }
+    }
+    data class TestClass (val test:String?=null)
 }

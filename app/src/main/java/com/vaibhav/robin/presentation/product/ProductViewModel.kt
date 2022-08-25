@@ -26,12 +26,14 @@ class ProductViewModel @Inject constructor(
 
     fun setProductId(str: String) {
         if (_productId.value != str && (productResponse as? Success)?.data?.name.isNullOrBlank())
-                viewModelScope.launch(Dispatchers.IO) {
-                    databaseUseCases.getProduct(_productId.value)
+            viewModelScope.launch(Dispatchers.IO) {
+                databaseUseCases.getProduct("D3MjFbzN2Grpl0QRU9cv").collect {
+                    productResponse = it
                 }
+            }
     }
 
-    var productResponse by mutableStateOf<Response<Product>>(Success(Product()))
+    var productResponse by mutableStateOf<Response<Product>>(Response.Loading)
 
     /* private val _selectedType = mutableStateOf(0)
      val selectedType = _selectedType

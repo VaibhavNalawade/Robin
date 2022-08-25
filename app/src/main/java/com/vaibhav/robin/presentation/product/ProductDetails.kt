@@ -49,12 +49,9 @@ fun ProductDetails(
     navController: NavHostController,
     snackBarHostState: SnackbarHostState
 ) {
-    val productResponse = viewModel.productResponse
-
 
     val id = navController.currentBackStackEntry?.arguments?.getString("Id") ?: ""
-    viewModel.setProductId(id)
-    Log.e("e",id)
+  LaunchedEffect(key1 = true, block = {viewModel.setProductId(id)})
     val bottomSheetState = rememberBottomSheetScaffoldState()
     val listState = rememberLazyListState()
     val expandedFab by remember { derivedStateOf { bottomSheetState.bottomSheetState.isCollapsed } }
@@ -201,13 +198,16 @@ fun BottomSheet(
         sheetContent = {
             when (response) {
                 is Success -> {
-                    FrontLayer( viewModel)
+                    FrontLayer(viewModel)
                 }
                 is Loading -> {
                     FrontScreenLoading()
                 }
                 is Error -> {
-
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Red))
+                    Log.e("Thist sukc",response.message)
                 }
             }
         },
@@ -283,9 +283,11 @@ fun BackLayer(
 
 
 @Composable
-fun FrontLayer( viewModel: ProductViewModel) {
+fun FrontLayer(viewModel: ProductViewModel) {
     Column(
-        modifier = Modifier.fillMaxWidth().height(calculateFrontLayoutHeight(height = appbarSize))
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(calculateFrontLayoutHeight(height = appbarSize))
             .background(color = colorScheme.surface)
     ) {
         SpacerVerticalOne()
@@ -598,35 +600,33 @@ fun backdropHandle() {
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.TopCenter
-    ){
+    ) {
         Surface(
             color = colorScheme.onSurface.copy(.3f),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .width(48.dp)
                 .height(8.dp),
-        content = {}
+            content = {}
         )
     }
 }
 
 suspend fun showSnackbar(
     message: String,
-    actionLabel:String?=null,
+    actionLabel: String? = null,
     snackbarHostState: SnackbarHostState,
-    dismissed: ()->Unit={},
-    actionPerformed: () -> Unit ={}
-)=when(
-        snackbarHostState.showSnackbar(
-            message=message,
-            actionLabel=actionLabel,
-        )
-    ){
-        SnackbarResult.Dismissed -> dismissed.invoke()
-        SnackbarResult.ActionPerformed ->  actionPerformed.invoke()
-    }
-
-
+    dismissed: () -> Unit = {},
+    actionPerformed: () -> Unit = {}
+) = when (
+    snackbarHostState.showSnackbar(
+        message = message,
+        actionLabel = actionLabel,
+    )
+) {
+    SnackbarResult.Dismissed -> dismissed.invoke()
+    SnackbarResult.ActionPerformed -> actionPerformed.invoke()
+}
 
 
 /**
