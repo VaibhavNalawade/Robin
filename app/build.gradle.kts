@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id(Dependencies.Gradle.Id.android)
     id(Dependencies.Gradle.Id.kotlinAndroid)
@@ -76,8 +74,7 @@ dependencies {
     implementation(Dependencies.Kotlin.Ktor.contentNegotiation)
     implementation(Dependencies.Kotlin.Ktor.ktorSerializationKotlinxJson)
 
-    implementation("androidx.compose.material3:material3-window-size-class:1.0.0-alpha16")
-    
+
     implementation(Dependencies.Kotlin.serialization)
 
     implementation(Dependencies.Kotlin.Coroutines.android)
@@ -111,6 +108,8 @@ dependencies {
     implementation(Dependencies.AndroidX.Material.material)
     implementation(Dependencies.AndroidX.Material.materialIconExtended)
     implementation(Dependencies.AndroidX.Material.material3Compose)
+    implementation(Dependencies.AndroidX.Material.material3ComposeWindowsSizeClass)
+
 
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
     kapt(Dependencies.Google.DaggerHilt.kapt)

@@ -37,8 +37,7 @@ fun Home(
     navController: NavHostController, snackbarHostState: SnackbarHostState, viewModel: HomeViewModel
 ) {
     val topAppBarScrollState = rememberTopAppBarState()
-    val scrollBehavior =
-        remember { TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarScrollState) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarScrollState)
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(Icons.Default.Favorite, Icons.Default.Face, Icons.Default.Email)

@@ -21,12 +21,9 @@ fun RobinBar(
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
-    val backgroundColors = TopAppBarDefaults.centerAlignedTopAppBarColors()
-    val backgroundColor = backgroundColors.containerColor(scrollBehavior.state.collapsedFraction
-    ).value
     Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Surface(color = backgroundColor) {
+            Surface() {
                 CenterAlignedTopAppBar(
                     modifier = modifier,
                     title = title,

@@ -27,8 +27,6 @@ class FirestoreSource {
         }
     }
 
-
-
     suspend fun fetchFromReference(document: DocumentReference): Flow<Response<Map<String,Any>>> = flow {
         try {
             emit(Response.Loading)

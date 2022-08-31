@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,22 +27,30 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.navigation.RobinDestinations
+import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.presentation.common.*
 import com.vaibhav.robin.presentation.theme.Values.Dimens
 import com.vaibhav.robin.presentation.theme.Values.Dimens.appbarSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.presentation.theme.Values.Color.subtextAlpha
+import com.vaibhav.robin.presentation.theme.Values.Dimens.brandingImageSize
 import kotlin.random.Random
 
 //Todo Add video support on back layer
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun ProductDetails(
     viewModel: ProductViewModel,
@@ -51,28 +59,29 @@ fun ProductDetails(
 ) {
 
     val id = navController.currentBackStackEntry?.arguments?.getString("Id") ?: ""
-  LaunchedEffect(key1 = true, block = {viewModel.setProductId(id)})
+    LaunchedEffect(key1 = true, block = { viewModel.setProductId(id) })
     val bottomSheetState = rememberBottomSheetScaffoldState()
-    val listState = rememberLazyListState()
     val expandedFab by remember { derivedStateOf { bottomSheetState.bottomSheetState.isCollapsed } }
 
-    Scaffold(floatingActionButton = {
-        /*    val fabState = fabState(addToCart = addToCart,viewModel,navController,snackBarHostState,
-                rememberCoroutineScope())*/
 
-        ExtendedFloatingActionButton(
-            onClick = {}, /*fabState.OnClick*/
-            expanded = expandedFab,
-            icon = /*fabState.icon*/{
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = stringResource(R.string.added_to_cart),
-                    tint = Color.Green
-                )
-            },
-            text = { Text(text = /*fabState.text*/"Add to cart") },
-        )
-    },
+    Scaffold(modifier = Modifier,
+        floatingActionButton = {
+            /*    val fabState = fabState(addToCart = addToCart,viewModel,navController,snackBarHostState,
+                    rememberCoroutineScope())*/
+
+            ExtendedFloatingActionButton(
+                onClick = {}, /*fabState.OnClick*/
+                expanded = expandedFab,
+                icon = /*fabState.icon*/{
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = stringResource(R.string.added_to_cart),
+                        tint = Color.Green
+                    )
+                },
+                text = { Text(text = /*fabState.text*/"Add to cart") },
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         floatingActionButtonPosition = FabPosition.End,
         content = { paddingValue ->
@@ -204,10 +213,12 @@ fun BottomSheet(
                     FrontScreenLoading()
                 }
                 is Error -> {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Red))
-                    Log.e("Thist sukc",response.message)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Red)
+                    )
+                    Log.e("Thist sukc", response.message)
                 }
             }
         },
@@ -241,7 +252,7 @@ fun BackLayer(
                 is Loading -> {}
                 is Success -> {
                     ImageSlider(
-                        bannerImage = response.data.type[0].media.images,
+                        bannerImage = response.data.variant[0].media.images,
                         contentScale = ContentScale.Crop,
                         urlParam = "&w=640&q=80",
                     ) {}
@@ -249,7 +260,6 @@ fun BackLayer(
             }
             SpaceBetweenContainer(
                 modifier = Modifier
-                    .statusBarsPadding()
                     .fillMaxWidth()
                     .height(appbarSize)
                     .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
@@ -292,25 +302,33 @@ fun FrontLayer(viewModel: ProductViewModel) {
     ) {
         SpacerVerticalOne()
         backdropHandle()
-        SpacerVerticalOne()
-        val scrollState = rememberScrollState()
-        Column(modifier = Modifier.verticalScroll(scrollState)) {
-/*            val selectedType by viewModel.selectedType
-            BrandPrice(product, selectedType)
-            DividerHorizontal()
-            TitleDescription(product, selectedType)
-            DividerHorizontal()
-            Size(this, product, selectedType)
-            DividerHorizontal()
-            Color(columnScope = this, product, viewModel)
-            DividerHorizontal()
-            Specification(product, selectedType)
+        when(val product =viewModel.productResponse){
+            is Error -> TODO()
+            Loading -> TODO()
+            is Success -> {
+                val scrollState = rememberScrollState()
+                Column(modifier = Modifier.verticalScroll(scrollState)) {
+                    val selectedType by viewModel.selectedVariant
+                    val selectedSize by viewModel.selectedSize
+                  //  BrandPrice(product.data, selectedType,selectedSize)
+                   // DividerHorizontal()
+                    TitleDescription(product.data, selectedType)
+                    DividerHorizontal()
+                    Size(this, product.data, selectedType)
+                    DividerHorizontal()
+                    Color(columnScope = this, product.data, viewModel)
+                  //  DividerHorizontal()
+                  //  Specification(product.data, selectedType)
 
-            ReviewRateing(LocalConfiguration.current.screenWidthDp)*/
+                   // ReviewRateing(LocalConfiguration.current.screenWidthDp)
+                }
+            }
         }
+
+
     }
 }
-/*
+
 @Composable
 fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewModel) =
     with(columnScope) {
@@ -327,15 +345,15 @@ fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewMode
         val state = rememberScrollState(0)
         Row(Modifier.horizontalScroll(state)) {
 
-            product.type.forEachIndexed { i, it ->
+            product.variant.forEachIndexed { i, it ->
 
                 SpacerHorizontalTwo()
                 CircularImage(
                     modifier = Modifier
                         .size(48.dp)
-                        .clickable { viewModel.selectedType.value = i },
-                    contentDescrption = "",
-                    Image = it.media.selection,
+                        .clickable { viewModel.selectedVariant.value = i },
+                   contentDescription = null,
+                    image = it.media.selection,
                     contentScale = ContentScale.Crop
                 )
             }
@@ -358,25 +376,22 @@ fun Size(columnScope: ColumnScope, product: Product, selectedType: Int) = with(c
     val state = rememberScrollState(0)
     Row(Modifier.horizontalScroll(state)) {
 
-        product.type[selectedType].size.forEach {
+        product.variant[selectedType].size.forEach {
 
             Spacer(modifier = Modifier.width(Dimens.gird_one))
 
-            */
-/** Todo Waiting for Chips replace button *//*
+/** Todo Waiting for Chips replace button */
 
             TextButton(
                 modifier = Modifier.size(42.dp),
-                onClick = { */
-/*TODO*//*
- },
+                onClick = {},
                 border = BorderStroke(
                     2.dp,
                     color = colorScheme.primary
                 ),
                 shape = shapes.small
             ) {
-                Text(text = it)
+                Text(text = it.size)
             }
         }
     }
@@ -384,7 +399,7 @@ fun Size(columnScope: ColumnScope, product: Product, selectedType: Int) = with(c
 }
 
 @Composable
-fun BrandPrice(productData: Product, selectedType: Int) {
+fun BrandPrice(productData: Product, selectedType: Int, selectedSize: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,8 +413,8 @@ fun BrandPrice(productData: Product, selectedType: Int) {
             {
                 CircularImage(
                     Modifier.size(brandingImageSize),
-                    contentDescrption = stringResource(id = R.string.branding_Image),
-                    Image = productData.brand.url
+                    image = productData.brand.url,
+                    contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(Dimens.gird_half))
 
@@ -412,14 +427,14 @@ fun BrandPrice(productData: Product, selectedType: Int) {
                 )
             }
             Text(
-                text = "${productData.type[selectedType].price.currency} ${productData.type[selectedType].price.price}",
+                text = "$ ${productData.variant[selectedType].size[selectedSize].price.price}",
                 style = typography.titleLarge.copy(color = colorScheme.tertiary)
             )
         }
     }
 }
 
-
+/*
 @Composable
 fun ReviewRateing(widthDp: Int) {
     Text(
@@ -520,40 +535,41 @@ fun Specification(product: Product, selectedType: Int) {
             }
     }
 }
-
+*/
+@OptIn(ExperimentalTextApi::class)
 @Composable
-fun TitleDescription(productData: Product, selectedType: Int) {
+fun TitleDescription(product: Product, selectedType: Int) {
     Column(modifier = Modifier.padding(horizontal = Dimens.gird_two)) {
         SpacerVerticalOne()
         Text(
-            text = productData.name,
-            style = typography.headlineMedium
+            text = product.name,
+            style = typography.headlineLarge
         )
         SpacerVerticalOne()
         Text(
-            text = productData.type[selectedType].description.description ?: "",
+            text = product.description ?: "",
             overflow = TextOverflow.Ellipsis,
             style = typography.bodyMedium.copy(colorScheme.onSurface.copy(subtextAlpha)),
         )
         SpacerVerticalOne()
-        BulletPoints(productData,selectedType)
+        BulletPoints(product,selectedType)
         SpacerVerticalOne()
     }
 }
 
 @Composable
 fun BulletPoints(productData: Product, selectedType: Int) {
-    productData.type[selectedType].description.subDescription.forEach {
+    productData.subDescription.forEach {
         SpaceBetweenContainer(verticalAlignment = Alignment.CenterVertically) {
-            it.one?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodyMedium) }
+            it["1"]?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodyMedium) }
             Divider(modifier = Modifier
                 .width(24.dp)
                 .padding(horizontal = 8.dp))
-            it.two?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodySmall) }
+            it["2"]?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodySmall) }
         }
     }
 }
-*/
+
 @Composable
 fun ButtonContainer(content: @Composable () -> Unit) {
     Surface(

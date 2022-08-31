@@ -24,6 +24,8 @@ class ProductViewModel @Inject constructor(
 
     private val _productId = MutableStateFlow(String())
 
+    var productResponse by mutableStateOf<Response<Product>>(Response.Loading)
+
     fun setProductId(str: String) {
         if (_productId.value != str && (productResponse as? Success)?.data?.name.isNullOrBlank())
             viewModelScope.launch(Dispatchers.IO) {
@@ -33,14 +35,13 @@ class ProductViewModel @Inject constructor(
             }
     }
 
-    var productResponse by mutableStateOf<Response<Product>>(Response.Loading)
+    private val _selectedVariant = mutableStateOf(0)
+    val selectedVariant = _selectedVariant
 
-    /* private val _selectedType = mutableStateOf(0)
-     val selectedType = _selectedType
+    private val _selectedSize = mutableStateOf(0)
+    val selectedSize = _selectedSize
 
-
-     private val selectedSize = mutableStateOf("")
-
+    /*
      private val _productUiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading())
      val productUiState = _productUiState
 

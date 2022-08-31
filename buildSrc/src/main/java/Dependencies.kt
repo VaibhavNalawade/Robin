@@ -1,15 +1,15 @@
 object Dependencies {
 
     const val KOTLIN_VERSION = "1.7.10"
-    const val COMPOSE_VERSION = "1.3.0-alpha03"
+    const val COMPOSE_VERSION = "1.3.0-beta01"
     const val COMPOSE_COMPILER_VERSION = "1.3.0"
-    private const val MDC3_VERSION = "1.0.0-alpha16"
+    private const val MDC3_VERSION = "1.0.0-beta01"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "7.4.0-alpha09"
+    private const val AGP_VERSION = "7.4.0-alpha10"
     private const val DAGGERHILT_VERSION="2.42"
 
     /**
@@ -96,6 +96,7 @@ object Dependencies {
             const val material="com.google.android.material:material:1.7.0-beta01"
             const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.3.0-alpha03"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
+            const val material3ComposeWindowsSizeClass="androidx.compose.material3:material3-window-size-class:$MDC3_VERSION"
         }
 
         /**
