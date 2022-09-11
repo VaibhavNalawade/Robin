@@ -2,18 +2,20 @@
 
 package com.vaibhav.robin.presentation.product
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -22,34 +24,39 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.Product
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.Dimens
-import com.vaibhav.robin.presentation.theme.Values.Dimens.appbarSize
+import com.vaibhav.robin.data.models.Review
+import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.theme.Values.Color.subtextAlpha
-import com.vaibhav.robin.presentation.theme.Values.Dimens.brandingImageSize
+import com.vaibhav.robin.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.common.*
+import com.vaibhav.robin.presentation.theme.Values.*
+import com.vaibhav.robin.presentation.theme.Values.Dimens.appbarSize
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import kotlin.random.Random
 
-//Todo Add video support on back layer
 
+/**
+ * Todo: In this screen we use legacy Material2 BottomSheet so Wait for Material 3 Implementation.
+ * TBD is Currently Unknown.
+ *
+ * Todo: Add video media support on back layer.
+ */
 @OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterialApi::class,
-    ExperimentalLayoutApi::class
+    ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class
 )
 @Composable
 fun ProductDetails(
@@ -202,23 +209,22 @@ fun BottomSheet(
     val response = viewModel.productResponse
 
     BottomSheetScaffold(
-        modifier = Modifier
-            .padding(padding),
+        modifier = Modifier.padding(padding),
         sheetContent = {
             when (response) {
                 is Success -> {
-                    FrontLayer(viewModel)
+                    FrontLayer(viewModel, navController)
                 }
                 is Loading -> {
                     FrontScreenLoading()
                 }
                 is Error -> {
+                    //todo nedd atteb=ntion here
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Red)
                     )
-                    Log.e("Thist sukc", response.message)
                 }
             }
         },
@@ -241,7 +247,7 @@ fun BackLayer(
     navController: NavHostController,
 ) {
     val response = viewModel.productResponse
-    Surface(color = colorScheme.surfaceVariant) {
+    Surface(tonalElevation = Dimens.surface_elevation_1) {
         Box(
             modifier = Modifier
                 .fillMaxHeight(.7f)
@@ -252,7 +258,7 @@ fun BackLayer(
                 is Loading -> {}
                 is Success -> {
                     ImageSlider(
-                        bannerImage = response.data.variant[0].media.images,
+                        bannerImage = response.data.variant[viewModel.selectedVariant.value].media.images,
                         contentScale = ContentScale.Crop,
                         urlParam = "&w=640&q=80",
                     ) {}
@@ -262,7 +268,8 @@ fun BackLayer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(appbarSize)
-                    .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 ButtonContainer {
                     IconButton(onClick = {
@@ -293,279 +300,366 @@ fun BackLayer(
 
 
 @Composable
-fun FrontLayer(viewModel: ProductViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(calculateFrontLayoutHeight(height = appbarSize))
-            .background(color = colorScheme.surface)
-    ) {
-        SpacerVerticalOne()
-        backdropHandle()
-        when(val product =viewModel.productResponse){
-            is Error -> TODO()
-            Loading -> TODO()
-            is Success -> {
-                val scrollState = rememberScrollState()
-                Column(modifier = Modifier.verticalScroll(scrollState)) {
-                    val selectedType by viewModel.selectedVariant
-                    val selectedSize by viewModel.selectedSize
-                  //  BrandPrice(product.data, selectedType,selectedSize)
-                   // DividerHorizontal()
-                    TitleDescription(product.data, selectedType)
-                    DividerHorizontal()
-                    Size(this, product.data, selectedType)
-                    DividerHorizontal()
-                    Color(columnScope = this, product.data, viewModel)
-                  //  DividerHorizontal()
-                  //  Specification(product.data, selectedType)
-
-                   // ReviewRateing(LocalConfiguration.current.screenWidthDp)
+fun FrontLayer(viewModel: ProductViewModel, navController: NavHostController) {
+    /**
+     * Todo- Remember To remove Surface layer When Using Material 3 BottomSheet
+     * Well it is workaround for Material2 Background Issue With Material 3 wrapper
+     * */
+    Surface(modifier = Modifier.fillMaxSize(),
+        tonalElevation = Dimens.surface_elevation_1,
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(calculateFrontLayoutHeight(height = appbarSize))
+            ) {
+                BottomSheetHandle()
+                when (val product = viewModel.productResponse) {
+                    is Error -> TODO()
+                    Loading -> TODO()
+                    is Success -> {
+                        val scrollState = rememberScrollState()
+                        Column(modifier = Modifier.verticalScroll(scrollState)) {
+                            val selectedVariant = viewModel.selectedVariant
+                            val selectedSize = viewModel.selectedSize
+                            TitleDescription(
+                                product.data,
+                                selectedVariant.value,
+                                selectedSize.value
+                            )
+                            VariantSelector(
+                                product.data,
+                                selectedVariant,
+                                selectedSize
+                            )
+                            Size(product.data, selectedVariant.value, selectedSize)
+                            Details(product.data)
+                            Rating(viewModel.stars) {
+                                navController.navigate(
+                                    RobinDestinations.review(
+                                        Id = navController.currentBackStackEntry?.arguments?.getString(
+                                            "Id"
+                                        )!!,
+                                        name = product.data.name,
+                                        image = URLEncoder.encode(
+                                            product.data.variant[selectedVariant.value].media.selection,
+                                            StandardCharsets.UTF_8.toString()
+                                        ),
+                                        star = viewModel.stars.value
+                                    )
+                                )
+                            }
+                            Review(viewModel.commentResponse)
+                        }
+                    }
                 }
             }
-        }
+        })
+}
 
 
+@Composable
+fun BottomSheetHandle() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Dimens.gird_one),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(modifier = Modifier
+            .height(4.dp)
+            .width(32.dp),
+            color = colorScheme.onSurfaceVariant.copy(0.40f),
+            shape = shapes.extraSmall,
+            content = {})
     }
 }
 
 @Composable
-fun Color(columnScope: ColumnScope, product: Product, viewModel: ProductViewModel) =
-    with(columnScope) {
+fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.gird_two),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = Dimens.gird_two,
+                    vertical = Dimens.gird_one
+                )
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = product.name,
+                style = typography.headlineMedium.copy(color = colorScheme.onSurfaceVariant)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Icon(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    imageVector = Icons.Filled.CurrencyRupee,
+                    contentDescription = null,
+                    tint = colorScheme.tertiary
+                )
+                SpacerHorizontalOne()
+                Text(
+                    text = product.variant[selectedVariant].size[selectedSize].price.retail.toInt()
+                        .toString(),
+                    style = typography.titleLarge.copy(colorScheme.tertiary)
+                )
+                SpacerHorizontalOne()
+                Icon(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    imageVector = Icons.Filled.StarHalf,
+                    contentDescription = null,
+                    tint = colorScheme.tertiary
+                )
+                SpacerHorizontalOne()
+                Text(
+                    text = "Not Rated",
+                    style = typography.titleLarge.copy(colorScheme.tertiary)
+                )
+                SpacerHorizontalOne()
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "(0 reviews)",
+                    style = typography.labelSmall.copy(colorScheme.tertiary)
+                )
+            }
+            SpacerVerticalOne()
+            Text(
+                text = product.description,
+                overflow = TextOverflow.Ellipsis,
+                style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant),
+            )
+            SpacerVerticalOne()
+            BulletPoints(product)
+            SpacerVerticalOne()
+        }
+    }
+}
 
-        SpacerVerticalOne()
-        Text(
-            modifier = Modifier.padding(horizontal = Dimens.gird_two),
-            text = "Select Color",
-            style = typography.titleLarge
-        )
+@Composable
+fun BulletPoints(productData: Product) {
+    val textColor = colorScheme.onSurfaceVariant
+    productData.subDescription.forEach { map ->
+        SpaceBetweenContainer(verticalAlignment = Alignment.CenterVertically) {
+            map["0"]?.let { title ->
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    style = typography.bodyMedium.copy(textColor)
+                )
+            }
+            Divider(
+                modifier = Modifier
+                    .width(Dimens.gird_four)
+                    .padding(horizontal = Dimens.gird_one),
+                color = colorScheme.onSurfaceVariant
+            )
+            map["1"]?.let { text ->
+                Text(
+                    text = text,
+                    maxLines = 1,
+                    style = typography.bodySmall.copy(textColor)
+                )
+            }
+        }
+    }
+}
 
-        SpacerVerticalOne()
+@Composable
+fun VariantSelector(
+    product: Product,
+    selectedVariant: MutableState<Int>,
+    selectedSize: MutableState<Int>
+) {
+    SpacerVerticalTwo()
+    LazyRow {
 
-        val state = rememberScrollState(0)
-        Row(Modifier.horizontalScroll(state)) {
-
-            product.variant.forEachIndexed { i, it ->
-
+        product.variant.forEachIndexed { index, variant ->
+            item {
                 SpacerHorizontalTwo()
-                CircularImage(
+                val selectedThis = index == selectedVariant.value
+                RobinAsyncImage(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clickable { viewModel.selectedVariant.value = i },
-                   contentDescription = null,
-                    image = it.media.selection,
+                        .size(64.dp)
+                        .clip(shapes.small)
+                        .border(
+                            width = if (selectedThis) 2.dp else 1.dp,
+                            color = if (selectedThis) colorScheme.primary else colorScheme.outline,
+                            shape = shapes.small
+                        )
+                        .clickable {
+                            selectedVariant.value = index
+                            selectedSize.value = 0
+                        },
+                    contentDescription = null,
+                    model = variant.media.selection,
                     contentScale = ContentScale.Crop
                 )
             }
         }
-        SpacerVerticalTwo()
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Size(columnScope: ColumnScope, product: Product, selectedType: Int) = with(columnScope) {
-    Spacer(modifier = Modifier.height(Dimens.gird_one))
-
-    Text(
-        modifier = Modifier.padding(horizontal = Dimens.gird_two),
-        text = "Select Size",
-        style = typography.titleLarge
-    )
-
-    Spacer(modifier = Modifier.height(Dimens.gird_two))
-
-    val state = rememberScrollState(0)
-    Row(Modifier.horizontalScroll(state)) {
-
-        product.variant[selectedType].size.forEach {
-
-            Spacer(modifier = Modifier.width(Dimens.gird_one))
-
-/** Todo Waiting for Chips replace button */
-
-            TextButton(
-                modifier = Modifier.size(42.dp),
-                onClick = {},
-                border = BorderStroke(
-                    2.dp,
-                    color = colorScheme.primary
-                ),
-                shape = shapes.small
-            ) {
-                Text(text = it.size)
+fun Size(
+    product: Product,
+    selectedType: Int,
+    selectedSize: MutableState<Int>
+) {
+    SpacerVerticalTwo()
+    LazyRow {
+        product.variant[selectedType].size.forEachIndexed { index, size ->
+            item {
+                SpacerHorizontalTwo()
+                val selectedThis = index == selectedSize.value
+                FilterChip(
+                    selected = selectedThis,
+                    onClick = { selectedSize.value = index },
+                    label = { Text(size.size) },
+                    leadingIcon = if (selectedThis) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else null
+                )
             }
         }
     }
-    Spacer(modifier = Modifier.height(Dimens.gird_two))
+    SpacerVerticalTwo()
 }
 
 @Composable
-fun BrandPrice(productData: Product, selectedType: Int, selectedSize: Int) {
-    Box(
+fun Details(data: Product) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical =Dimens.gird_one,horizontal = Dimens.gird_two)
+            .padding(horizontal = Dimens.gird_two),
     ) {
-        SpaceBetweenContainer(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = Dimens.gird_two,
+                    vertical = Dimens.gird_one
+                )
         ) {
-            SpaceBetweenContainer(verticalAlignment = Alignment.CenterVertically)
-            {
-                CircularImage(
-                    Modifier.size(brandingImageSize),
-                    image = productData.brand.url,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(Dimens.gird_half))
-
-                Text(
-                    text = productData.brand.name,
-                    style = typography.bodyMedium.copy(
-                        color = colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold
+            Text(
+                stringResource(id = R.string.details),
+                style = typography.headlineSmall
+            )
+            SpacerVerticalOne()
+            data.details.forEach { map ->
+                var title = true
+                map.forEach {
+                    if (title) {
+                        Text(
+                            text = it.value,
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                        title = false
+                    } else Text(
+                        text = it.value,
+                        style = typography.bodySmall.copy(colorScheme.onSurfaceVariant)
                     )
-                )
+                }
+                SpacerVerticalOne()
             }
-            Text(
-                text = "$ ${productData.variant[selectedType].size[selectedSize].price.price}",
-                style = typography.titleLarge.copy(color = colorScheme.tertiary)
-            )
         }
     }
 }
 
-/*
 @Composable
-fun ReviewRateing(widthDp: Int) {
+fun Rating(stars: MutableState<Int>, onClick: () -> Unit) {
+    SpacerVerticalTwo()
     Text(
-        text = "Customer reviews", style = typography.headlineSmall
+        modifier = Modifier.padding(horizontal = Dimens.gird_four),
+        text = stringResource(id = R.string.rate_this_product),
+        style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
     )
-    val lazyListState = rememberLazyListState()
-    LazyRow(
-        state = lazyListState,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Text(
+        modifier = Modifier.padding(horizontal = Dimens.gird_four),
+        text = stringResource(R.string.review_explain),
+        style = typography.bodySmall.copy(colorScheme.onSurfaceVariant)
     )
-    {
-        items(MockProvider().commentMock.size) { index ->
-            ReviewCard(widthDp = widthDp, MockProvider().commentMock[index], 240f)
-        }
-    }
-}
-
-@Composable
-fun SpecificationBlock(loop: DetailsPoint) {
-    Column(Modifier.fillMaxWidth()) {
-        loop.one?.let {
-            Text(
-                text = it,
-                style = typography.titleMedium,
-            )
-        }
-        loop.two?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.three?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.four?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.five?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.six?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.seven?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.eight?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.nine?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
-            )
-        }
-        loop.ten?.let {
-            Text(
-                text = it,
-                style = typography.bodyMedium,
+    SpacerVerticalOne()
+    Row(modifier = Modifier.padding(horizontal = Dimens.gird_two)) {
+        for (i in 0..4 step 1) {
+            IconButton(modifier = Modifier.size(64.dp),
+                onClick = {
+                    stars.value = i + 1
+                    onClick()
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(48.dp),
+                        imageVector = if (stars.value > i) Icons.Outlined.Star else
+                            Icons.Outlined.StarOutline,
+                        contentDescription = null,
+                        tint = colorScheme.primary
+                    )
+                }
             )
         }
     }
 }
 
 @Composable
-fun Specification(product: Product, selectedType: Int) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
-        SpacerVerticalOne()
-        Text(
-            text = "Specification",
-            style = typography.titleLarge,
-        )
-        Spacer(modifier = Modifier.height(Dimens.gird_two))
-            product.type[selectedType].details.forEach {
-                SpecificationBlock(it)
-                SpacerVerticalTwo()
+fun Review(commentResponse: Response<List<Review>>) {
+    when(commentResponse){
+        is Error -> TODO()
+        Loading -> Loading()
+        is Success ->
+            commentResponse.data.forEach{
+                    ReviewContainer(it)
             }
+        }
     }
-}
-*/
-@OptIn(ExperimentalTextApi::class)
-@Composable
-fun TitleDescription(product: Product, selectedType: Int) {
-    Column(modifier = Modifier.padding(horizontal = Dimens.gird_two)) {
-        SpacerVerticalOne()
-        Text(
-            text = product.name,
-            style = typography.headlineLarge
-        )
-        SpacerVerticalOne()
-        Text(
-            text = product.description ?: "",
-            overflow = TextOverflow.Ellipsis,
-            style = typography.bodyMedium.copy(colorScheme.onSurface.copy(subtextAlpha)),
-        )
-        SpacerVerticalOne()
-        BulletPoints(product,selectedType)
-        SpacerVerticalOne()
-    }
-}
+
 
 @Composable
-fun BulletPoints(productData: Product, selectedType: Int) {
-    productData.subDescription.forEach {
-        SpaceBetweenContainer(verticalAlignment = Alignment.CenterVertically) {
-            it["1"]?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodyMedium) }
-            Divider(modifier = Modifier
-                .width(24.dp)
-                .padding(horizontal = 8.dp))
-            it["2"]?.let { it1 -> Text(text = it1, maxLines = 1, style = typography.bodySmall) }
+fun ReviewContainer(review: Review) {
+    Card(
+        modifier = Modifier
+            .padding(Dimens.gird_two)
+            .fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(Dimens.gird_two)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularImage(
+                    modifier = Modifier.size(52.dp),
+                    contentDescription = null,
+                    image = review.profileImage
+                )
+                SpacerHorizontalOne()
+                Column {
+                    Text(text = review.userName)
+                    Row() {
+                        Text(review.rating.toString())
+                        Icon(imageVector = Icons.Filled.Star, contentDescription = null)
+                    }
+                }
+            }
+            SpacerVerticalOne()
+            Text(
+                text = review.content,
+                style = typography.bodyMedium.copy(
+                    colorScheme.onSurfaceVariant
+                )
+            )
         }
     }
 }
@@ -573,9 +667,8 @@ fun BulletPoints(productData: Product, selectedType: Int) {
 @Composable
 fun ButtonContainer(content: @Composable () -> Unit) {
     Surface(
-        modifier = Modifier
-            .size(42.dp),
-        color = colorScheme.surface.copy(.6f),
+        modifier = Modifier.size(42.dp),
+        tonalElevation = Dimens.surface_elevation_4,
         shape = CircleShape,
     ) {
         Box(Modifier.padding(Dimens.gird_half)) {
@@ -586,7 +679,7 @@ fun ButtonContainer(content: @Composable () -> Unit) {
 
 @Composable
 fun FrontScreenLoading() {
-    Surface {
+    Surface( tonalElevation = Dimens.surface_elevation_4) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -611,35 +704,16 @@ fun FrontScreenLoading() {
     }
 }
 
-@Composable
-fun backdropHandle() {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Surface(
-            color = colorScheme.onSurface.copy(.3f),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .width(48.dp)
-                .height(8.dp),
-            content = {}
-        )
-    }
-}
-
 suspend fun showSnackbar(
     message: String,
     actionLabel: String? = null,
     snackbarHostState: SnackbarHostState,
     dismissed: () -> Unit = {},
     actionPerformed: () -> Unit = {}
-) = when (
-    snackbarHostState.showSnackbar(
-        message = message,
-        actionLabel = actionLabel,
-    )
-) {
+) = when (snackbarHostState.showSnackbar(
+    message = message,
+    actionLabel = actionLabel,
+)) {
     SnackbarResult.Dismissed -> dismissed.invoke()
     SnackbarResult.ActionPerformed -> actionPerformed.invoke()
 }
@@ -655,7 +729,7 @@ fun calculateFrontLayoutHeight(height: Dp) = LocalConfiguration.current.screenHe
 
 /**
  *Calculate Peak & @return
- * @param onObjectHeight */
+ *  onObjectHeight */
 
 
 /** FIXME: Bug Detected on Secondary Display height peak calculation not working also on some phones.
@@ -663,113 +737,7 @@ FIXME:Debug the Calculation of height sightly wrong*/
 
 @Composable
 fun calculatePeakHeight(onObjectHeight: Int) = with(LocalDensity.current) {
-    (LocalConfiguration.current.screenHeightDp.dp - onObjectHeight.toDp()) +
-            WindowInsets.statusBars.asPaddingValues().calculateTopPadding() +
-            Dimens.bottomSheetOnTop
+    (LocalConfiguration.current.screenHeightDp.dp - onObjectHeight.toDp()) + WindowInsets.statusBars.asPaddingValues()
+        .calculateTopPadding() + Dimens.bottomSheetOnTop
 }
 
-/*
-@Preview(group = "LoadingState")
-@Composable
-fun LoadingStateLight() {
-    RobinAppPreviewScaffold {
-        FrontScreenLoading()
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "LoadingState")
-@Composable
-fun LoadingStateDark() {
-    RobinAppPreviewScaffold {
-        FrontScreenLoading()
-    }
-}
-
-@Preview(group = "TitleDescription")
-@Composable
-fun TitleDescriptionLight() {
-    RobinAppPreviewScaffold {
-        TitleDescription(Product(),0)
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "TitleDescription")
-@Composable
-fun TitleDescriptionDark() {
-    RobinAppPreviewScaffold {
-        TitleDescription(Product(),0)
-    }
-}
-
-@Preview(group = "BarndPrice")
-@Composable
-fun BarndPriceLight() {
-    RobinAppPreviewScaffold {
-        BrandPrice(Product(),0)
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "BarndPrice")
-@Composable
-fun BrandPriceDark() {
-    RobinAppPreviewScaffold {
-        BrandPrice(Product(),0)
-    }
-}
-
-@Preview(group = "Size")
-@Composable
-fun SizeLight() {
-    RobinAppPreviewScaffold {
-        Column {
-            Size(this, Product(),0)
-        }
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "Size")
-@Composable
-fun SizeDark() {
-    RobinAppPreviewScaffold {
-        Column {
-            Size(this, Product(),0)
-        }
-    }
-}
-
-@Preview(group = "Color")
-@Composable
-fun ColorLight() {
-    RobinAppPreviewScaffold {
-        Column(Modifier.fillMaxWidth()) {
-            Color(this, Product(),ProductViewModel())
-        }
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "Color")
-@Composable
-fun ColorDark() {
-    RobinAppPreviewScaffold {
-        Column(Modifier.fillMaxWidth()) {
-            Color(this, Product(), ProductViewModel())
-        }
-    }
-}
-
-@Preview(group = "Specification")
-@Composable
-fun SpecificationLight() {
-    RobinAppPreviewScaffold {
-        Specification(Product(),0)
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES, group = "Specification")
-@Composable
-fun SpecificationDark() {
-    RobinAppPreviewScaffold {
-        Specification(Product(),0)
-    }
-}
-*/

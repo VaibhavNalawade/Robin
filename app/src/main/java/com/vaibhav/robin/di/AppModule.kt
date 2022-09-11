@@ -62,7 +62,8 @@ class AppModule {
             updateProfileDateAndGender = UpdateProfileDateAndGender(repo),
             updateAddressAndPhone = UpdateAddressAndPhone(repo),
             initializeProfile = InitializeProfile(repo),
-            getProduct = GetProduct(repo)
+            getProduct = GetProduct(repo),
+            getReview = GetReview(repo),
+            writeReview = WriteReview(repo)
         )
-
 }

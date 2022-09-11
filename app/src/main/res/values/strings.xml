@@ -5,7 +5,6 @@
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
     <string name="promotional_banner">"promotional banner"</string>
     <string name="branding_Image">Branding Image</string>
-    <string name="more_details">More Details</string>
     <string name="close">Close</string>
     <string name="cart">Cart</string>
     <string name="items">Items</string>
@@ -53,4 +52,13 @@
     <string name="agreement_short">By continuing, you agree to our User Agreement and Privacy Policy.</string>
     <string name="email">Email</string>
     <string name="forgot_password">Forgot your username or password ?</string>
+    <string name="post">POST</string>
+    <string name="review_write_hint">Tell what you think?</string>
+    <string name="review_policy">Review are Public and include your profile name and picture</string>
+    <string name="unknown_error">Unknown Error Occurred</string>
+    <string name="try_again">Try again</string>
+    <!--Product-->
+    <string name="rate_this_product">Rate this product</string>
+    <string name="details">Details</string>
+    <string name="review_explain">Tell other what you think</string>
 </resources>

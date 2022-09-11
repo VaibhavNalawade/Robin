@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,17 +22,24 @@ class ProductViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private val _productId = MutableStateFlow(String())
+    private var _productId by mutableStateOf(String())
 
-    var productResponse by mutableStateOf<Response<Product>>(Response.Loading)
+    var productResponse by mutableStateOf<Response<Product>>(Loading)
+    var commentResponse by mutableStateOf<Response<List<Review>>>(Loading)
 
     fun setProductId(str: String) {
-        if (_productId.value != str && (productResponse as? Success)?.data?.name.isNullOrBlank())
+        if (_productId != str && (productResponse as? Success)?.data?.name.isNullOrBlank())
             viewModelScope.launch(Dispatchers.IO) {
-                databaseUseCases.getProduct("D3MjFbzN2Grpl0QRU9cv").collect {
+                _productId=str
+                databaseUseCases.getProduct(_productId).collect {
                     productResponse = it
                 }
             }
+        viewModelScope.launch(Dispatchers.IO) {
+            databaseUseCases.getReview.invoke(_productId).collect{
+                commentResponse=it
+            }
+        }
     }
 
     private val _selectedVariant = mutableStateOf(0)
@@ -40,6 +47,9 @@ class ProductViewModel @Inject constructor(
 
     private val _selectedSize = mutableStateOf(0)
     val selectedSize = _selectedSize
+
+    private val _stars = mutableStateOf(0)
+    val stars = _stars
 
     /*
      private val _productUiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading())

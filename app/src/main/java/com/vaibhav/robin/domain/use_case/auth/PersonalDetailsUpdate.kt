@@ -10,7 +10,10 @@ import com.vaibhav.robin.domain.model.Response
 import kotlinx.coroutines.flow.flow
 
 class PersonalDetailsUpdate @Inject constructor(private val repository: AuthRepository) {
-    suspend operator fun invoke(firstName: MutableState<TextFieldState>, lastname: MutableState<TextFieldState>): Flow<Response<Boolean>> {
+    suspend operator fun invoke(
+        firstName: MutableState<TextFieldState>,
+        lastname: MutableState<TextFieldState>
+    ): Flow<Response<Boolean>> {
         firstName.value=Validators.personalDetails(firstName.value)
         lastname.value=Validators.personalDetails(lastname.value)
         if (!firstName.value.error && !lastname.value.error)

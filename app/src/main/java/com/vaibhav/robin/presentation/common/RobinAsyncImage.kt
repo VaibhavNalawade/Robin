@@ -28,19 +28,3 @@ fun RobinAsyncImage(
         contentDescription = contentDescription
     )
 }
-@Composable
-fun RobinAsyncImage(
-    modifier: Modifier,
-    contentDescription: String?,
-    model: Any?,
-    placeholder: Painter?,
-    contentScale: ContentScale = ContentScale.Fit
-) {
-    AsyncImage(
-        modifier = modifier,
-        contentScale = contentScale,
-        placeholder= placeholder,
-        model = model,
-        contentDescription = contentDescription
-    )
-}

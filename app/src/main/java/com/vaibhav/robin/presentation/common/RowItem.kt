@@ -20,8 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.vaibhav.robin.R
-import com.vaibhav.robin.presentation.theme.RobinTypography
-import com.vaibhav.robin.presentation.theme.Values.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

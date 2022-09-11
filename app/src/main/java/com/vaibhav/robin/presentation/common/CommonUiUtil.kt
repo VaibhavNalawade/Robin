@@ -50,16 +50,12 @@ fun SpaceBetweenContainer(
 fun CircularImage(
     modifier: Modifier = Modifier,
     contentDescription: String?,
-    borderStroke: BorderStroke = BorderStroke(
-        color = MaterialTheme.colorScheme.onSurface,
-        width = 2.dp
-    ),
     image: Any,
     contentScale: ContentScale=ContentScale.Crop
 ) {
     RobinAsyncImage(
         modifier = modifier
-            .fillMaxSize().clip(CircleShape).border(borderStroke, CircleShape),
+            .fillMaxSize().clip(CircleShape),
         contentDescription = contentDescription,
         model = image,
         contentScale = contentScale

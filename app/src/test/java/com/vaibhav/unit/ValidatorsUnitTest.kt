@@ -173,4 +173,23 @@ class ValidatorsUnitTest {
             assert(!error)
         }
     }
+    @Test
+    fun check_review_valid(){
+        Validators.checkReview(TextFieldState("Some to do")).apply {
+            assert(!error)
+        }
+    }
+
+    @Test
+    fun check_review_empty(){
+        Validators.checkReview(TextFieldState("")).apply {
+            assert(error)
+        }
+    }
+    @Test
+    fun check_review_large(){
+        Validators.checkReview(TextFieldState("A".repeat(501))).apply {
+            assert(error)
+        }
+    }
 }

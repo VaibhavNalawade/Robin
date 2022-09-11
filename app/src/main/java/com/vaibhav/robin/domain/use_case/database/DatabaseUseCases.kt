@@ -4,5 +4,7 @@ data class DatabaseUseCases (
     val updateProfileDateAndGender:UpdateProfileDateAndGender,
     val updateAddressAndPhone: UpdateAddressAndPhone,
     val initializeProfile: InitializeProfile,
-    val getProduct: GetProduct
+    val getProduct: GetProduct,
+    val getReview:GetReview,
+    val writeReview:WriteReview
 )

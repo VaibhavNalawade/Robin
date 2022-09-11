@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +14,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.vaibhav.robin.presentation.review.Review
 import com.vaibhav.robin.presentation.account.*
 import com.vaibhav.robin.presentation.cart.Cart
 import com.vaibhav.robin.presentation.home.Home
@@ -28,7 +28,13 @@ fun RobinNavHost(navController: NavHostController) {
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
     ) {
-        composable(RobinDestinations.HOME) { Home(navController, snackBarHostState, hiltViewModel()) }
+        composable(RobinDestinations.HOME) {
+            Home(
+                navController,
+                snackBarHostState,
+                hiltViewModel()
+            )
+        }
 
         composable(
             RobinDestinations.searchQuery("{query}"),
@@ -36,12 +42,35 @@ fun RobinNavHost(navController: NavHostController) {
         ) { SearchBar(navController) }
 
         composable(RobinDestinations.CART) { Cart(navController, snackBarHostState) }
+        /**
+         * Destination Review
+         * */
+        composable(
+            RobinDestinations.review("{Id}", "{name}", "{image}", "{star}"),
+            listOf(
+                navArgument("Id") { type = NavType.StringType },
+                navArgument("name") { type = NavType.StringType },
+                navArgument("image") { type = NavType.StringType },
+                navArgument("star") { type = NavType.IntType }
+            )
+        ) {
+            Review(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
+        }
 
 
         composable(
             RobinDestinations.product("{Id}"),
             listOf(navArgument("Id") { type = NavType.StringType })
-        ) { ProductDetails(navController=navController,snackBarHostState= snackBarHostState, viewModel = hiltViewModel()) }
+        ) {
+            ProductDetails(
+                navController = navController,
+                snackBarHostState = snackBarHostState,
+                viewModel = hiltViewModel()
+            )
+        }
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
         ) {
@@ -103,6 +132,13 @@ object RobinDestinations {
     const val PERSONAL_DETAILS = "PersonalDetails"
     const val DATE_AND_GENDER = "DATE_AND_GENDER"
     const val ADDRESS_AND_PHONE = "ADDRESS_AND_PHONE"
+    private const val REVIEW = "REVIEW"
+
+    fun review(Id: String, name: String, image: String, star: String) =
+        "$REVIEW/$Id/$name/$image/$star"
+
+    fun review(Id: String, name: String, image: String, star: Int) =
+        "$REVIEW/$Id/$name/$image/$star"
 
     fun product(Id: String) = "$PRODUCT/$Id"
     fun searchQuery(query: String) = "$SEARCH/$query"

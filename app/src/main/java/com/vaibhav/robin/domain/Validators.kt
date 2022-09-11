@@ -116,6 +116,21 @@ object Validators {
             )
         return textFieldState.copy(error = false, errorMessage = null)
     }
+
+    fun checkReview(textFieldState: TextFieldState):TextFieldState{
+        if (textFieldState.text.isBlank())
+            return textFieldState.copy(
+                error = true,
+                errorMessage = UiText.StringResource(R.string.password_empty)
+            )
+        if (textFieldState.text.length>500){
+            return textFieldState.copy(
+                error = true,
+                errorMessage = UiText.StringResource(R.string.phone_invalid)
+            )
+        }
+        return textFieldState.copy(error = false, errorMessage = null)
+    }
 }
 
 

@@ -24,7 +24,6 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 
 import com.vaibhav.robin.presentation.common.RobinBar
-import com.vaibhav.robin.presentation.theme.RobinTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

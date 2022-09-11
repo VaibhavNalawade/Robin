@@ -72,7 +72,7 @@ private val DarkThemeColors = darkColorScheme(
 private val shapes = Shapes(
     extraSmall = RoundedCornerShape(4.dp),
     small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(10.dp),
+    medium = RoundedCornerShape(12.dp),
     large = RoundedCornerShape(20.dp),
     extraLarge = RoundedCornerShape(28.dp)
 )

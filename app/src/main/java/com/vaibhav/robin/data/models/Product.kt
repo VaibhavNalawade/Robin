@@ -11,10 +11,3 @@ data class Product(
     val details: List<Map<String,String>> = emptyList(),
     val subDescription:List<Map<String,String>> = emptyList()
 )
-
-data class Variant(
-    val media: Media = Media(),
-    val name: String = "",
-    val size: List<Size> = emptyList(),
-
-)
