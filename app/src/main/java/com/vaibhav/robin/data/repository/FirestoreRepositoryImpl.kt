@@ -2,6 +2,7 @@ package com.vaibhav.robin.data.repository
 
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.data.remote.FirestoreSource
@@ -16,8 +17,10 @@ class FirestoreRepositoryImpl @Inject constructor(
     private val source: FirestoreSource,
     private val auth: AuthRepository
 ) : FirestoreDatabaseRepository {
-    override suspend fun updateProfile(hashMap: HashMap<String, Any>) = source.updateToReference(
-        firestore.collection("ProfileData").document(auth.getUserUid()!!), hashMap
+    override suspend fun updateProfile(hashMap: HashMap<String, Any>) = source.writeToReference(
+        firestore.collection("ProfileData").document(auth.getUserUid()!!),
+        hashMap,
+        options = SetOptions.merge()
     )
 
     override suspend fun initializeProfile() = source.writeToReference(

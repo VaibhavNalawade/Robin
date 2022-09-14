@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.Validators
+import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
 import com.vaibhav.robin.entities.ui.state.TextFieldState
@@ -30,6 +31,6 @@ class WriteReview @Inject constructor(private val repo: FirestoreDatabaseReposit
                     rating = stars
                 )
             )
-        else return flow{(Response.Error("Predate failed"))}
+        else return flow{(Response.Error(ValidationFailedException()))}
     }
 }

@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.account
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.navigation.RobinDestinations
@@ -27,61 +29,24 @@ import com.vaibhav.robin.presentation.theme.Values
 
 @Composable
 fun SignUp(navController: NavHostController, viewModel: SignUpViewModel) {
-    val response=viewModel.responseMain
-    InitUi(viewModel, navController)
+    val response = viewModel.signUpResponse.value
+
     when (response) {
         is Success -> {
             if (response.data){
                 LaunchedEffect(key1 = true, block ={
                     navController.navigate(RobinDestinations.PERSONAL_DETAILS)
                 } )
-            }
+            }else  InitUi(viewModel, navController)
         }
         is Error -> {
-            val openDialog = remember { mutableStateOf(true) }
-            /* val decode = remember {
-                 mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
-             }*/
-            if (openDialog.value)
-                AlertDialog(
-                    onDismissRequest = {
-
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Error,
-                            modifier = Modifier.size(48.dp),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    },
-                    title = {
-                        Text(text = "Oh Snap!!!")
-                    },
-                    text = {
-                        Text(
-                            text = response.message
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.retry()
-                                openDialog.value = false
-                            },
-                        ) {
-                            Text("Retry")
-                        }
-                    }
-                )
+            if (response.message !is ValidationFailedException)
+            com.vaibhav.robin.presentation.common.Error(response.message){viewModel.retry();Log.e("click","dfuycyfuylgyuy")}
+            else InitUi(viewModel, navController)
         }
         is Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Loading(
-                    Modifier
-                        .height(68.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                )
+                Loading(modifier=Modifier.fillMaxSize())
             }
         }
     }

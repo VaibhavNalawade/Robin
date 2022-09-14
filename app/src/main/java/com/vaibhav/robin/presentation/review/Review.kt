@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.presentation.common.*
 import com.vaibhav.robin.presentation.theme.Values.*
@@ -43,6 +44,11 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
     val productImage = remember {
         arg.getString("image") ?: throw Exception(NullPointerException())
     }
+    LaunchedEffect(key1 = true, block = {
+        if (!viewModel.getAuthState()) {
+            navController.navigate(RobinDestinations.LOGIN_ROUTE)
+        }
+    })
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,11 +107,7 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
             }
         }
         when (response) {
-            is Response.Error -> Error(
-                errorMessage = response.message,
-                icon = Icons.Default.Error,
-                retry = { viewModel.retry() }
-            )
+            is Response.Error -> com.vaibhav.robin.presentation.common.Error(response.message) {}
 
             is Response.Loading -> Loading(modifier = Modifier.fillMaxSize())
             is Response.Success -> {

@@ -6,6 +6,7 @@ import com.vaibhav.robin.entities.ui.state.TextFieldState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import com.vaibhav.robin.domain.Validators
+import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import kotlinx.coroutines.flow.flow
 
@@ -18,6 +19,6 @@ class PersonalDetailsUpdate @Inject constructor(private val repository: AuthRepo
         lastname.value=Validators.personalDetails(lastname.value)
         if (!firstName.value.error && !lastname.value.error)
         return repository.UpdateProfile(firstName.value.text+" "+ lastname.value.text,null)
-       return flow { emit(Response.Error("Predate Failed")) }
+       return flow { emit(Response.Error(ValidationFailedException())) }
     }
 }

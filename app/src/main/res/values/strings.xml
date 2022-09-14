@@ -46,8 +46,6 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="postcode_Invalid">Postcode is Wrong</string>
-    <string name="email_already">This email is already connected</string>
-    <string name="email_already_message">This email is already connected to an account. Log in or try another email.</string>
     <string name="sign_in">Sign In</string>
     <string name="agreement_short">By continuing, you agree to our User Agreement and Privacy Policy.</string>
     <string name="email">Email</string>
@@ -55,10 +53,15 @@
     <string name="post">POST</string>
     <string name="review_write_hint">Tell what you think?</string>
     <string name="review_policy">Review are Public and include your profile name and picture</string>
-    <string name="unknown_error">Unknown Error Occurred</string>
     <string name="try_again">Try again</string>
     <!--Product-->
     <string name="rate_this_product">Rate this product</string>
     <string name="details">Details</string>
     <string name="review_explain">Tell other what you think</string>
+    <!--Error-->
+    <string name="network_error_title">Ohh Snap!!!</string>
+    <string name="network_error_message">Check your internet connection and try again</string>
+    <string name="unknown_error">Something went wrong. try again after sometime letter</string>
+    <string name="email_already">This email is already in use</string>
+    <string name="email_already_message">This email is already connected to an account. Log in or try another email.</string>
 </resources>

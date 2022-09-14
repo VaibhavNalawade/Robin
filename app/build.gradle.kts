@@ -4,7 +4,6 @@ plugins {
     id(Dependencies.Gradle.Id.googleService)
     id(Dependencies.Gradle.Id.daggerHilt)
     kotlin(Dependencies.Gradle.Id.kapt)
-    kotlin(Dependencies.Gradle.Id.pluginSerialization) version Dependencies.KOTLIN_VERSION
 }
 
 android {
@@ -67,16 +66,6 @@ kapt {
 }
 
 dependencies {
-
-    implementation(Dependencies.Kotlin.Ktor.clientCore)
-    implementation(Dependencies.Kotlin.Ktor.clientAndroid)
-    implementation(Dependencies.Kotlin.Ktor.clientCio)
-    implementation(Dependencies.Kotlin.Ktor.contentNegotiation)
-    implementation(Dependencies.Kotlin.Ktor.ktorSerializationKotlinxJson)
-
-
-    implementation(Dependencies.Kotlin.serialization)
-
     implementation(Dependencies.Kotlin.Coroutines.android)
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
 

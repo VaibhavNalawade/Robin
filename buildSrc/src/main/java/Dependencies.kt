@@ -1,9 +1,9 @@
 object Dependencies {
 
     const val KOTLIN_VERSION = "1.7.10"
-    const val COMPOSE_VERSION = "1.3.0-beta01"
-    const val COMPOSE_COMPILER_VERSION = "1.3.0"
-    private const val MDC3_VERSION = "1.0.0-beta01"
+    const val COMPOSE_VERSION = "1.3.0-beta02"
+    const val COMPOSE_COMPILER_VERSION = "1.3.1"
+    private const val MDC3_VERSION = "1.0.0-beta02"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
     private const val KTOR_VERSION = "2.1.0"
@@ -20,17 +20,6 @@ object Dependencies {
     }
 
     object Kotlin {
-
-        object Ktor {
-            const val clientCore = "io.ktor:ktor-client-core:$KTOR_VERSION"
-            const val clientAndroid = "io.ktor:ktor-client-android:$KTOR_VERSION"
-            const val clientCio = "io.ktor:ktor-client-cio:$KTOR_VERSION"
-            const val contentNegotiation = "io.ktor:ktor-client-content-negotiation:$KTOR_VERSION"
-            const val ktorSerializationKotlinxJson =
-                "io.ktor:ktor-serialization-kotlinx-json:$KTOR_VERSION"
-        }
-
-        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC"
         object Coroutines {
             const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
             const val playServiceSupport = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$COROUTINES_VERSION"

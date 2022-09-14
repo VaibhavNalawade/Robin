@@ -36,9 +36,13 @@ class ReviewViewModel @Inject constructor(
 
 
     init {
-        val profile=auth.getProfileData()
-        userName=profile?.Name?:"Error"
-        userPhoto=profile?.Image?: Uri.EMPTY
+        viewModelScope.launch {
+            auth.getAuthState().collect{
+                val profile=auth.getProfileData()
+                userName=profile?.Name?:"Error"
+                userPhoto=profile?.Image?: Uri.EMPTY
+            }
+        }
     }
 
     fun createReview()=viewModelScope.launch(Dispatchers.IO) {
@@ -50,4 +54,6 @@ class ReviewViewModel @Inject constructor(
     fun retry() {
         createReview()
     }
+    fun getAuthState() =auth.isUserAuthenticated()
+
 }

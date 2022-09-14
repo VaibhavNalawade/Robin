@@ -32,37 +32,25 @@ class SignUpViewModel @Inject constructor(
     private val _signUpConfirmPassword = mutableStateOf(TextFieldState())
     val signUpConfirmPassword get() = _signUpConfirmPassword
 
-    var signUpResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
-        private set
+    private val _signUpResponse = mutableStateOf<Response<Boolean>>(Response.Success(false))
+    val signUpResponse get() = _signUpResponse
 
-    var initializeProfileResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
-        private set
-
-    var responseMain by mutableStateOf<Response<Boolean>>(Response.Success(false))
-        private set
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
-        responseMain =Response.Loading
         authUseCases.signUpWithEmailPassword.invoke(
             _signUpEmail,
             _signUpPassword,
             _signUpConfirmPassword
         ).collect { response ->
-            signUpResponse = response
-            when(response){
-                is Response.Error -> responseMain=response
-                Response.Loading -> {}
-                is Response.Success -> if(response.data)createProfile()
-            }
+            signUpResponse.value = response
         }
     }
 
     fun retry() {
-        signUpResponse = Response.Success(false)
-        initializeProfileResponse = Response.Success(false)
+        _signUpResponse.value = Response.Success(false)
     }
 
-    private fun createProfile() = viewModelScope.launch(Dispatchers.IO) {
+/*    private fun createProfile() = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.initializeProfile().collect {
             initializeProfileResponse=it
             when(it){
@@ -78,6 +66,6 @@ class SignUpViewModel @Inject constructor(
                 is Response.Success -> responseMain=it
             }
         }
-    }
+    }*/
 }
 

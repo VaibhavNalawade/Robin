@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,16 +20,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vaibhav.robin.R
+import com.vaibhav.robin.presentation.ExceptionHandler
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.presentation.theme.Values
 
 @Composable
 fun Error(
-    errorTitle: String = stringResource(R.string.unknown_error),
-    errorMessage: String = stringResource(R.string.unknown_error),
-    icon: ImageVector = Icons.Default.Warning,
+    exception: Exception,
     retry: () -> Unit
 ) {
+    val errorhandler = remember {
+        ExceptionHandler(exception)
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = colorScheme.primary.copy(alpha = 0.05f)
@@ -59,7 +62,7 @@ fun Error(
                         modifier = Modifier
                             .size(128.dp)
                             .padding(Values.Dimens.gird_three),
-                        imageVector = icon,
+                        imageVector = errorhandler.icon,
                         contentDescription = null,
                         tint = colorScheme.error
                     )
@@ -67,14 +70,14 @@ fun Error(
                 SpacerVerticalTwo()
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = errorTitle,
+                    text = errorhandler.title.asString(),
                     textAlign = TextAlign.Center,
                     style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
                 )
                 SpacerVerticalOne()
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = errorMessage,
+                    text = errorhandler.message.asString(),
                     textAlign = TextAlign.Center,
                     style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant)
                 )
@@ -94,9 +97,7 @@ fun Error(
 fun ErrorPreview() {
     RobinAppPreviewScaffold {
         Error(
-            errorTitle = "You are Offline",
-            errorMessage = "Check your internet connection.Unable to connect.",
-            Icons.Default.Warning,
+           Exception()
         ){}
     }
 }

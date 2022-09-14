@@ -23,10 +23,7 @@ import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.Loading
-import com.vaibhav.robin.presentation.common.RobinTextField
-import com.vaibhav.robin.presentation.common.SpacerVerticalFour
-import com.vaibhav.robin.presentation.common.SpacerVerticalTwo
+import com.vaibhav.robin.presentation.common.*
 import com.vaibhav.robin.presentation.theme.Values
 
 @Composable
@@ -41,43 +38,8 @@ fun PersonalDetails(navController: NavHostController, viewModel: PersonalDetails
                 })
         }
         is Response.Error -> {
-            val openDialog = remember { mutableStateOf(true) }
-            /* val decode = remember {
-                 mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
-             }*/
-            if (openDialog.value)
-                AlertDialog(
-                    onDismissRequest = {
 
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Error,
-                            modifier = Modifier.size(48.dp),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    },
-                    title = {
-                        Text(text = "Oh Snap!!!")
-                    },
-                    text = {
-                        Text(
-                            text = response.message
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.retry()
-                                openDialog.value = false
-                            },
-                        ) {
-
-                            Text("Retry")
-                        }
-                    }
-                )
+           com.vaibhav.robin.presentation.common.Error(response.message){}
         }
         is Response.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

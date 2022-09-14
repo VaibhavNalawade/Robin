@@ -2,6 +2,7 @@ package com.vaibhav.robin.data.remote
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
@@ -21,7 +22,7 @@ class FirestoreSource {
                 emit(Success(toObject<T>()!!))
             }
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -35,7 +36,7 @@ class FirestoreSource {
                 emit(Success(toObjects(T::class.java)))
             }
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -47,19 +48,22 @@ class FirestoreSource {
                     emit(Success(data!!))
                 }
             } catch (e: Exception) {
-                emit(Error(e.message ?: e.toString()))
+                emit(Error(e))
             }
         }
 
     suspend fun writeToReference(
-        document: DocumentReference, data: Any
+        document: DocumentReference, data: Any,
+        options: SetOptions?=null
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Response.Loading)
-            document.set(data).await()
+            if (options==null)
+             document.set(data).await()
+            else  document.set(data,options).await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -68,10 +72,10 @@ class FirestoreSource {
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Response.Loading)
-            document.update(data).await()
+            document.update(data,).await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 }

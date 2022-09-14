@@ -51,6 +51,8 @@ class ProductViewModel @Inject constructor(
     private val _stars = mutableStateOf(0)
     val stars = _stars
 
+
+
     /*
      private val _productUiState = MutableStateFlow<ProductUiState>(ProductUiState.Loading())
      val productUiState = _productUiState

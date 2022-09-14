@@ -47,42 +47,9 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
                 })
         }
         is Response.Error -> {
-            val openDialog = remember { mutableStateOf(true) }
-            /* val decode = remember {
-                 mutableStateOf(AuthExceptionDecode((authState as AuthState.Error).exception))
-             }*/
-            if (openDialog.value)
-                AlertDialog(
-                    onDismissRequest = {
+            com.vaibhav.robin.presentation.common.Error(response.message){}
+               
 
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Error,
-                            modifier = Modifier.size(48.dp),
-                            contentDescription = null,
-                            tint = colorScheme.error
-                        )
-                    },
-                    title = {
-                        Text(text = "Oh Snap!!!")
-                    },
-                    text = {
-                        Text(
-                            text = response.message
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.retry()
-                                openDialog.value = false
-                            },
-                        ) {
-                            Text("Retry")
-                        }
-                    }
-                )
         }
         is Response.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
