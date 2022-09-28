@@ -1,8 +1,7 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Robin</string>
     <string name="product_image">Product Image</string>
     <string name="placeholder">Placeholder</string>
-    <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
     <string name="promotional_banner">"promotional banner"</string>
     <string name="branding_Image">Branding Image</string>
     <string name="close">Close</string>
@@ -15,11 +14,10 @@
     <string name="process_to_checkout">Process To Checkout</string>
     <string name="complete_the_payment">Complete the Payment</string>
     <string name="wishlist">Wishlist</string>
-    <string name="add_to_cart">Add To Cart</string>
     <string name="error_occurred">Error Occurred</string>
     <string name="already_exist_in_cart">Already Exist In Cart</string>
     <string name="loading">Loading…</string>
-    <string name="added_to_cart">Added To Cart</string>
+
     <string name="password">Password</string>
     <string name="email_is_empty">Please enter a Email</string>
     <string name="email_is_invalid">Email is invalid. Please enter a valid email address</string>
@@ -56,12 +54,27 @@
     <string name="try_again">Try again</string>
     <!--Product-->
     <string name="rate_this_product">Rate this product</string>
+    <string name="your_review">Your review</string>
+    <string name="rating_and_reviews">Rating and review</string>
     <string name="details">Details</string>
     <string name="review_explain">Tell other what you think</string>
+    <string name="added_to_cart">Added to cart</string>
+    <string name="add_to_cart">Add to cart</string>
     <!--Error-->
     <string name="network_error_title">Ohh Snap!!!</string>
     <string name="network_error_message">Check your internet connection and try again</string>
     <string name="unknown_error">Something went wrong. try again after sometime letter</string>
     <string name="email_already">This email is already in use</string>
     <string name="email_already_message">This email is already connected to an account. Log in or try another email.</string>
+    <!-- Timestamp-->
+    <string name="now">Now.</string>
+    <string name="minutes">minutes ago.</string>
+    <string name="hours">hour ago.</string>
+    <string name="days">days ago.</string>
+    <string name="weeks">weeks ago.</string>
+    <string name="months">months ago.</string>
+    <string name="years">years ago.</string>
+    <!--Testing-->
+    <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
+    <string name="profile_photo_test" translatable="false" tools:ignore="TypographyDashes">https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&amp;token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda</string>
 </resources>

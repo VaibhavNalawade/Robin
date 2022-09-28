@@ -2,7 +2,7 @@ package com.vaibhav.robin.domain.use_case.auth
 
 import androidx.compose.runtime.MutableState
 import com.vaibhav.robin.domain.repository.AuthRepository
-import com.vaibhav.robin.entities.ui.state.TextFieldState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import com.vaibhav.robin.domain.Validators

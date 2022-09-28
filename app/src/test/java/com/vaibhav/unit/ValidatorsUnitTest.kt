@@ -1,9 +1,9 @@
 package com.vaibhav.unit
 
 import com.vaibhav.robin.domain.Validators
-import com.vaibhav.robin.entities.ui.state.DropdownState
-import com.vaibhav.robin.entities.ui.state.SelectableState
-import com.vaibhav.robin.entities.ui.state.TextFieldState
+import com.vaibhav.robin.presentation.models.state.DropdownState
+import com.vaibhav.robin.presentation.models.state.SelectableState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import org.junit.Test
 
 

@@ -3,6 +3,7 @@ package com.vaibhav.robin.data.models
 
 data class Product(
     val brand: Brand = Brand(),
+    val rating:Rating=Rating(),
     val category: Category = Category(),
     val description:String="",
     val name: String = "",

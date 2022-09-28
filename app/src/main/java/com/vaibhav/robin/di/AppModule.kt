@@ -64,6 +64,12 @@ class AppModule {
             initializeProfile = InitializeProfile(repo),
             getProduct = GetProduct(repo),
             getReview = GetReview(repo),
-            writeReview = WriteReview(repo)
+            writeReview = WriteReview(repo),
+            getUserReview = GetUserReview(repo),
+            addFavourite = AddFavourite(repo),
+            removeFavourite = RemoveFavourite(repo),
+            checkFavourite = CheckFavourite(repo),
+            addCartItem = AddCartItem(repo),
+            getCartItem = GetCartItem(repo)
         )
 }

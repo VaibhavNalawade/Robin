@@ -1,6 +1,6 @@
 package com.vaibhav.robin.presentation
 
-import android.content.ContentValues.TAG
+
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -14,6 +14,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuthActionCodeException
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthException
@@ -31,6 +32,7 @@ import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Date
 
 object UiUtil {
     @OptIn(ExperimentalPagerApi::class)
@@ -66,9 +68,9 @@ sealed class UiText {
 }
 
 class ExceptionHandler(val exception: Exception) {
-     lateinit var title: UiText
+     var title: UiText=UiText.StringResource(R.string.unknown_error)
         private set
-     lateinit var message: UiText
+      var message: UiText =UiText.StringResource(R.string.unknown_error)
         private set
      var errorCode: String?=null
         private set
@@ -252,4 +254,31 @@ class ExceptionHandler(val exception: Exception) {
             "ERROR_MISSING_EMAIL" -> "An email address must be provided."
         }*/
     }
+}
+
+@Composable
+fun timeStampHandler(timestamp: Timestamp): String {
+    val difference= Date().time-timestamp.toDate().time
+   val sec =difference/1000
+
+    val min =sec/60
+    val hours =min/60
+    val days =hours/24
+    val week =days/7
+    val months=days/30
+    val years =months/12
+
+    return if (min<1)
+        stringResource(id = R.string.now)
+    else if (min<59)
+        "$min ${stringResource(id = R.string.minutes)}"
+    else if (hours<24)
+        "$hours ${stringResource(id = R.string.hours)}"
+    else if (days<7)
+        "$days ${stringResource(id = R.string.days)}"
+    else if (week<4)
+        "$week ${stringResource(id = R.string.weeks)}"
+    else if ( months<12)
+        "$months ${stringResource(id = R.string.months)}"
+    else   "$years ${stringResource(id = R.string.years)}"
 }

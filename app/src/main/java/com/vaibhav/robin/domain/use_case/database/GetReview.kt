@@ -4,5 +4,5 @@ import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
 import javax.inject.Inject
 
 class GetReview @Inject constructor(private val repo:FirestoreDatabaseRepository){
-        suspend operator fun invoke(productId:String)=repo.getReview(productId)
+        suspend operator fun invoke(productId:String)=repo.getReviews(productId)
         }

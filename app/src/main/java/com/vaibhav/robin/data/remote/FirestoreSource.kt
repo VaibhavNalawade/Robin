@@ -27,11 +27,12 @@ class FirestoreSource {
     }
 
     suspend inline fun <reified T> fetchFromReferenceToObject(
-        document: CollectionReference
+        document: CollectionReference,
+        limitValue: Long = Long.MAX_VALUE
     ): Flow<Response<List<T>>> = flow {
         try {
             emit(Response.Loading)
-            document.get().await().apply {
+            document.limit(limitValue).get().await().apply {
 
                 emit(Success(toObjects(T::class.java)))
             }
@@ -54,18 +55,19 @@ class FirestoreSource {
 
     suspend fun writeToReference(
         document: DocumentReference, data: Any,
-        options: SetOptions?=null
+        options: SetOptions? = null
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Response.Loading)
-            if (options==null)
-             document.set(data).await()
-            else  document.set(data,options).await()
+            if (options == null)
+                document.set(data).await()
+            else document.set(data, options).await()
             emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e))
         }
     }
+
 
     suspend fun updateToReference(
         document: DocumentReference, data: Map<String, Any>
@@ -75,6 +77,25 @@ class FirestoreSource {
             document.update(data,).await()
             emit(Success(true))
         } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
+
+    suspend fun deleteDocument(document: DocumentReference): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Response.Loading)
+            document.delete().await()
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
+    suspend fun checkExits(document: DocumentReference):Flow<Response<Boolean>> = flow {
+        try{
+            emit(Response.Loading)
+            emit(Success(document.get().await().exists()))
+        }
+        catch (e:Exception){
             emit(Error(e))
         }
     }
