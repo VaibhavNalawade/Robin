@@ -6,8 +6,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
-import com.google.gson.Gson
-import com.vaibhav.robin.data.models.Review
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -20,7 +18,7 @@ class RobinApp : Application() {
         Firebase.initialize(this)
         if (BuildConfig.DEBUG&& isEmulatorNotRunning) {
             isEmulatorNotRunning=false
-            val host = "192.168.56.174"
+            val host = "192.168.80.174"
             Firebase.firestore.useEmulator(host, 9090)
             Firebase.auth.useEmulator(host, 9099)
         } else Firebase.firestore.firestoreSettings = firestoreSettings {

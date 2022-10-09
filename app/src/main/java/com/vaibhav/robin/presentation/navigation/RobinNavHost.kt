@@ -14,12 +14,12 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.presentation.review.Review
-import com.vaibhav.robin.presentation.account.*
-import com.vaibhav.robin.presentation.cart.Cart
-import com.vaibhav.robin.presentation.home.Home
-import com.vaibhav.robin.presentation.product.ProductDetails
-import com.vaibhav.robin.presentation.search.SearchBar
+import com.vaibhav.robin.presentation.ui.review.Review
+import com.vaibhav.robin.presentation.ui.account.*
+import com.vaibhav.robin.presentation.ui.cart.Cart
+import com.vaibhav.robin.presentation.ui.home.Home
+import com.vaibhav.robin.presentation.ui.product.ProductDetails
+import com.vaibhav.robin.presentation.ui.search.SearchBar
 
 @Composable
 fun RobinNavHost(navController: NavHostController) {

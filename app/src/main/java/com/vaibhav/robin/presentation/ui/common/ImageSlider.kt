@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.*
 import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.UiUtil
-import com.vaibhav.robin.presentation.theme.Values
+import com.vaibhav.robin.presentation.ui.theme.Values
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalPagerApi::class)

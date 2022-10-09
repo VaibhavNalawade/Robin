@@ -28,7 +28,7 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
+import com.vaibhav.robin.presentation.ui.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

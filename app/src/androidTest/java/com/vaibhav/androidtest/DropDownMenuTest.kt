@@ -13,7 +13,7 @@ import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.models.state.DropdownState
 import com.vaibhav.robin.presentation.UiText
-import com.vaibhav.robin.presentation.common.ExposedDropdownMenuBox
+import com.vaibhav.robin.presentation.ui.common.ExposedDropdownMenuBox
 import org.junit.Rule
 import org.junit.Test
 

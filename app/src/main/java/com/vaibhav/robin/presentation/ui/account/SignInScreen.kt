@@ -31,8 +31,8 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.Dimens.gird_two
+import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.gird_two
 import kotlinx.coroutines.launch
 
 @Composable

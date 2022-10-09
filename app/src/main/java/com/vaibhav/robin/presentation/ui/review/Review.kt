@@ -25,8 +25,15 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.*
+import com.vaibhav.robin.presentation.ui.common.CircularImage
+import com.vaibhav.robin.presentation.ui.common.Loading
+import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
+import com.vaibhav.robin.presentation.ui.common.ShowError
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalOne
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalTwo
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
+import com.vaibhav.robin.presentation.ui.theme.Values
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
 fun Review(navController: NavController, viewModel: ReviewViewModel) {
@@ -107,7 +114,7 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
             }
         }
         when (response) {
-            is Response.Error -> com.vaibhav.robin.presentation.common.Error(response.message) {}
+            is Response.Error -> ShowError(response.message) {}
 
             is Response.Loading -> Loading(modifier = Modifier.fillMaxSize())
             is Response.Success -> {

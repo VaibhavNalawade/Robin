@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.theme.Values
+import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
 fun SpaceBetweenContainer(

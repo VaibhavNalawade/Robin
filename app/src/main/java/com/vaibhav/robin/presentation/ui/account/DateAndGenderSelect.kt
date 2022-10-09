@@ -29,8 +29,8 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.Dimens
+import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,7 +46,7 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
                 })
         }
         is Response.Error -> {
-            com.vaibhav.robin.presentation.common.Error(response.message){}
+            ShowError(response.message){}
                
 
         }

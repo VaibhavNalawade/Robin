@@ -8,22 +8,17 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values
+import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
 fun AddressAndPhoneDetails(navController: NavHostController, viewModel: AddressPhoneViewModel) {
@@ -38,7 +33,7 @@ InitUi(viewModel)
         }
         is Response.Error -> {
             if (response.message !is ValidationFailedException)
-            Error(response.message) {
+            ShowError(response.message) {
                 viewModel.retry()
             }
         }

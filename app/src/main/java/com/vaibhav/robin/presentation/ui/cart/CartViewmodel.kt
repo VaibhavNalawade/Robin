@@ -1,8 +1,11 @@
 package com.vaibhav.robin.presentation.ui.cart
 
+import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.data.models.CartItem
@@ -15,42 +18,35 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.model.Response
+import kotlinx.coroutines.flow.catch
+
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val authUseCases: AuthUseCases,
     private val databaseUseCases: DatabaseUseCases
 ) : ViewModel() {
-    var cartItem by mutableStateOf<Response<List<CartItem>>>(Loading)
-    private set
+    var cartItem = mutableStateOf<Response<List<CartItem>>>(Loading)
+        private set
 
-    var productData by mutableStateOf<List<Product>>(emptyList())
-    init {
+    var productData = mutableStateListOf<Response<Product>>()
+
+    suspend fun launchEffect(){
         if (authUseCases.isUserAuthenticated())
-            viewModelScope.launch(Dispatchers.IO){
-                databaseUseCases.getCartItem().collect{ listcartitems ->
-                    cartItem = listcartitems
-                    when(listcartitems){
-                        is Error -> TODO()
-                        Loading -> TODO()
-                        is Success -> {
-                            listcartitems.data.forEach {
-                                databaseUseCases.getProduct(it.productId).collect{
-
-                                    when(it){
-                                        is Error -> TODO()
-                                        Loading -> TODO()
-                                        is Success -> {
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            viewModelScope.launch(Dispatchers.IO) {
+                databaseUseCases.getCartItem().collect { listResponse ->
+                    cartItem.value = listResponse
                 }
             }
     }
+
+    suspend fun fetchproduct(productId: String, ind: Int) = viewModelScope.launch {
+        databaseUseCases.getProduct("D3MjFbzN2Grpl0QRU9cv").collect {
+            productData.add(ind, it)
+            (it as? Success)?.data?.let { it1 -> Log.e("collect", it1.name) }
+        }
+    }
 }
+
 /*
     private val _cartItemsUiState = MutableStateFlow<CartItemsUiState>(CartItemsUiState.Loading())
     val cartItemsUiState = _cartItemsUiState

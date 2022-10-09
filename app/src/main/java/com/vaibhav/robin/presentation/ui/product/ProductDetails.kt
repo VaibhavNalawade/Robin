@@ -39,9 +39,9 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values.*
-import com.vaibhav.robin.presentation.theme.Values.Dimens.appbarSize
+import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values.*
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.appbarSize
 import com.vaibhav.robin.presentation.timeStampHandler
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -97,7 +97,7 @@ fun ProductDetails(
                 }
 
                 is Error -> {
-                    Error(exception = response.message) {}
+                    ShowError(exception = response.message) {}
                 }
             }
         },
@@ -332,7 +332,7 @@ fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: 
         }
         when (val reviewResponse = viewModel.reviewsResponse) {
             is Error -> item {
-                Error(exception = reviewResponse.message) {
+                ShowError(exception = reviewResponse.message) {
 
                 }
             }

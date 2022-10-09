@@ -1,6 +1,7 @@
 package com.vaibhav.robin.data.repository
 
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.vaibhav.robin.data.models.CartItem
@@ -14,6 +15,7 @@ import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlin.math.log
 
 class FirestoreRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,

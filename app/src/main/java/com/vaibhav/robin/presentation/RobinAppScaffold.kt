@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.vaibhav.robin.presentation.navigation.RobinNavHost
-import com.vaibhav.robin.presentation.theme.RobinTheme
+import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 
 @Composable
 fun RobinAppScaffold() {

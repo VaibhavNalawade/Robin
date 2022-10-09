@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,8 +20,8 @@ import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.common.*
-import com.vaibhav.robin.presentation.theme.Values
+import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
 fun PersonalDetails(navController: NavHostController, viewModel: PersonalDetailsViewModel) {
@@ -39,7 +36,7 @@ fun PersonalDetails(navController: NavHostController, viewModel: PersonalDetails
         }
         is Response.Error -> {
 
-           com.vaibhav.robin.presentation.common.Error(response.message){}
+           com.vaibhav.robin.presentation.ui.common.ShowError(response.message){}
         }
         is Response.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
