@@ -27,18 +27,18 @@ import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExposedDropdownMenuBox(
+fun RobinDropdownMenuBox(
     dropdownOptionList: List<DropdownOption>,
-    state: MutableState<DropdownState>
+    state: MutableState<DropdownState>,
+    modifier:Modifier = Modifier.fillMaxWidth()
 ) {
 
     var expanded by remember { mutableStateOf(false) }
     var index by remember { mutableStateOf(state.value.selectedIndex) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier) {
         ExposedDropdownMenuBox(
             modifier = Modifier
-                .fillMaxWidth()
                 .border(
                     BorderStroke(
                         width = 1.dp,
@@ -50,7 +50,6 @@ fun ExposedDropdownMenuBox(
             onExpandedChange = { expanded = !expanded }
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(Dimens.gird_two))
@@ -68,7 +67,6 @@ fun ExposedDropdownMenuBox(
                     style = typography.bodyLarge
                 )
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.End
                 ) {
                     IconButton(
@@ -140,7 +138,7 @@ fun DropdownPreviewLight() {
                 vertical = Dimens.gird_one
             ), contentAlignment = Alignment.Center
         ) {
-            ExposedDropdownMenuBox(
+            RobinDropdownMenuBox(
                 listOf(DropdownOption(options = "op")),
                 remember {
                     mutableStateOf(DropdownState())
@@ -160,7 +158,7 @@ fun DropdownPreviewDark() {
                 vertical = Dimens.gird_one
             ), contentAlignment = Alignment.Center
         ) {
-            ExposedDropdownMenuBox(
+            RobinDropdownMenuBox(
                 listOf(
                     DropdownOption(
                         options = "op",

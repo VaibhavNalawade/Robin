@@ -1,21 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Robin</string>
-    <string name="product_image">Product Image</string>
-    <string name="placeholder">Placeholder</string>
     <string name="promotional_banner">"promotional banner"</string>
-    <string name="branding_Image">Branding Image</string>
     <string name="close">Close</string>
     <string name="cart">Cart</string>
-    <string name="items">Items</string>
-    <string name="total">Total</string>
-    <string name="subtotal">Subtotal</string>
-    <string name="shipping">Shipping</string>
-    <string name="tax">Tax</string>
-    <string name="process_to_checkout">Process To Checkout</string>
     <string name="complete_the_payment">Complete the Payment</string>
-    <string name="wishlist">Wishlist</string>
     <string name="error_occurred">Error Occurred</string>
-    <string name="already_exist_in_cart">Already Exist In Cart</string>
     <string name="loading">Loading…</string>
 
     <string name="password">Password</string>
@@ -24,7 +13,6 @@
     <string name="password_empty">Please Enter a Password</string>
     <string name="password_length">Password should be 6 character</string>
     <string name="password_not_match">Password does not Match</string>
-    <string name="password_confirm">Confirm Password </string>
     <string name="field_is_empty">Field is empty</string>
     <string name="select_a_date">Select a Date</string>
     <string-array name="gender_selection">
@@ -32,10 +20,8 @@
     <item name="male">Male</item>
     <item name="female">Female</item>
     </string-array>
-    <string name="select_a_gender">Select a Gender</string>
     <string name="address_empty">Please enter address</string>
     <string name="postcode_empty">Please enter postcode</string>
-    <string name="phone_empty">Please enter Phone number</string>
     <string name="phone_invalid">Please enter Valid Phone number</string>
     <string name="personal_details">Personal Details</string>
     <string name="signup_message">Enter your personal details such as your name phone number address. We don\'t share such details to third party and maintain your privacy</string>

@@ -29,7 +29,7 @@ class AppModule {
     fun provideFirebaseFirestore() = Firebase.firestore
 
     @Provides
-    fun provideFirestoreSource() = FirestoreSource()
+    fun provideFirestoreSource() = FirestoreSource(provideFirebaseFirestore())
 
     @Provides
     fun provideAuthRepository(

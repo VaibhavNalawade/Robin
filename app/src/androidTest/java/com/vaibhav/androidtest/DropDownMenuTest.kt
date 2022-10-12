@@ -13,7 +13,7 @@ import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.models.state.DropdownState
 import com.vaibhav.robin.presentation.UiText
-import com.vaibhav.robin.presentation.ui.common.ExposedDropdownMenuBox
+import com.vaibhav.robin.presentation.ui.common.RobinDropdownMenuBox
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,7 +39,7 @@ class DropDownMenuTest {
     fun dropDownMenuTestClickTest() {
         composeTestRule.setContent {
             RobinAppPreviewScaffold {
-                ExposedDropdownMenuBox(
+                RobinDropdownMenuBox(
                     state = state,
                     dropdownOptionList = options
                 )
@@ -89,7 +89,7 @@ class DropDownMenuTest {
         composeTestRule.setContent {
             RobinAppPreviewScaffold {
                 state.value=state.value.copy(error=true, errorMessage = UiText.DynamicString("Error Occurred"))
-                ExposedDropdownMenuBox(
+                RobinDropdownMenuBox(
                     state = state,
                     dropdownOptionList = options
                 )

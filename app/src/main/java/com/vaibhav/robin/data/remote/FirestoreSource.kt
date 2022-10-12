@@ -2,6 +2,7 @@ package com.vaibhav.robin.data.remote
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.vaibhav.robin.domain.model.Response
@@ -10,8 +11,9 @@ import com.vaibhav.robin.domain.model.Response.Success
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class FirestoreSource {
+class FirestoreSource @Inject constructor(private val firestore: FirebaseFirestore) {
 
     suspend inline fun <reified T> fetchFromReferenceToObject(
         document: DocumentReference
@@ -52,6 +54,7 @@ class FirestoreSource {
                 emit(Error(e))
             }
         }
+
 
     suspend fun writeToReference(
         document: DocumentReference, data: Any,

@@ -152,7 +152,7 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
             DropdownOption(array[2], Icons.Filled.Girl)
         )
 
-        ExposedDropdownMenuBox(
+        RobinDropdownMenuBox(
             dropdownOptionList = list,
             state = gender
         )
