@@ -110,6 +110,10 @@ class FirestoreRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun getProducts(): Flow<Response<List<Product>>> =tryCatchScaffold {
+        source.fetchFromReferenceToObject(firestore.collection("Product"),50)
+    }
+
 
     private suspend fun <T>tryCatchScaffold(tryBlock:suspend ()->Flow<Response<T>>):Flow<Response<T>> =
         try {

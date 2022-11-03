@@ -27,4 +27,6 @@ interface FirestoreDatabaseRepository {
     suspend fun addCartItem(productId: String,cartItem: CartItem):Flow<Response<Boolean>>
 
     suspend fun getCartItems():Flow<Response<List<CartItem>>>
+
+    suspend fun getProducts():Flow<Response<List<Product>>>
 }

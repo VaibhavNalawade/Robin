@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.*
@@ -14,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,25 +24,26 @@ import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.models.common.DropdownOption
-import com.vaibhav.robin.presentation.models.state.DropdownState
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
-import com.vaibhav.robin.presentation.ui.common.RobinDropdownMenuBox
+import com.vaibhav.robin.presentation.ui.common.ShowError
 import com.vaibhav.robin.presentation.ui.common.SpaceBetweenContainer
 import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalTwo
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
+import java.lang.Exception
 
 
 @Composable
 fun Cart(
-    viewModel: CartViewModel,
-    navController: NavController,
-    snackBarHostState: SnackbarHostState
+    viewModel: CartViewModel, navController: NavController, snackBarHostState: SnackbarHostState
 ) {
+    val subTotal = remember {
+        mutableStateOf(0)
+    }
     LaunchedEffect(key1 = false, block = {
         viewModel.launch()
     })
@@ -57,25 +58,112 @@ fun Cart(
                 ) {
 
                     when (val item = viewModel.cartItem) {
-                        is Response.Error -> TODO()
+                        is Response.Error -> item {
+                            ShowError(exception = item.message) {
+
+                            }
+                        }
+
                         Response.Loading -> item { Loading() }
-                        is Response.Success -> item.data.forEachIndexed { index, cartItem ->
+                        is Response.Success -> if (item.data.isNotEmpty()) item.data.forEachIndexed { index, cartItem ->
                             item {
                                 CartItemListLoader(
-                                    cartItemIndex = index, productList = viewModel.productData
+                                    cartItemIndex = index,
+                                    productList = viewModel.productData,
+                                    subTotal
                                 ) {
                                     viewModel.getDetails(cartItem.productId, index)
                                 }
                             }
                         }
+                        else item {
+                            EmptyCart()
+                        }
                     }
                 }
             }
-            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                Button(modifier = Modifier.fillMaxWidth(.8f), onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24), contentDescription ="" )
-                    SpacerHorizontalOne()
-                    Text(text = "Checkout")
+            Surface(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                tonalElevation = Dimens.surface_elevation_5,
+                shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+            ) {
+                Column {
+                    SpacerVerticalOne()
+                    // FIXME: Calculating cost on client side very bad practice
+                    SpaceBetweenContainer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.gird_four)
+                    ) {
+                        Text(
+                            text = "TOTAL",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                        Text(
+                            text = "₹ ${subTotal.value + (subTotal.value * .18) + 100}",
+                            style = typography.headlineMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                    }
+                    SpacerVerticalTwo()
+                    // FIXME: Calculating cost on client side very bad practice
+                    SpaceBetweenContainer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.gird_four)
+                    ) {
+                        Text(
+                            text = "SubTotal",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                        Text(
+                            text = "₹ ${subTotal.value}",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                    }
+                    SpacerVerticalOne()
+                    // FIXME: Calculating Shipping cost on client side very bad practice
+                    SpaceBetweenContainer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.gird_four)
+                    ) {
+                        Text(
+                            text = "Shipping",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                        Text(
+                            text = "₹ 100",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                    }
+                    SpacerVerticalOne()
+                    // FIXME: Calculating Tax on client side very bad practice
+                    SpaceBetweenContainer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.gird_four)
+                    ) {
+                        Text(
+                            text = "Tax",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                        Text(
+                            text = "₹ ${subTotal.value * .18}",
+                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                        )
+                    }
+                    SpacerVerticalTwo()
+                    Button(modifier = Modifier
+                        .fillMaxWidth(.8f)
+                        .align(Alignment.CenterHorizontally),
+                        onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24),
+                            contentDescription = ""
+                        )
+                        SpacerHorizontalOne()
+                        Text(text = "Checkout")
+                    }
                 }
             }
         }
@@ -86,16 +174,21 @@ fun Cart(
 fun CartItemListLoader(
     cartItemIndex: Int,
     productList: SnapshotStateList<Response<Product>>,
+    total: MutableState<Int>,
     function: suspend () -> Unit
 ) {
     LaunchedEffect(key1 = true, block = { function.invoke() })
-    if (productList.isNotEmpty()) when (val product = productList[cartItemIndex]) {
+    if (productList.isNotEmpty())
+        when (val product = productList[cartItemIndex]) {
         Response.Loading -> {
             CartItemLoading()
         }
 
-        is Response.Error -> TODO()
-        is Response.Success -> CartItem(product = product.data, variantIndex = 0)
+        is Response.Error -> ShowError(exception = Exception()) {
+            // FIXME: Need to implement retry Button on Error
+            TODO()
+        }
+        is Response.Success -> CartItem(product = product.data, variantIndex = 0, total)
     }
 
 }
@@ -132,9 +225,12 @@ fun CartAppBar(items: Int, onBackButton: () -> Unit) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartItem(product: Product, variantIndex: Int) {
+fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
+    // FIXME: Calculating total price on client side very bad practice
+    LaunchedEffect(key1 = true, block = {
+        total.value = (total.value + product.variant[variantIndex].size[0].price.retail).toInt()
+    })
     Card {
         Row(
             modifier = Modifier
@@ -166,28 +262,28 @@ fun CartItem(product: Product, variantIndex: Int) {
                         Text(text = product.brand.name, style = typography.bodyMedium)
                         SpacerHorizontalTwo()
                         Text(
-                            text = "$ ${product.variant[variantIndex].size[0].price.retail.toString()}",
+                            text = "$ ${product.variant[variantIndex].size[0].price.retail}",
                             style = typography.titleMedium
                         )
                         SpacerHorizontalOne()
                     }
                 }
                 SpaceBetweenContainer(modifier = Modifier.fillMaxWidth()) {
-                 Row(verticalAlignment = Alignment.CenterVertically){
-                     IconButton(onClick = { /*TODO*/ }) {
-                         Icon(
-                             painter = painterResource(id = R.drawable.add_circle_fill0_wght200_grad200_opsz20),
-                             contentDescription = ""
-                         )
-                     }
-                     Text(text = "1", style = typography.labelLarge)
-                     IconButton(onClick = { /*TODO*/ }) {
-                         Icon(
-                             painter = painterResource(id = R.drawable.do_not_disturb_on_fill0_wght200_grad200_opsz20),
-                             contentDescription = ""
-                         )
-                     }
-                 }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_circle_fill0_wght200_grad200_opsz20),
+                                contentDescription = ""
+                            )
+                        }
+                        Text(text = "1", style = typography.labelLarge)
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.do_not_disturb_on_fill0_wght200_grad200_opsz20),
+                                contentDescription = ""
+                            )
+                        }
+                    }
                     FilledTonalIconButton(onClick = { /*TODO*/ }) {
                         Icon(
                             painter = painterResource(id = R.drawable.delete_fill0_wght700_grad200_opsz24),
@@ -196,7 +292,6 @@ fun CartItem(product: Product, variantIndex: Int) {
                         )
                     }
                 }
-
 
             }
         }

@@ -1,22 +1,22 @@
 package com.vaibhav.robin.presentation.ui.cart
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.domain.model.Response.Loading
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.domain.model.Response
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
@@ -26,16 +26,20 @@ class CartViewModel @Inject constructor(
     var cartItem by mutableStateOf<Response<List<CartItem>>>(Loading)
         private set
 
-    val productData = mutableStateListOf<Response<Product>>()
+    //Note This only allow 100 cartItems
+    val productData: SnapshotStateList<Response<Product>> =
+        (1..100).map { Loading }.toMutableStateList()
 
-    suspend fun launch()=viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.getCartItem().collect{
-        cartItem=it
+
+    suspend fun launch() = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.getCartItem().collect {
+            cartItem = it
         }
     }
-    suspend fun getDetails(productID: String,index:Int)=viewModelScope.launch(Dispatchers.IO){
-        databaseUseCases.getProduct(productID).collect{
-            productData.add(index,it)
+
+    suspend fun getDetails(productID: String, index: Int) = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.getProduct(productID).collect {
+            productData.add(index, it)
         }
     }
 }

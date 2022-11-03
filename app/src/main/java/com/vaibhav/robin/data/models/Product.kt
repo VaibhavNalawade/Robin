@@ -7,6 +7,7 @@ data class Product(
     val category: Category = Category(),
     val description:String="",
     val name: String = "",
+    val id:String="",
     val variant: List<Variant> = emptyList(),
     val reference:List<Reference> = emptyList(),
     val details: List<Map<String,String>> = emptyList(),

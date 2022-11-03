@@ -9,6 +9,7 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Success
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -18,15 +19,15 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
     suspend inline fun <reified T> fetchFromReferenceToObject(
         document: DocumentReference
     ): Flow<Response<T>> = flow {
-        try {
-            emit(Response.Loading)
-            document.get().await().apply {
-                emit(Success(toObject<T>()!!))
-            }
-        } catch (e: Exception) {
-            emit(Error(e))
+
+        emit(Response.Loading)
+        document.get().await().apply {
+            emit(Success(toObject<T>()!!))
         }
+    }.catch {
+        emit(Error(it as Exception))
     }
+
 
     suspend inline fun <reified T> fetchFromReferenceToObject(
         document: CollectionReference,
@@ -77,7 +78,7 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Response.Loading)
-            document.update(data,).await()
+            document.update(data).await()
             emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e))
@@ -93,12 +94,12 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
             emit(Error(e))
         }
     }
-    suspend fun checkExits(document: DocumentReference):Flow<Response<Boolean>> = flow {
-        try{
+
+    suspend fun checkExits(document: DocumentReference): Flow<Response<Boolean>> = flow {
+        try {
             emit(Response.Loading)
             emit(Success(document.get().await().exists()))
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             emit(Error(e))
         }
     }

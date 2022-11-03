@@ -6,6 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.remote.FirestoreSource
 import com.vaibhav.robin.data.repository.AuthRepositoryImpl
 import com.vaibhav.robin.data.repository.FirestoreRepositoryImpl
@@ -70,6 +71,7 @@ class AppModule {
             removeFavourite = RemoveFavourite(repo),
             checkFavourite = CheckFavourite(repo),
             addCartItem = AddCartItem(repo),
-            getCartItem = GetCartItem(repo)
+            getCartItem = GetCartItem(repo),
+            getProducts = GetProducts(repo)
         )
 }

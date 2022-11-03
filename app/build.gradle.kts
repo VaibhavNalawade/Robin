@@ -32,6 +32,9 @@ android {
         debug{
 
         }
+        create("Admin"){
+
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

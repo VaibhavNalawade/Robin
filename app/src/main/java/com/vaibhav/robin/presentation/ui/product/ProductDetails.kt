@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.*
 import com.vaibhav.robin.domain.model.Response
@@ -330,16 +331,31 @@ fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: 
                 style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
             )
         }
+        
         when (val reviewResponse = viewModel.reviewsResponse) {
             is Error -> item {
                 ShowError(exception = reviewResponse.message) {
-
                 }
             }
 
             Loading -> item { Loading() }
-            is Success -> items(reviewResponse.data) { review ->
-                ReviewContainer(review = review)
+            is Success -> {
+                if(reviewResponse.data.isNotEmpty())
+                items(reviewResponse.data) { review ->
+                    ReviewContainer(review = review)
+                }
+                else item {
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        model = R.drawable.desert,
+                        contentScale = ContentScale.Fit,
+                        contentDescription = "",
+                    )
+                    Text(text = "Nothing to see here", style = typography.titleMedium)
+                    Text(text = "Please consider to Review", style = typography.titleMedium)
+                }
             }
         }
         item { SpacerVerticalFour() }
@@ -405,7 +421,7 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
                     tint = colorScheme.primary
                 )
                 Text(
-                    text = product.rating.stars.toString(),
+                    text = product.rating.stars?.toString()?:"Not Rated",
                     style = typography.bodyMedium.copy(colorScheme.primary)
                 )
                 SpacerHorizontalOne()
@@ -478,7 +494,9 @@ fun BulletPoints(productData: Product, visible: Boolean) {
 
 @Composable
 fun VariantSelector(
-    product: Product, selectedVariantState: MutableState<Int>, selectedSizeState: MutableState<Int>
+    product: Product,
+    selectedVariantState: MutableState<Int>,
+    selectedSizeState: MutableState<Int>
 ) {
     SpacerVerticalOne()
     LazyRow {

@@ -45,7 +45,7 @@ class ProductViewModel @Inject constructor(
             if (authUseCases.isUserAuthenticated()) {
                 databaseUseCases.checkFavourite(str).collect {
                     when(it){
-                        is Error -> TODO()
+                        is Error -> {}
                         Loading -> {}
                         is Success -> favouriteToggleButtonState=it.data
                     }
