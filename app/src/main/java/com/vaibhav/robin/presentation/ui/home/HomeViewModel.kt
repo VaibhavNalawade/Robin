@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             authUseCases.getAuthState().collect {
                 userAuthenticated = it
-                if (true) profileData = authUseCases.getProfileData()
+                profileData = authUseCases.getProfileData()
             }
         }
         viewModelScope.launch {
