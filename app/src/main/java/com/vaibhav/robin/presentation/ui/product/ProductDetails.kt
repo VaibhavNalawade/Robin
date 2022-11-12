@@ -62,7 +62,6 @@ import kotlin.random.Random
 fun ProductDetails(
     viewModel: ProductViewModel,
     navController: NavHostController,
-    snackBarHostState: SnackbarHostState
 ) {
 
     val id = remember {

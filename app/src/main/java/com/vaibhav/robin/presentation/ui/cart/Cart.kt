@@ -39,7 +39,7 @@ import java.lang.Exception
 
 @Composable
 fun Cart(
-    viewModel: CartViewModel, navController: NavController, snackBarHostState: SnackbarHostState
+    viewModel: CartViewModel, navController: NavController
 ) {
     val subTotal = remember {
         mutableStateOf(0)

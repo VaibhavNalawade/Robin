@@ -31,4 +31,4 @@ Robin  uses a minimalist aesthetic, creating an experience where content and act
 - [ ]  Unit Testing need to increase coverage.
 - [ ]  Instrument Test need to increase coverage.
 - [x]  redesign home ui.
-- [ ]  Migrate from android view calander To Compose
+- [ ]  Migrate from android view calendar To Compose

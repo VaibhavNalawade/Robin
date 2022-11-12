@@ -2,9 +2,7 @@ package com.vaibhav.robin.presentation.navigation
 
 
 import android.util.Log
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,24 +12,25 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.presentation.ui.review.Review
-import com.vaibhav.robin.presentation.ui.account.*
+import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
+import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
+import com.vaibhav.robin.presentation.ui.account.Login
+import com.vaibhav.robin.presentation.ui.account.PersonalDetails
+import com.vaibhav.robin.presentation.ui.account.SignUp
 import com.vaibhav.robin.presentation.ui.cart.Cart
 import com.vaibhav.robin.presentation.ui.home.Home
 import com.vaibhav.robin.presentation.ui.product.ProductDetails
+import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
 
 @Composable
 fun RobinNavHost(navController: NavHostController) {
-
-    val snackBarHostState = remember { SnackbarHostState() }
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
     ) {
         composable(RobinDestinations.HOME) {
             Home(
                 navController,
-                snackBarHostState,
                 hiltViewModel()
             )
         }
@@ -40,11 +39,7 @@ fun RobinNavHost(navController: NavHostController) {
             RobinDestinations.searchQuery("{query}"),
             listOf(navArgument("query") { type = NavType.StringType })
         ) { SearchBar(navController) }
-
-        composable(RobinDestinations.CART) { Cart(hiltViewModel(),navController, snackBarHostState) }
-        /**
-         * Destination Review
-         * */
+        composable(RobinDestinations.CART) { Cart(hiltViewModel(),navController) }
         composable(
             RobinDestinations.review("{Id}", "{name}", "{image}", "{star}"),
             listOf(
@@ -59,15 +54,12 @@ fun RobinNavHost(navController: NavHostController) {
                 viewModel = hiltViewModel()
             )
         }
-
-
         composable(
             RobinDestinations.product("{Id}"),
             listOf(navArgument("Id") { type = NavType.StringType })
         ) {
             ProductDetails(
                 navController = navController,
-                snackBarHostState = snackBarHostState,
                 viewModel = hiltViewModel()
             )
         }
@@ -103,16 +95,6 @@ fun RobinNavHost(navController: NavHostController) {
                 AddressAndPhoneDetails(
                     navController = navController, viewModel = hiltViewModel()
                 )
-            }
-        }
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            Log.e("NAV", destination.route!!)
-            when (destination.route) {
-                RobinDestinations.CART -> {
-                    if (!userExist()) {
-                        navController.navigate(RobinDestinations.LOGIN_ROUTE)
-                    }
-                }
             }
         }
     }

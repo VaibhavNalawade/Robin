@@ -9,7 +9,7 @@ object Dependencies {
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha06"
+    private const val AGP_VERSION = "8.0.0-alpha07"
     private const val DAGGERHILT_VERSION="2.42"
 
     /**
@@ -95,7 +95,7 @@ object Dependencies {
             const val ui = "androidx.compose.ui:ui:$COMPOSE_VERSION"
             const val foundation="androidx.compose.foundation:foundation:$COMPOSE_VERSION"
             const val UI_TOOLING = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
-            const val NAVIGATION = "androidx.navigation:navigation-compose:2.5.1"
+            const val NAVIGATION = "androidx.navigation:navigation-compose:2.6.0-alpha03"
             const val ACTIVITY = "androidx.activity:activity-compose:1.6.0-beta01"
         }
     }
