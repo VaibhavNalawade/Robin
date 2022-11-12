@@ -2,10 +2,11 @@ package com.vaibhav.robin.domain.use_case.database
 
 import androidx.compose.runtime.MutableState
 import com.vaibhav.robin.domain.Validators
+import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
-import com.vaibhav.robin.entities.ui.state.DropdownState
-import com.vaibhav.robin.entities.ui.state.SelectableState
+import com.vaibhav.robin.presentation.models.state.DropdownState
+import com.vaibhav.robin.presentation.models.state.SelectableState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -25,6 +26,6 @@ class UpdateProfileDateAndGender @Inject constructor(private val firestoreReposi
             )
             return firestoreRepository.updateProfile(hashmap)
         }
-        else  return flow { emit(Response.Error("Predate Failed")) }
+        else  return flow { emit(Response.Error(ValidationFailedException())) }
     }
 }

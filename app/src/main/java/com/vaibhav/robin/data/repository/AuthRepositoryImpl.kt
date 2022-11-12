@@ -27,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             auth.signInWithEmailAndPassword(email, password).await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -37,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             Firebase.auth.signOut()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -49,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             auth.createUserWithEmailAndPassword(email, password).await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -75,7 +75,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             auth.currentUser?.updateProfile(profileUpdates)?.await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -87,7 +87,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             auth.sendPasswordResetEmail(email).await()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 
@@ -97,7 +97,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
             auth.currentUser!!.sendEmailVerification()
             emit(Success(true))
         } catch (e: Exception) {
-            emit(Error(e.message ?: e.toString()))
+            emit(Error(e))
         }
     }
 

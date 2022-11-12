@@ -1,0 +1,127 @@
+package com.vaibhav.robin.presentation.navigation
+
+
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.navigation
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
+import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
+import com.vaibhav.robin.presentation.ui.account.Login
+import com.vaibhav.robin.presentation.ui.account.PersonalDetails
+import com.vaibhav.robin.presentation.ui.account.SignUp
+import com.vaibhav.robin.presentation.ui.cart.Cart
+import com.vaibhav.robin.presentation.ui.home.Home
+import com.vaibhav.robin.presentation.ui.product.ProductDetails
+import com.vaibhav.robin.presentation.ui.review.Review
+import com.vaibhav.robin.presentation.ui.search.SearchBar
+
+@Composable
+fun RobinNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController, startDestination = RobinDestinations.HOME
+    ) {
+        composable(RobinDestinations.HOME) {
+            Home(
+                navController,
+                hiltViewModel()
+            )
+        }
+
+        composable(
+            RobinDestinations.searchQuery("{query}"),
+            listOf(navArgument("query") { type = NavType.StringType })
+        ) { SearchBar(navController) }
+        composable(RobinDestinations.CART) { Cart(hiltViewModel(),navController) }
+        composable(
+            RobinDestinations.review("{Id}", "{name}", "{image}", "{star}"),
+            listOf(
+                navArgument("Id") { type = NavType.StringType },
+                navArgument("name") { type = NavType.StringType },
+                navArgument("image") { type = NavType.StringType },
+                navArgument("star") { type = NavType.IntType }
+            )
+        ) {
+            Review(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
+        }
+        composable(
+            RobinDestinations.product("{Id}"),
+            listOf(navArgument("Id") { type = NavType.StringType })
+        ) {
+            ProductDetails(
+                navController = navController,
+                viewModel = hiltViewModel()
+            )
+        }
+        navigation(
+            startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
+        ) {
+
+            composable(RobinDestinations.LOGIN) {
+                Login(
+                    navController = navController, viewModel = hiltViewModel()
+                )
+            }
+            composable(RobinDestinations.SIGN_UP) {
+
+                SignUp(
+                    navController = navController, viewModel = hiltViewModel()
+                )
+            }
+            composable(RobinDestinations.PERSONAL_DETAILS) {
+
+                PersonalDetails(
+                    navController = navController, viewModel = hiltViewModel()
+                )
+            }
+            composable(RobinDestinations.DATE_AND_GENDER) {
+
+                DateAndGenderSelect(
+                    navController = navController, viewModel = hiltViewModel()
+                )
+            }
+            composable(RobinDestinations.ADDRESS_AND_PHONE) {
+
+                AddressAndPhoneDetails(
+                    navController = navController, viewModel = hiltViewModel()
+                )
+            }
+        }
+    }
+}
+
+fun userExist() = Firebase.auth.currentUser != null
+
+
+object RobinDestinations {
+    const val HOME = "home"
+    private const val PRODUCT = "product"
+    private const val SEARCH = "Search"
+    const val CART = "Cart"
+    const val LOGIN_ROUTE = "Login_Route"
+    const val LOGIN = "Login"
+    const val SIGN_UP = "SignUp"
+    const val PERSONAL_DETAILS = "PersonalDetails"
+    const val DATE_AND_GENDER = "DATE_AND_GENDER"
+    const val ADDRESS_AND_PHONE = "ADDRESS_AND_PHONE"
+    private const val REVIEW = "REVIEW"
+
+    fun review(Id: String, name: String, image: String, star: String) =
+        "$REVIEW/$Id/$name/$image/$star"
+
+    fun review(Id: String, name: String, image: String, star: Int) =
+        "$REVIEW/$Id/$name/$image/$star"
+
+    fun product(Id: String) = "$PRODUCT/$Id"
+    fun searchQuery(query: String) = "$SEARCH/$query"
+}

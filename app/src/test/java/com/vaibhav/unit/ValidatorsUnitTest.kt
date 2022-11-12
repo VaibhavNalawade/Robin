@@ -1,9 +1,9 @@
 package com.vaibhav.unit
 
 import com.vaibhav.robin.domain.Validators
-import com.vaibhav.robin.entities.ui.state.DropdownState
-import com.vaibhav.robin.entities.ui.state.SelectableState
-import com.vaibhav.robin.entities.ui.state.TextFieldState
+import com.vaibhav.robin.presentation.models.state.DropdownState
+import com.vaibhav.robin.presentation.models.state.SelectableState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import org.junit.Test
 
 
@@ -171,6 +171,25 @@ class ValidatorsUnitTest {
     fun check_phone_valid() {
         Validators.checkPhone(TextFieldState("+91 9456211568")).apply {
             assert(!error)
+        }
+    }
+    @Test
+    fun check_review_valid(){
+        Validators.checkReview(TextFieldState("Some to do")).apply {
+            assert(!error)
+        }
+    }
+
+    @Test
+    fun check_review_empty(){
+        Validators.checkReview(TextFieldState("")).apply {
+            assert(error)
+        }
+    }
+    @Test
+    fun check_review_large(){
+        Validators.checkReview(TextFieldState("A".repeat(501))).apply {
+            assert(error)
         }
     }
 }

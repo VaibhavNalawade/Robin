@@ -4,5 +4,14 @@ data class DatabaseUseCases (
     val updateProfileDateAndGender:UpdateProfileDateAndGender,
     val updateAddressAndPhone: UpdateAddressAndPhone,
     val initializeProfile: InitializeProfile,
-    val getProduct: GetProduct
+    val getProduct: GetProduct,
+    val getReview:GetReview,
+    val writeReview:WriteReview,
+    val getUserReview:GetUserReview,
+    val addFavourite:AddFavourite,
+    val removeFavourite:RemoveFavourite,
+    val checkFavourite:CheckFavourite,
+    val addCartItem: AddCartItem,
+    val getCartItem:GetCartItem,
+    val getProducts:GetProducts
 )

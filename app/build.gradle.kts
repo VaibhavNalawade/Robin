@@ -1,12 +1,9 @@
-import java.util.Properties
-
 plugins {
     id(Dependencies.Gradle.Id.android)
     id(Dependencies.Gradle.Id.kotlinAndroid)
     id(Dependencies.Gradle.Id.googleService)
     id(Dependencies.Gradle.Id.daggerHilt)
     kotlin(Dependencies.Gradle.Id.kapt)
-    kotlin(Dependencies.Gradle.Id.pluginSerialization) version Dependencies.KOTLIN_VERSION
 }
 
 android {
@@ -33,6 +30,9 @@ android {
         }
 
         debug{
+
+        }
+        create("Admin"){
 
         }
     }
@@ -69,17 +69,6 @@ kapt {
 }
 
 dependencies {
-
-    implementation(Dependencies.Kotlin.Ktor.clientCore)
-    implementation(Dependencies.Kotlin.Ktor.clientAndroid)
-    implementation(Dependencies.Kotlin.Ktor.clientCio)
-    implementation(Dependencies.Kotlin.Ktor.contentNegotiation)
-    implementation(Dependencies.Kotlin.Ktor.ktorSerializationKotlinxJson)
-
-    implementation("androidx.compose.material3:material3-window-size-class:1.0.0-alpha16")
-    
-    implementation(Dependencies.Kotlin.serialization)
-
     implementation(Dependencies.Kotlin.Coroutines.android)
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
 
@@ -111,6 +100,8 @@ dependencies {
     implementation(Dependencies.AndroidX.Material.material)
     implementation(Dependencies.AndroidX.Material.materialIconExtended)
     implementation(Dependencies.AndroidX.Material.material3Compose)
+    implementation(Dependencies.AndroidX.Material.material3ComposeWindowsSizeClass)
+
 
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
     kapt(Dependencies.Google.DaggerHilt.kapt)
@@ -126,6 +117,5 @@ dependencies {
     androidTestImplementation(Dependencies.Test.AndroidTest.composeUITest)
     debugImplementation(Dependencies.Test.Debug.uiToolingDebug)
     debugImplementation(Dependencies.Test.Debug.uiTestManifest)
-
-
+    implementation ("com.google.code.gson:gson:2.9.1")
 }

@@ -2,9 +2,9 @@ package com.vaibhav.robin.domain
 
 import androidx.core.util.PatternsCompat
 import com.vaibhav.robin.R
-import com.vaibhav.robin.entities.ui.state.DropdownState
-import com.vaibhav.robin.entities.ui.state.SelectableState
-import com.vaibhav.robin.entities.ui.state.TextFieldState
+import com.vaibhav.robin.presentation.models.state.DropdownState
+import com.vaibhav.robin.presentation.models.state.SelectableState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import com.vaibhav.robin.presentation.UiText
 
 /*
@@ -114,6 +114,21 @@ object Validators {
                 error = true,
                 errorMessage = UiText.StringResource(R.string.phone_invalid)
             )
+        return textFieldState.copy(error = false, errorMessage = null)
+    }
+
+    fun checkReview(textFieldState: TextFieldState): TextFieldState {
+        if (textFieldState.text.isBlank())
+            return textFieldState.copy(
+                error = true,
+                errorMessage = UiText.StringResource(R.string.password_empty)
+            )
+        if (textFieldState.text.length>500){
+            return textFieldState.copy(
+                error = true,
+                errorMessage = UiText.StringResource(R.string.phone_invalid)
+            )
+        }
         return textFieldState.copy(error = false, errorMessage = null)
     }
 }

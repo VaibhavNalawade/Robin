@@ -2,9 +2,10 @@ package com.vaibhav.robin.domain.use_case.database
 
 import androidx.compose.runtime.MutableState
 import com.vaibhav.robin.domain.Validators
+import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
-import com.vaibhav.robin.entities.ui.state.TextFieldState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -37,6 +38,6 @@ class UpdateAddressAndPhone @Inject constructor(private val firestoreRepository:
                 )
             )
             return firestoreRepository.updateProfile(hashmap)
-        } else return flow { emit(Response.Error("Predate Failed")) }
+        } else return flow { emit(Response.Error(ValidationFailedException())) }
     }
 }

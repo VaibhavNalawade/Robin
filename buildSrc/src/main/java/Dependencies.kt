@@ -1,15 +1,15 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.7.10"
-    const val COMPOSE_VERSION = "1.3.0-alpha03"
-    const val COMPOSE_COMPILER_VERSION = "1.3.0"
-    private const val MDC3_VERSION = "1.0.0-alpha16"
+    const val KOTLIN_VERSION = "1.7.20"
+    const val COMPOSE_VERSION = "1.4.0-alpha01"
+    const val COMPOSE_COMPILER_VERSION = "1.3.2"
+    private const val MDC3_VERSION = "1.1.0-alpha01"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "7.4.0-alpha09"
+    private const val AGP_VERSION = "8.0.0-alpha07"
     private const val DAGGERHILT_VERSION="2.42"
 
     /**
@@ -20,17 +20,6 @@ object Dependencies {
     }
 
     object Kotlin {
-
-        object Ktor {
-            const val clientCore = "io.ktor:ktor-client-core:$KTOR_VERSION"
-            const val clientAndroid = "io.ktor:ktor-client-android:$KTOR_VERSION"
-            const val clientCio = "io.ktor:ktor-client-cio:$KTOR_VERSION"
-            const val contentNegotiation = "io.ktor:ktor-client-content-negotiation:$KTOR_VERSION"
-            const val ktorSerializationKotlinxJson =
-                "io.ktor:ktor-serialization-kotlinx-json:$KTOR_VERSION"
-        }
-
-        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC"
         object Coroutines {
             const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
             const val playServiceSupport = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$COROUTINES_VERSION"
@@ -96,6 +85,7 @@ object Dependencies {
             const val material="com.google.android.material:material:1.7.0-beta01"
             const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.3.0-alpha03"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
+            const val material3ComposeWindowsSizeClass="androidx.compose.material3:material3-window-size-class:$MDC3_VERSION"
         }
 
         /**
@@ -105,7 +95,7 @@ object Dependencies {
             const val ui = "androidx.compose.ui:ui:$COMPOSE_VERSION"
             const val foundation="androidx.compose.foundation:foundation:$COMPOSE_VERSION"
             const val UI_TOOLING = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
-            const val NAVIGATION = "androidx.navigation:navigation-compose:2.5.1"
+            const val NAVIGATION = "androidx.navigation:navigation-compose:2.6.0-alpha03"
             const val ACTIVITY = "androidx.activity:activity-compose:1.6.0-beta01"
         }
     }
