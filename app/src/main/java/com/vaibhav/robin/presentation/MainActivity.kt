@@ -3,6 +3,8 @@ package com.vaibhav.robin.presentation
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
@@ -29,7 +31,10 @@ class MainActivity : ComponentActivity() {
                 slideUp.doOnEnd { splashScreenView.remove() }
                 slideUp.start()
             }
-
+        var keepSplashOnScreen = true
+        val delay = 2000L
+        installSplashScreen().setKeepOnScreenCondition { keepSplashOnScreen }
+        Handler(Looper.getMainLooper()).postDelayed({ keepSplashOnScreen = false }, delay)
 
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)

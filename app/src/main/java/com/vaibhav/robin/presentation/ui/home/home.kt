@@ -111,6 +111,7 @@ fun Home(
                     is Response.Success -> {
                         LazyVerticalGrid(
                             horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
+                            verticalArrangement=Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(Dimens.gird_one),
                             columns = GridCells.Adaptive(164.dp)
                         ) {
@@ -521,12 +522,15 @@ fun GridItem(
             ) {
                 Text(
                     text = product.name,
-                    style = typography.titleMedium
+                    style = typography.bodyLarge ,
+                    color= colorScheme.onSurfaceVariant,
+                    maxLines = 1
                 )
-                SpacerVerticalOne()
                 Text(
                     text = "₹ ${product.variant[0].size[0].price.retail}",
-                    style = typography.bodyMedium
+                    style = typography.bodyMedium,
+                    color= colorScheme.primary,
+                    maxLines = 1
                 )
                 SpacerVerticalOne()
             }
