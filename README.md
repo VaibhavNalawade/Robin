@@ -44,6 +44,4 @@ Robin  uses a minimalist aesthetic, creating an experience where content and act
 - [ ] complete todo list
 
 ### Feel free to add issue to issuetracker
-# Design file click here
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2F9LYXdzt9kSTt1tRVkt2iw1%2FRobinApp-Design%3Fnode-id%3D229%253A1043%26t%3Df9mPKdLzIaJrctf6-1" allowfullscreen></iframe>
-
+[Get Figma Desgin file](https://www.figma.com/file/9LYXdzt9kSTt1tRVkt2iw1/RobinApp-Design?t=mGEILdVot3UeYI3w-1)
