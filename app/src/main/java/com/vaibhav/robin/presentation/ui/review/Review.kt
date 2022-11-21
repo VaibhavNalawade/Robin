@@ -53,7 +53,11 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
     }
     LaunchedEffect(key1 = true, block = {
         if (!viewModel.getAuthState()) {
-            navController.navigate(RobinDestinations.LOGIN_ROUTE)
+            navController.navigate(RobinDestinations.LOGIN_ROUTE){
+                popUpTo(RobinDestinations.review("","","","")){
+                    inclusive=true
+                }
+            }
         }
     })
     Column(

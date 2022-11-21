@@ -32,13 +32,12 @@ class MainActivity : ComponentActivity() {
                 slideUp.start()
             }
         var keepSplashOnScreen = true
-        val delay = 2000L
+        val delay = 1000L
         installSplashScreen().setKeepOnScreenCondition { keepSplashOnScreen }
         Handler(Looper.getMainLooper()).postDelayed({ keepSplashOnScreen = false }, delay)
 
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
             RobinAppScaffold()
         }

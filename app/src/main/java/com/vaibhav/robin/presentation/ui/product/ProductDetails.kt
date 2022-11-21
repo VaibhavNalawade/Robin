@@ -75,6 +75,9 @@ fun ProductDetails(
     val onObjectHeight = remember { mutableStateOf(0) }
     val response = viewModel.productResponse
     val fab = fabState(addToCart = viewModel.cartAdd)
+    val snackbarHost = remember {
+        SnackbarHostState()
+    }
 
     BottomSheetScaffold(
         modifier = Modifier,
@@ -330,30 +333,41 @@ fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: 
                 style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
             )
         }
-        
+
         when (val reviewResponse = viewModel.reviewsResponse) {
             is Error -> item {
                 ShowError(exception = reviewResponse.message) {
                 }
             }
 
-            Loading -> item { Loading() }
+            Loading -> item {
+                Loading()
+            }
+
             is Success -> {
-                if(reviewResponse.data.isNotEmpty())
-                items(reviewResponse.data) { review ->
-                    ReviewContainer(review = review)
-                }
+                if (reviewResponse.data.isNotEmpty())
+                    items(reviewResponse.data) { review ->
+                        ReviewContainer(review = review)
+                    }
                 else item {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        model = R.drawable.desert,
-                        contentScale = ContentScale.Fit,
-                        contentDescription = "",
-                    )
-                    Text(text = "Nothing to see here", style = typography.titleMedium)
-                    Text(text = "Please consider to Review", style = typography.titleMedium)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            model = R.drawable.desert,
+                            contentScale = ContentScale.Fit,
+                            contentDescription = "",
+                        )
+                        Text(
+                            text = stringResource(id = R.string.nothing_to_see_here),
+                            style = typography.titleLarge
+                        )
+                        Text(
+                            text = stringResource(id = R.string.encourage_write_review),
+                            style = typography.titleMedium
+                        )
+                    }
                 }
             }
         }
@@ -420,7 +434,7 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
                     tint = colorScheme.primary
                 )
                 Text(
-                    text = product.rating.stars?.toString()?:"Not Rated",
+                    text = product.rating.stars?.toString() ?: "Not Rated",
                     style = typography.bodyMedium.copy(colorScheme.primary)
                 )
                 SpacerHorizontalOne()

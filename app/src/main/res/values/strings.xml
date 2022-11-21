@@ -30,7 +30,6 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="postcode_Invalid">Postcode is Wrong</string>
-    <string name="sign_in">Sign In</string>
     <string name="agreement_short">By continuing, you agree to our User Agreement and Privacy Policy.</string>
     <string name="email">Email</string>
     <string name="forgot_password">Forgot your username or password ?</string>
@@ -46,6 +45,8 @@
     <string name="review_explain">Tell other what you think</string>
     <string name="added_to_cart">Added to cart</string>
     <string name="add_to_cart">Add to cart</string>
+    <string name="nothing_to_see_here">Nothing to see here</string>
+    <string name="encourage_write_review">Please consider to write a Review</string>
     <!--Error-->
     <string name="network_error_title">Ohh Snap!!!</string>
     <string name="network_error_message">Check your internet connection and try again</string>
@@ -60,6 +61,10 @@
     <string name="weeks">weeks ago.</string>
     <string name="months">months ago.</string>
     <string name="years">years ago.</string>
+    <!--Account-->
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="signing_out_success">Signing Out Successful</string>
     <!--Testing-->
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
     <string name="profile_photo_test" translatable="false" tools:ignore="TypographyDashes">https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&amp;token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda</string>

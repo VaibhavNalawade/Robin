@@ -45,6 +45,8 @@ fun Home(
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage = stringResource(id = R.string.error_occurred)
+    val signInSuccessMessage = stringResource(id = R.string.signing_out_success)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -61,16 +63,17 @@ fun Home(
                             viewModel.signOut().collect { response ->
                                 when (response) {
                                     is Response.Error -> showMessage(
-                                      state =   snackbarHostState,
-                                        message = "ERROR"
+                                        state = snackbarHostState,
+                                        message = errorMessage
                                     )
-                                    is Response.Loading -> showMessage(
-                                       state =  snackbarHostState,
-                                        message = "In Progress"
-                                    )
+
+                                    is Response.Loading -> {
+                                        /*Do Nothing*/
+                                    }
+
                                     is Response.Success -> showMessage(
                                         state = snackbarHostState,
-                                        message = "Success"
+                                        message = signInSuccessMessage
                                     )
                                 }
                             }
@@ -105,17 +108,17 @@ fun Home(
                 modifier = Modifier
                     .padding(contentPadding)
             ) {
-                when (val res = viewModel.products) {
-                    is Response.Error -> ShowError(res.message) {}
+                when (val response = viewModel.products) {
+                    is Response.Error -> ShowError(response.message) {}
                     is Response.Loading -> Loading()
                     is Response.Success -> {
                         LazyVerticalGrid(
                             horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
-                            verticalArrangement=Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
                             contentPadding = PaddingValues(Dimens.gird_one),
-                            columns = GridCells.Adaptive(164.dp)
+                            columns = GridCells.Adaptive(minSize = 164.dp)
                         ) {
-                            items(items = res.data) { product ->
+                            items(items = response.data) { product ->
                                 GridItem(product = product) { id ->
                                     navController.navigate(RobinDestinations.product(id))
                                 }
@@ -144,13 +147,13 @@ fun RobinAppBar(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
+                    .align(alignment = Alignment.CenterHorizontally)
                     .padding(horizontal = Dimens.gird_three)
                     .statusBarsPadding()
-                    .height(48.dp),
+                    .height(height = 48.dp),
                 tonalElevation = Dimens.surface_elevation_5,
                 shadowElevation = 1.dp,
-                shape = RoundedCornerShape(100)
+                shape = RoundedCornerShape(percent = 100)
             ) {
                 Box(
                     modifier = Modifier
@@ -159,7 +162,7 @@ fun RobinAppBar(
                     val scope = rememberCoroutineScope()
                     IconButton(
                         modifier = Modifier
-                            .align(Alignment.CenterStart),
+                            .align(alignment = Alignment.CenterStart),
                         onClick = {
                             scope.launch {
                                 if (drawerState.isClosed) drawerState.open()
@@ -185,7 +188,7 @@ fun RobinAppBar(
                         )
                     )
                     IconButton(modifier = Modifier
-                        .align(Alignment.CenterEnd),
+                        .align(alignment = Alignment.CenterEnd),
                         onClick = {
                             //TODO Profile Button Click Implementation
                             scope.launch {
@@ -204,7 +207,7 @@ fun RobinAppBar(
                             )
                         else
                             CircularImage(
-                                modifier = Modifier.size(32.dp),
+                                modifier = Modifier.size(size = 32.dp),
                                 contentDescription = "",
                                 image = profileData.Image
                             )
@@ -473,8 +476,8 @@ fun AuthUserNavigationItem(
     userAuthenticated: Boolean,
     signOut: () -> Unit
 ) {
-    val user = if (userAuthenticated) "Sign out"
-    else "Sign in"
+    val user = if (userAuthenticated) stringResource(id = R.string.sign_out)
+    else stringResource(id = R.string.sign_in)
     NavigationDrawerItem(
         modifier = Modifier
             .padding(NavigationDrawerItemDefaults.ItemPadding),
@@ -510,7 +513,8 @@ fun GridItem(
                     .defaultMinSize(
                         minHeight = 220.dp,
                         minWidth = 164.dp
-                    ),
+                    )
+                    .fillMaxWidth(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 model = product.variant[0].media.images[0]
@@ -522,14 +526,14 @@ fun GridItem(
             ) {
                 Text(
                     text = product.name,
-                    style = typography.bodyLarge ,
-                    color= colorScheme.onSurfaceVariant,
+                    style = typography.bodyLarge,
+                    color = colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
                 Text(
                     text = "₹ ${product.variant[0].size[0].price.retail}",
                     style = typography.bodyMedium,
-                    color= colorScheme.primary,
+                    color = colorScheme.primary,
                     maxLines = 1
                 )
                 SpacerVerticalOne()

@@ -30,7 +30,7 @@ import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 fun RobinDropdownMenuBox(
     dropdownOptionList: List<DropdownOption>,
     state: MutableState<DropdownState>,
-    modifier:Modifier = Modifier.fillMaxWidth()
+    modifier:Modifier = Modifier
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -38,54 +38,18 @@ fun RobinDropdownMenuBox(
 
     Column(modifier) {
         ExposedDropdownMenuBox(
-            modifier = Modifier
-                .border(
-                    BorderStroke(
-                        width = 1.dp,
-                        color = if (!state.value.error) colorScheme.outline else colorScheme.error
-                    ),
-                    shape = shapes.extraSmall
-                ),
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(Dimens.gird_two))
-                dropdownOptionList[index].leadingIcon?.let { vector ->
-                    Icon(
-                        imageVector = vector,
-                        contentDescription = dropdownOptionList[index].contentDescription
-                    )
-                }
-                Spacer(
-                    modifier = Modifier.width(Dimens.gird_two)
-                )
-                Text(
-                    text = dropdownOptionList[index].options,
-                    style = typography.bodyLarge
-                )
-                Column(
-                    horizontalAlignment = Alignment.End
-                ) {
-                    IconButton(
-
-                        modifier = Modifier.clearAndSetSemantics { },
-                        onClick = {}
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = "Trailing icon for exposed dropdown menu",
-                            tint = colorScheme.onSurface,
-                            modifier = Modifier.rotate(
-                                if (expanded) 180f
-                                else 360f
-                            )
-                        )
-                    }
-                }
-            }
+            TextField(
+                // The `menuAnchor` modifier must be passed to the text field for correctness.
+                modifier = Modifier.menuAnchor(),
+                value = dropdownOptionList[index].options,
+                onValueChange = {  },
+                label = { Text("Label") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            )
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }

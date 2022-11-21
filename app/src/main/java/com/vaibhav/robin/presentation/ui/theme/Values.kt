@@ -23,10 +23,6 @@ sealed class Values{
         val bottomSheetOnTop=24.dp
 
     }
-    object CustomColor {
-        const val cardSurfaceAlpha = 0.7f
-        const val subtextAlpha=0.7f
-    }
 }
 
 

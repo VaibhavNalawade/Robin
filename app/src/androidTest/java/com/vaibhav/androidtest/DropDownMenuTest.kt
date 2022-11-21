@@ -36,8 +36,7 @@ class DropDownMenuTest {
 
 
     @Test
-    fun dropDownMenuTestClickTest() {
-        composeTestRule.setContent {
+    fun dropDownMenuTestClickTest() {        composeTestRule.setContent {
             RobinAppPreviewScaffold {
                 RobinDropdownMenuBox(
                     state = state,

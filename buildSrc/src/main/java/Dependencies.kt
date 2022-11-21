@@ -3,13 +3,13 @@ object Dependencies {
     const val KOTLIN_VERSION = "1.7.20"
     const val COMPOSE_VERSION = "1.4.0-alpha01"
     const val COMPOSE_COMPILER_VERSION = "1.3.2"
-    private const val MDC3_VERSION = "1.1.0-alpha01"
+    private const val MDC3_VERSION = "1.1.0-alpha02"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha07"
+    private const val AGP_VERSION = "8.0.0-alpha08"
     private const val DAGGERHILT_VERSION="2.42"
 
     /**
