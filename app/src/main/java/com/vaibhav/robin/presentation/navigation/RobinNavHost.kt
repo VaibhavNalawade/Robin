@@ -42,7 +42,7 @@ fun RobinNavHost(navController: NavHostController) {
         ) { SearchBar(navController) }
         composable(RobinDestinations.CART) { Cart(hiltViewModel(),navController) }
         composable(
-            RobinDestinations.review("{Id}", "{name}", "{image}", "{star}"),
+            RobinDestinations.REVIEW_SIGNATURE,
             listOf(
                 navArgument("Id") { type = NavType.StringType },
                 navArgument("name") { type = NavType.StringType },

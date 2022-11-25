@@ -3,6 +3,7 @@
 package com.vaibhav.robin.presentation.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -120,7 +121,7 @@ fun Home(
                         ) {
                             items(items = response.data) { product ->
                                 GridItem(product = product) { id ->
-                                    navController.navigate(RobinDestinations.product(id))
+                                    navController.navigate(RobinDestinations.product(id).also { Log.e("nav",it) })
                                 }
                             }
                         }

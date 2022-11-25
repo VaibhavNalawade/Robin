@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.ui.review
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -53,9 +54,11 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
     }
     LaunchedEffect(key1 = true, block = {
         if (!viewModel.getAuthState()) {
-            navController.navigate(RobinDestinations.LOGIN_ROUTE){
-                popUpTo(RobinDestinations.review("","","","")){
-                    inclusive=true
+            navController.navigate(RobinDestinations.LOGIN_ROUTE) {
+                popUpTo(
+                    route = RobinDestinations.REVIEW_SIGNATURE
+                ) {
+                    inclusive = true
                 }
             }
         }

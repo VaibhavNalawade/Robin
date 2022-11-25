@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
 import com.vaibhav.robin.presentation.ui.common.ShowError
@@ -45,6 +46,14 @@ fun Cart(
         mutableStateOf(0)
     }
     LaunchedEffect(key1 = false, block = {
+        if (!viewModel.getAuthState())
+            navController.navigate(RobinDestinations.LOGIN_ROUTE) {
+                popUpTo(
+                    route = RobinDestinations.CART
+                ) {
+                    inclusive = true
+                }
+            }
         viewModel.launch()
     })
     Surface(tonalElevation = Dimens.surface_elevation_1) {
@@ -60,7 +69,7 @@ fun Cart(
                     when (val item = viewModel.cartItem) {
                         is Response.Error -> item {
                             ShowError(exception = item.message) {
-
+//todo
                             }
                         }
 
@@ -262,7 +271,7 @@ fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
                         Text(text = product.brand.name, style = typography.bodyMedium)
                         SpacerHorizontalTwo()
                         Text(
-                            text = "$ ${product.variant[variantIndex].size[0].price.retail}",
+                            text = "₹ ${product.variant[variantIndex].size[0].price.retail}",
                             style = typography.titleMedium
                         )
                         SpacerHorizontalOne()

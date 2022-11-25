@@ -14,9 +14,9 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
+import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +31,7 @@ class ProductViewModel @Inject constructor(
     var reviewsResponse by mutableStateOf<Response<List<Review>>>(Loading)
     var yourReviewResponse by mutableStateOf<Response<Review>>(Loading)
     var favouriteToggleButtonState by mutableStateOf(false)
+    fun getAuthState() =authUseCases.isUserAuthenticated()
 
     fun setProductId(str: String) {
         if (_productId != str && (productResponse as? Success)?.data?.name.isNullOrBlank()) viewModelScope.launch(
@@ -78,32 +79,28 @@ class ProductViewModel @Inject constructor(
     private val _stars = mutableStateOf(0)
     val stars = _stars
 
-    var favouriteAdd by mutableStateOf<Response<Boolean>>(Success(false))
-        private set
-
-    var favouriteRemove by mutableStateOf<Response<Boolean>>(Success(false))
-        private set
-
     fun addFavorite() = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.addFavourite(
             _productId, Favourite(_productId, selectedSize.value, selectedVariant.value)
         ).collect {
             when(it){
-                is Error -> TODO()
+                is Error -> {
+
+                }
                 Loading -> {
 
                 }
                 is Success -> favouriteToggleButtonState=it.data
             }
         }
-
-
     }
 
     fun removeFavorite() = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.removeFavourite(_productId).collect {
             when(it){
-                is Error -> TODO()
+                is Error -> {
+
+                }
                 Loading -> {
 
                 }
@@ -115,8 +112,6 @@ class ProductViewModel @Inject constructor(
     var cartAdd by mutableStateOf<Response<Boolean>>(Success(false))
         private set
 
-    var cartRemove by mutableStateOf<Response<Boolean>>(Success(false))
-        private set
     fun addCartItem()=viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.addCartItem(_productId, CartItem(_productId,_selectedVariant.value,_selectedSize.value)).collect{
             cartAdd=it

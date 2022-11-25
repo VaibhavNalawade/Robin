@@ -42,9 +42,11 @@ class CartViewModel @Inject constructor(
             productData.add(index, it)
         }
     }
-}
 
-/*
+
+    fun getAuthState() = authUseCases.isUserAuthenticated()
+}
+/*}
     private val _cartItemsUiState = MutableStateFlow<CartItemsUiState>(CartItemsUiState.Loading())
     val cartItemsUiState = _cartItemsUiState
 

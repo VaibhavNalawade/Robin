@@ -1,7 +1,6 @@
 package com.vaibhav.robin.presentation.ui.product
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.Color
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -12,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.rememberBottomSheetScaffoldState
@@ -83,7 +81,15 @@ fun ProductDetails(
         modifier = Modifier,
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { viewModel.addCartItem() },
+                onClick = {
+                    if (viewModel.getAuthState())
+                    viewModel.addCartItem()
+                    else navController.navigate(RobinDestinations.LOGIN_ROUTE){
+                        popUpTo(RobinDestinations.LOGIN_ROUTE){
+                            inclusive=true
+                        }
+                    }
+                          },
                 expanded = expandedFab,
                 icon = fab.icon,
                 text = { Text(text = fab.text) },
@@ -206,9 +212,9 @@ fun BackLayer(
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .height(appbarSize)
-                    .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 FilledIconButton(onClick = {
                     navController.popBackStack()
                 }) {
@@ -222,12 +228,23 @@ fun BackLayer(
                 FilledIconToggleButton(
                     checked = viewModel.favouriteToggleButtonState,
                     onCheckedChange = {
-                        if (it) viewModel.addFavorite() else viewModel.removeFavorite()
+                        if (viewModel.getAuthState())
+                            if (it)
+                                viewModel.addFavorite()
+                            else
+                                viewModel.removeFavorite()
+                        else
+                            navController.navigate(RobinDestinations.LOGIN_ROUTE) {
+                                popUpTo(RobinDestinations.LOGIN_ROUTE) {
+                                    inclusive = true
+                                }
+                            }
                     }) {
-                    if (viewModel.favouriteToggleButtonState) Icon(
-                        painter = painterResource(id = R.drawable.favorite_fill1_wght700_grad0_opsz24),
-                        contentDescription = "Localized description",
-                    )
+                    if (viewModel.favouriteToggleButtonState)
+                        Icon(
+                            painter = painterResource(id = R.drawable.favorite_fill1_wght700_grad0_opsz24),
+                            contentDescription = "Localized description",
+                        )
                     else Icon(
                         painter = painterResource(id = R.drawable.favorite_fill0_wght700_grad0_opsz24),
                         contentDescription = "Localized description",
