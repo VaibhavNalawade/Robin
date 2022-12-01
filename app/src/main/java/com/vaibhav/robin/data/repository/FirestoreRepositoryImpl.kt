@@ -106,7 +106,7 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getCartItems(): Flow<Response<List<CartItem>>> = tryCatchScaffold {
         source.fetchFromReferenceToObject(
-            firestore.collection("ProfileData").document(auth.getUserUid()!!).collection("Cart"), limitValue = 4
+            firestore.collection("ProfileData").document(auth.getUserUid()!!).collection("Cart"), limitValue = 100
         )
     }
 

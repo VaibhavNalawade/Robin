@@ -16,6 +16,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,9 +43,8 @@ import java.lang.Exception
 fun Cart(
     viewModel: CartViewModel, navController: NavController
 ) {
-    val subTotal = remember {
-        mutableStateOf(0)
-    }
+    val subTotal = remember { mutableStateOf(0) }
+
     LaunchedEffect(key1 = false, block = {
         if (!viewModel.getAuthState())
             navController.navigate(RobinDestinations.LOGIN_ROUTE) {
@@ -56,35 +56,45 @@ fun Cart(
             }
         viewModel.launch()
     })
-    Surface(tonalElevation = Dimens.surface_elevation_1) {
+
+    Surface(color = colorScheme.surface) {
         Box {
-            Column(modifier = Modifier.statusBarsPadding()) {
-                CartAppBar(items = 0) { navController.popBackStack() }
+            Column(
+                modifier = Modifier
+                    .statusBarsPadding()
+            ) {
+                CartAppBar(
+                    items = (viewModel.cartItem as? Response.Success)?.data?.size ?: 0,
+                    onBackButton = { navController.popBackStack() }
+                )
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                    contentPadding = PaddingValues(8.dp)
                 ) {
-
                     when (val item = viewModel.cartItem) {
                         is Response.Error -> item {
                             ShowError(exception = item.message) {
-//todo
+                                viewModel.launch()
                             }
                         }
 
-                        Response.Loading -> item { Loading() }
-                        is Response.Success -> if (item.data.isNotEmpty()) item.data.forEachIndexed { index, cartItem ->
-                            item {
-                                CartItemListLoader(
-                                    cartItemIndex = index,
-                                    productList = viewModel.productData,
-                                    subTotal
-                                ) {
-                                    viewModel.getDetails(cartItem.productId, index)
+                        is Response.Loading -> item {
+                            Loading()
+                        }
+
+                        is Response.Success -> if (item.data.isNotEmpty())
+                            item.data.forEachIndexed { index, cartItem ->
+                                item {
+                                    CartItemListLoader(
+                                        cartItemIndex = index,
+                                        productList = viewModel.productData,
+                                        subTotal
+                                    ) {
+                                        viewModel.getDetails(cartItem.productId, index)
+                                    }
                                 }
                             }
-                        }
                         else item {
                             EmptyCart()
                         }
@@ -92,8 +102,8 @@ fun Cart(
                 }
             }
             Surface(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                tonalElevation = Dimens.surface_elevation_5,
+                modifier = Modifier.align(Alignment.BottomCenter).onGloballyPositioned {  },
+                tonalElevation = Dimens.surface_elevation_1,
                 shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
             ) {
                 Column {
@@ -189,16 +199,16 @@ fun CartItemListLoader(
     LaunchedEffect(key1 = true, block = { function.invoke() })
     if (productList.isNotEmpty())
         when (val product = productList[cartItemIndex]) {
-        Response.Loading -> {
-            CartItemLoading()
-        }
+            Response.Loading -> {
+                CartItemLoading()
+            }
 
-        is Response.Error -> ShowError(exception = Exception()) {
-            // FIXME: Need to implement retry Button on Error
-            TODO()
+            is Response.Error -> ShowError(exception = Exception()) {
+
+            }
+
+            is Response.Success -> CartItem(product = product.data, variantIndex = 0, total)
         }
-        is Response.Success -> CartItem(product = product.data, variantIndex = 0, total)
-    }
 
 }
 

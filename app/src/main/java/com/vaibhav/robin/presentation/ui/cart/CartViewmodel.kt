@@ -31,7 +31,7 @@ class CartViewModel @Inject constructor(
         (1..100).map { Loading }.toMutableStateList()
 
 
-    suspend fun launch() = viewModelScope.launch(Dispatchers.IO) {
+     fun launch() = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.getCartItem().collect {
             cartItem = it
         }
@@ -45,6 +45,7 @@ class CartViewModel @Inject constructor(
 
 
     fun getAuthState() = authUseCases.isUserAuthenticated()
+
 }
 /*}
     private val _cartItemsUiState = MutableStateFlow<CartItemsUiState>(CartItemsUiState.Loading())

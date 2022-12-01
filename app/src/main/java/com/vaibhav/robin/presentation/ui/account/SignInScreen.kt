@@ -29,184 +29,188 @@ import androidx.navigation.compose.rememberNavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.presentation.ExceptionHandler
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.gird_two
 import kotlinx.coroutines.launch
 
 @Composable
 fun Login(navController: NavController, viewModel: SignInViewModel) {
-
     val response = viewModel.signInResponse
-
-    Row(modifier = Modifier.fillMaxSize()) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.15f)
-                .background(Color.DarkGray),
-            content = {}
-        )
-
-        Column(
+    val state = rememberMessageBarState()
+    ContentWithMessageBar(
+        messageBarState = state,
+        position = MessageBarPosition.BOTTOM
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(gird_two)
         ) {
-
-            SpacerVerticalFour()
-
-            Text(
-                text = stringResource(id = R.string.sign_in),
-                style = typography.headlineMedium
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.15f)
+                    .background(Color.DarkGray),
+                content = {}
             )
-
-            SpacerVerticalTwo()
-
-            Text(
-                text = stringResource(R.string.agreement_short),
-                style = typography.bodyMedium
-            )
-
-            SpacerVerticalFour()
-
-            /**
-             * todo Validation need to be implemented when error message functionality added to M3
-             * todo currently waiting TBD
-             */
-
-            RobinTextField(
-                state = viewModel.email,
-                label = {
-                    Text(text = stringResource(R.string.email))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                leadingIcon = {
-                    Icon(
-                        Icons.Rounded.Email,
-                        contentDescription = null
-                    )
-                },
-            )
-
-            SpacerVerticalTwo()
-
-            PasswordTextField(
-                state = viewModel.password,
-                label = {
-                    Text(stringResource(id = R.string.password))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    viewModel.viewModelScope.launch {
-                        viewModel.signWithEmailPassword()
-                    }
-                })
-            )
-
-            SpacerVerticalFour()
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                onClick = {
-                    viewModel.viewModelScope.launch {
-                        viewModel.signWithEmailPassword()
-                    }
-                },
-                content = {
-                    LoginButtonState(response, navController)
-                }
-            )
-
-            SpacerVerticalTwo()
-
-            Text(
-                text = stringResource(R.string.forgot_password),
-                style = typography.bodySmall
-            )
-
-            SpacerVerticalTwo()
-
-            HyperlinkText(
-                fullText = "New to Robin? SIGN UP",
-                onClick = { navController.navigate(RobinDestinations.SIGN_UP) },
-                linkText = listOf("SIGN UP")
-            )
-
-            SpacerVerticalTwo()
-
-            SpaceBetweenContainer(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(gird_two)
             ) {
-                DividerHorizontal(modifier = Modifier.fillMaxWidth(.40f))
-                Text(text = "OR")
-                DividerHorizontal(modifier = Modifier.fillMaxWidth(.45f))
-            }
-            SpacerVerticalTwo()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = stringResource(R.string.complete_the_payment),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                SpacerVerticalFour()
+                Text(
+                    text = stringResource(id = R.string.sign_in),
+                    style = typography.headlineMedium
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = "Google")
-            }
-            SpacerVerticalTwo()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.microsoft_logo),
-                    contentDescription = stringResource(R.string.complete_the_payment),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                SpacerVerticalTwo()
+                Text(
+                    text = stringResource(R.string.agreement_short),
+                    style = typography.bodyMedium
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = "Microsoft")
-            }
-            SpacerVerticalTwo()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = stringResource(R.string.complete_the_payment),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                SpacerVerticalFour()
+                /**
+                 * todo Validation need to be implemented when error message functionality added to M3
+                 * todo currently waiting TBD
+                 */
+                RobinTextField(
+                    state = viewModel.email,
+                    label = {
+                        Text(text = stringResource(R.string.email))
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            Icons.Rounded.Email,
+                            contentDescription = null
+                        )
+                    },
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = "Facebook")
-            }
-            SpacerVerticalTwo()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.twitter),
-                    contentDescription = stringResource(R.string.complete_the_payment),
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+
+                SpacerVerticalTwo()
+
+                PasswordTextField(
+                    state = viewModel.password,
+                    label = {
+                        Text(stringResource(id = R.string.password))
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.signWithEmailPassword()
+                        }
+                    })
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = "Twitter")
+
+                SpacerVerticalFour()
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RectangleShape,
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.signWithEmailPassword()
+                        }
+                    },
+                    content = {
+                        LoginButtonState(response, navController, state)
+                    }
+                )
+
+                SpacerVerticalTwo()
+
+                Text(
+                    text = stringResource(R.string.forgot_password),
+                    style = typography.bodySmall
+                )
+
+                SpacerVerticalTwo()
+
+                HyperlinkText(
+                    fullText = "New to Robin? SIGN UP",
+                    onClick = { navController.navigate(RobinDestinations.SIGN_UP) },
+                    linkText = listOf("SIGN UP")
+                )
+
+                SpacerVerticalTwo()
+
+                SpaceBetweenContainer(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    DividerHorizontal(modifier = Modifier.fillMaxWidth(.40f))
+                    Text(text = "OR")
+                    DividerHorizontal(modifier = Modifier.fillMaxWidth(.45f))
+                }
+                SpacerVerticalTwo()
+                OutlinedButton(modifier = Modifier.fillMaxWidth(),
+                    shape = RectangleShape,
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.google),
+                        contentDescription = stringResource(R.string.complete_the_payment),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(text = "Google")
+                }
+                SpacerVerticalTwo()
+                OutlinedButton(modifier = Modifier.fillMaxWidth(),
+                    shape = RectangleShape,
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.microsoft_logo),
+                        contentDescription = stringResource(R.string.complete_the_payment),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(text = "Microsoft")
+                }
+                SpacerVerticalTwo()
+                OutlinedButton(modifier = Modifier.fillMaxWidth(),
+                    shape = RectangleShape,
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.facebook),
+                        contentDescription = stringResource(R.string.complete_the_payment),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(text = "Facebook")
+                }
+                SpacerVerticalTwo()
+                OutlinedButton(modifier = Modifier.fillMaxWidth(),
+                    shape = RectangleShape,
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.twitter),
+                        contentDescription = stringResource(R.string.complete_the_payment),
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(text = "Twitter")
+                }
             }
         }
     }
 }
 
 @Composable
-fun LoginButtonState(response: Response<Boolean>, navController: NavController) {
+fun LoginButtonState(
+    response: Response<Boolean>,
+    navController: NavController,
+    state: MessageBarState
+) {
     when (response) {
         is Loading -> {
             CircularProgressIndicator(
@@ -215,16 +219,19 @@ fun LoginButtonState(response: Response<Boolean>, navController: NavController) 
                 strokeWidth = 5.dp
             )
         }
+
         is Success -> {
             if (response.data) {
                 LaunchedEffect(key1 = true, block = {
                     navController.popBackStack()
                 })
-            }
-            else DefaultButtonAppearance()
+            } else DefaultButtonAppearance()
         }
+
         is Error -> {
             DefaultButtonAppearance()
+            val exceptionMessage = ExceptionHandler(response.message)
+            state.addError(response.message)
         }
     }
 }

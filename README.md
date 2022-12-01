@@ -37,9 +37,9 @@ Robin  uses a minimalist aesthetic, creating an experience where content and act
 - [ ]  Need to add Favourite screen
 
 ## :bug: Known bug
-- [ ] un-authenticated user causes crash when user need to be authenticated
-- [ ] login checks failing
-- [ ] item with no review causing ui bug on product page
+- [x] un-authenticated user causes crash when user need to be authenticated
+- [x] login checks failing
+- [x] item with no review causing ui bug on product page
 - [ ] cart individual item sometimes not properly loading
 - [ ] complete todo list
 
