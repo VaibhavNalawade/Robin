@@ -9,14 +9,14 @@ object Dependencies {
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha08"
-    private const val DAGGERHILT_VERSION="2.42"
+    private const val AGP_VERSION = "8.0.0-alpha09"
+    private const val DAGGERHILT_VERSION="2.44"
 
     /**
      * Projects Third party Support Section
      */
     object RobinAppSupport {
-        const val coil = "io.coil-kt:coil-compose:2.1.0"
+        const val coil = "io.coil-kt:coil-compose:2.2.2"
     }
 
     object Kotlin {
@@ -78,8 +78,8 @@ object Dependencies {
         }
 
         object Paging {
-            const val runtime = "androidx.paging:paging-runtime-ktx:3.2.0-alpha02"
-            const val compose = "androidx.paging:paging-compose:1.0.0-alpha16"
+            const val runtime = "androidx.paging:paging-runtime-ktx:3.2.0-alpha03"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha17"
         }
         object Material{
             const val material="com.google.android.material:material:1.7.0-beta01"
@@ -126,7 +126,7 @@ object Dependencies {
      * Firebase Section
      */
     object Firebase {
-        const val BOM = "com.google.firebase:firebase-bom:30.3.1"
+        const val BOM = "com.google.firebase:firebase-bom:31.1.0"
         const val firestore = "com.google.firebase:firebase-firestore-ktx"
         const val auth="com.google.firebase:firebase-auth-ktx"
     }

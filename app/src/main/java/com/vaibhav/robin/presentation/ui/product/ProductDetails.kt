@@ -393,22 +393,7 @@ fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: 
 }
 
 
-@Composable
-fun BottomSheetHandle() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = Dimens.gird_one),
-        contentAlignment = Alignment.Center
-    ) {
-        Surface(modifier = Modifier
-            .height(4.dp)
-            .width(32.dp),
-            color = colorScheme.onSurfaceVariant.copy(0.40f),
-            shape = shapes.extraSmall,
-            content = {})
-    }
-}
+
 
 @Composable
 fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) {

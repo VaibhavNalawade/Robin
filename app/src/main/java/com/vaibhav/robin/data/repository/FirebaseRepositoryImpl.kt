@@ -1,7 +1,6 @@
 package com.vaibhav.robin.data.repository
 
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.vaibhav.robin.data.models.CartItem
@@ -11,17 +10,18 @@ import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.data.remote.FirestoreSource
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.repository.AuthRepository
-import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
+import com.vaibhav.robin.domain.repository.DatabaseRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import java.util.UUID
 import javax.inject.Inject
-import kotlin.math.log
 
-class FirestoreRepositoryImpl @Inject constructor(
+class FirebaseRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val source: FirestoreSource,
     private val auth: AuthRepository
-) : FirestoreDatabaseRepository {
+) : DatabaseRepository {
     override suspend fun updateProfile(hashMap: HashMap<String, Any>) = try {
         source.writeToReference(
             firestore.collection("ProfileData").document(auth.getUserUid()!!),
@@ -97,9 +97,12 @@ class FirestoreRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun addCartItem(productId: String,cartItem: CartItem): Flow<Response<Boolean>> = tryCatchScaffold {
+    override suspend fun addCartItem(item: CartItem): Flow<Response<Boolean>> = tryCatchScaffold {
+        val cartItem=item.copy(cartId = UUID.randomUUID().toString())
         source.writeToReference(
-            firestore.collection("ProfileData").document(auth.getUserUid()!!).collection("Cart").document(productId),
+            firestore.collection("ProfileData").document(auth.getUserUid()!!).collection("Cart").document(
+                cartItem.cartId
+            ),
             cartItem
         )
     }
@@ -112,6 +115,23 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getProducts(): Flow<Response<List<Product>>> =tryCatchScaffold {
         source.fetchFromReferenceToObject(firestore.collection("Product"),50)
+    }
+
+    override suspend fun listenForCartItems()= callbackFlow<Response<List<CartItem>>> {
+        source.listenDocumentChanges(
+            firestore.collection("ProfileData")
+                .document(auth.getUserUid()!!)
+                .collection("Cart"))
+            .collect{
+           trySend(Response.Success( it.toObjects(CartItem::class.java)))
+        }
+    }
+
+    override suspend fun deleteCartItem(productId: String): Flow<Response<Boolean>> = tryCatchScaffold {
+        source.deleteDocument(
+            firestore.collection("ProfileData")
+                .document(auth.getUserUid()!!)
+                .collection("Cart").document(productId))
     }
 
 

@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.ui.cart
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,7 @@ import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,8 +33,10 @@ class CartViewModel @Inject constructor(
         (1..100).map { Loading }.toMutableStateList()
 
 
-     fun launch() = viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.getCartItem().collect {
+    fun launch() = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.listenForCartItems().catch {
+            Log.e("Error Occurred",it.message?:it.stackTraceToString())
+        }.collect {
             cartItem = it
         }
     }
@@ -45,6 +49,23 @@ class CartViewModel @Inject constructor(
 
 
     fun getAuthState() = authUseCases.isUserAuthenticated()
+    fun removeCartItem(cartId: String) = viewModelScope.launch {
+        Log.e(
+            "REmove",
+            "Clicked"
+        )
+        databaseUseCases.removeCartItems(cartId).collect {
+            Log.e("Error", "it.message.message!!")
+            when (it) {
+                is Response.Error -> {
+                    Log.e("Error", it.message.message!!)
+                }
+
+                Loading -> Log.e("Loading", "loda")
+                is Response.Success -> Log.e("Success", it.data.toString())
+            }
+        }
+    }
 
 }
 /*}

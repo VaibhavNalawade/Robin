@@ -1,8 +1,8 @@
 package com.vaibhav.robin.domain.use_case.database
 
-import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
+import com.vaibhav.robin.domain.repository.DatabaseRepository
 import javax.inject.Inject
 
-class GetProducts@Inject constructor(private val repo:FirestoreDatabaseRepository) {
+class GetProducts@Inject constructor(private val repo:DatabaseRepository) {
 suspend operator fun invoke()=repo.getProducts()
 }

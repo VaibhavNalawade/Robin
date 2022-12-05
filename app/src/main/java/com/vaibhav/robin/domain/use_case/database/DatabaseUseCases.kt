@@ -13,5 +13,7 @@ data class DatabaseUseCases (
     val checkFavourite:CheckFavourite,
     val addCartItem: AddCartItem,
     val getCartItem:GetCartItem,
-    val getProducts:GetProducts
+    val getProducts:GetProducts,
+    val listenForCartItems:ListenForCartItems,
+    val removeCartItems: RemoveCartItems
 )

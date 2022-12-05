@@ -6,13 +6,13 @@ import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.Validators
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
+import com.vaibhav.robin.domain.repository.DatabaseRepository
 import com.vaibhav.robin.presentation.models.state.TextFieldState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class WriteReview @Inject constructor(private val repo: FirestoreDatabaseRepository) {
+class WriteReview @Inject constructor(private val repo: DatabaseRepository) {
 
     suspend operator fun invoke(
         userName: String,

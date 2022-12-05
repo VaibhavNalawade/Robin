@@ -7,7 +7,7 @@ import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.model.Response
 import kotlinx.coroutines.flow.Flow
 
-interface FirestoreDatabaseRepository {
+interface DatabaseRepository {
     suspend fun updateProfile(hashMap: HashMap<String, Any>): Flow<Response<Boolean>>
     suspend fun initializeProfile():Flow<Response<Boolean>>
     suspend fun getProduct(productId:String):Flow<Response<Product>>
@@ -24,9 +24,11 @@ interface FirestoreDatabaseRepository {
 
     suspend fun checkProductFavorite(productId: String):Flow<Response<Boolean>>
 
-    suspend fun addCartItem(productId: String,cartItem: CartItem):Flow<Response<Boolean>>
+    suspend fun addCartItem(cartItem: CartItem):Flow<Response<Boolean>>
 
     suspend fun getCartItems():Flow<Response<List<CartItem>>>
 
     suspend fun getProducts():Flow<Response<List<Product>>>
+    suspend fun  listenForCartItems():Flow<Response<List<CartItem>>>
+    suspend fun deleteCartItem(productId: String):Flow<Response<Boolean>>
 }

@@ -31,7 +31,7 @@ class ProductViewModel @Inject constructor(
     var reviewsResponse by mutableStateOf<Response<List<Review>>>(Loading)
     var yourReviewResponse by mutableStateOf<Response<Review>>(Loading)
     var favouriteToggleButtonState by mutableStateOf(false)
-    fun getAuthState() =authUseCases.isUserAuthenticated()
+    fun getAuthState() = authUseCases.isUserAuthenticated()
 
     fun setProductId(str: String) {
         if (_productId != str && (productResponse as? Success)?.data?.name.isNullOrBlank()) viewModelScope.launch(
@@ -45,10 +45,10 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             if (authUseCases.isUserAuthenticated()) {
                 databaseUseCases.checkFavourite(str).collect {
-                    when(it){
+                    when (it) {
                         is Error -> {}
                         Loading -> {}
-                        is Success -> favouriteToggleButtonState=it.data
+                        is Success -> favouriteToggleButtonState = it.data
                     }
                 }
             }
@@ -83,28 +83,32 @@ class ProductViewModel @Inject constructor(
         databaseUseCases.addFavourite(
             _productId, Favourite(_productId, selectedSize.value, selectedVariant.value)
         ).collect {
-            when(it){
+            when (it) {
                 is Error -> {
 
                 }
+
                 Loading -> {
 
                 }
-                is Success -> favouriteToggleButtonState=it.data
+
+                is Success -> favouriteToggleButtonState = it.data
             }
         }
     }
 
     fun removeFavorite() = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.removeFavourite(_productId).collect {
-            when(it){
+            when (it) {
                 is Error -> {
 
                 }
+
                 Loading -> {
 
                 }
-                is Success -> favouriteToggleButtonState= !it.data
+
+                is Success -> favouriteToggleButtonState = !it.data
             }
         }
     }
@@ -112,11 +116,25 @@ class ProductViewModel @Inject constructor(
     var cartAdd by mutableStateOf<Response<Boolean>>(Success(false))
         private set
 
-    fun addCartItem()=viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.addCartItem(_productId, CartItem(_productId,_selectedVariant.value,_selectedSize.value)).collect{
-            cartAdd=it
+    fun addCartItem() =
+        viewModelScope.launch(Dispatchers.IO) {
+            val item=productResponse as? Success
+            if (item != null) {
+                databaseUseCases.addCartItem(
+                    CartItem(
+                        productId= _productId,
+                        productName = item.data.name,
+                        productVariant = selectedVariant.value,
+                        productSize = selectedSize.value,
+                        productImage = item.data.variant[selectedVariant.value].media.images[0],
+                        brand = item.data.brand,
+                        price = item.data.variant[selectedVariant.value].size[selectedSize.value].price.retail
+                    )
+                ).collect {
+                    cartAdd = it
+                }
+            }
         }
-    }
 }
 
 

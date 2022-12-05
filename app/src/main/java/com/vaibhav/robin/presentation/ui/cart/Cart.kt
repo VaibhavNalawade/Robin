@@ -1,4 +1,4 @@
-package com.vaibhav.robin.presentation.ui.cart
+﻿package com.vaibhav.robin.presentation.ui.cart
 
 
 import androidx.compose.foundation.Image
@@ -6,26 +6,28 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Store
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.common.BottomSheetHandle
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
 import com.vaibhav.robin.presentation.ui.common.ShowError
@@ -36,9 +38,9 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import java.lang.Exception
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Cart(
     viewModel: CartViewModel, navController: NavController
@@ -56,133 +58,75 @@ fun Cart(
             }
         viewModel.launch()
     })
+    val bottomSheetState = rememberBottomSheetScaffoldState()
+    LaunchedEffect(key1 = true, block = {
+        bottomSheetState.bottomSheetState.expand()
+    })
+    BottomSheetScaffold(
+        modifier = Modifier.statusBarsPadding(),
+        sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
+        sheetPeekHeight = 32.dp,
+        sheetContent = { FrontLayout(subTotal) },
+        scaffoldState = bottomSheetState,
+        topBar = {
+            CartAppBar(
+                items = (viewModel.cartItem as? Response.Success)?.data?.size ?: 0,
+                onBackButton = { navController.popBackStack() }
+            )
+        },
+        content = {
+            BackLayout(
+                viewModel.cartItem,
+                subTotal,
+                onErrorOccurred = { viewModel.launch() },
+                onRemoveButtonClick = { cartItemId ->
+                    viewModel.removeCartItem(cartItemId)
+                }
+            )
+        }
+    )
+}
 
+@Composable
+fun BackLayout(
+    cartItem: Response<List<CartItem>>,
+    subTotal: MutableState<Int>,
+    onRemoveButtonClick: (String) -> Unit,
+    onErrorOccurred: () -> Unit
+) {
     Surface(color = colorScheme.surface) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .statusBarsPadding()
-            ) {
-                CartAppBar(
-                    items = (viewModel.cartItem as? Response.Success)?.data?.size ?: 0,
-                    onBackButton = { navController.popBackStack() }
-                )
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(8.dp)
-                ) {
-                    when (val item = viewModel.cartItem) {
-                        is Response.Error -> item {
-                            ShowError(exception = item.message) {
-                                viewModel.launch()
-                            }
-                        }
-
-                        is Response.Loading -> item {
-                            Loading()
-                        }
-
-                        is Response.Success -> if (item.data.isNotEmpty())
-                            item.data.forEachIndexed { index, cartItem ->
-                                item {
-                                    CartItemListLoader(
-                                        cartItemIndex = index,
-                                        productList = viewModel.productData,
-                                        subTotal
-                                    ) {
-                                        viewModel.getDetails(cartItem.productId, index)
-                                    }
-                                }
-                            }
-                        else item {
-                            EmptyCart()
-                        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            when (val item = cartItem) {
+                is Response.Error -> item {
+                    ShowError(exception = item.message) {
+                        onErrorOccurred.invoke()
                     }
                 }
-            }
-            Surface(
-                modifier = Modifier.align(Alignment.BottomCenter).onGloballyPositioned {  },
-                tonalElevation = Dimens.surface_elevation_1,
-                shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
-            ) {
-                Column {
-                    SpacerVerticalOne()
-                    // FIXME: Calculating cost on client side very bad practice
-                    SpaceBetweenContainer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Dimens.gird_four)
-                    ) {
-                        Text(
-                            text = "TOTAL",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                        Text(
-                            text = "₹ ${subTotal.value + (subTotal.value * .18) + 100}",
-                            style = typography.headlineMedium.copy(colorScheme.onSurfaceVariant)
-                        )
+
+                is Response.Loading -> item {
+                    Loading()
+                }
+
+                is Response.Success -> if (item.data.isNotEmpty())
+                    item.data.forEachIndexed { index, cartItem ->
+                        item {
+                            CartItem(
+                                product = cartItem,
+                                variantIndex = index,
+                                total = subTotal
+                            ) {
+                                onRemoveButtonClick(cartItem.cartId)
+                            }
+                        }
                     }
-                    SpacerVerticalTwo()
-                    // FIXME: Calculating cost on client side very bad practice
-                    SpaceBetweenContainer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Dimens.gird_four)
-                    ) {
-                        Text(
-                            text = "SubTotal",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                        Text(
-                            text = "₹ ${subTotal.value}",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                    }
-                    SpacerVerticalOne()
-                    // FIXME: Calculating Shipping cost on client side very bad practice
-                    SpaceBetweenContainer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Dimens.gird_four)
-                    ) {
-                        Text(
-                            text = "Shipping",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                        Text(
-                            text = "₹ 100",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                    }
-                    SpacerVerticalOne()
-                    // FIXME: Calculating Tax on client side very bad practice
-                    SpaceBetweenContainer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Dimens.gird_four)
-                    ) {
-                        Text(
-                            text = "Tax",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                        Text(
-                            text = "₹ ${subTotal.value * .18}",
-                            style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
-                        )
-                    }
-                    SpacerVerticalTwo()
-                    Button(modifier = Modifier
-                        .fillMaxWidth(.8f)
-                        .align(Alignment.CenterHorizontally),
-                        onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24),
-                            contentDescription = ""
-                        )
-                        SpacerHorizontalOne()
-                        Text(text = "Checkout")
-                    }
+                else item {
+                    EmptyCart()
                 }
             }
         }
@@ -190,27 +134,94 @@ fun Cart(
 }
 
 @Composable
-fun CartItemListLoader(
-    cartItemIndex: Int,
-    productList: SnapshotStateList<Response<Product>>,
-    total: MutableState<Int>,
-    function: suspend () -> Unit
-) {
-    LaunchedEffect(key1 = true, block = { function.invoke() })
-    if (productList.isNotEmpty())
-        when (val product = productList[cartItemIndex]) {
-            Response.Loading -> {
-                CartItemLoading()
+fun FrontLayout(subTotal: MutableState<Int>) {
+    Surface(
+        modifier = Modifier,
+        tonalElevation = Dimens.surface_elevation_1,
+        shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+    ) {
+        Column {
+            BottomSheetHandle()
+            SpacerVerticalOne()
+            // FIXME: Calculating cost on client side very bad practice
+            SpaceBetweenContainer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.gird_four)
+            ) {
+                Text(
+                    text = "TOTAL",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+                Text(
+                    text = "₹ ${(subTotal.value + (subTotal.value * .18) + 100).toInt()}",
+                    style = typography.headlineMedium.copy(colorScheme.onSurfaceVariant)
+                )
             }
-
-            is Response.Error -> ShowError(exception = Exception()) {
-
+            SpacerVerticalTwo()
+            // FIXME: Calculating cost on client side very bad practice
+            SpaceBetweenContainer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.gird_four)
+            ) {
+                Text(
+                    text = "SubTotal",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+                Text(
+                    text = "₹ ${subTotal.value}",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
             }
-
-            is Response.Success -> CartItem(product = product.data, variantIndex = 0, total)
+            SpacerVerticalOne()
+            // FIXME: Calculating Shipping cost on client side very bad practice
+            SpaceBetweenContainer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.gird_four)
+            ) {
+                Text(
+                    text = "Shipping",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+                Text(
+                    text = "₹ 100",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+            }
+            SpacerVerticalOne()
+            // FIXME: Calculating Tax on client side very bad practice
+            SpaceBetweenContainer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.gird_four)
+            ) {
+                Text(
+                    text = "Tax",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+                Text(
+                    text = "₹ ${(subTotal.value * .18).toInt()}",
+                    style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
+                )
+            }
+            SpacerVerticalTwo()
+            Button(modifier = Modifier
+                .fillMaxWidth(.8f)
+                .align(Alignment.CenterHorizontally),
+                onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24),
+                    contentDescription = ""
+                )
+                SpacerHorizontalOne()
+                Text(text = "Checkout")
+            }
         }
-
+    }
 }
+
 
 @Composable
 fun CartAppBar(items: Int, onBackButton: () -> Unit) {
@@ -245,10 +256,15 @@ fun CartAppBar(items: Int, onBackButton: () -> Unit) {
 
 
 @Composable
-fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
+fun CartItem(
+    product: CartItem,
+    variantIndex: Int,
+    total: MutableState<Int>,
+    onRemoveButtonClick: () -> Unit
+) {
     // FIXME: Calculating total price on client side very bad practice
     LaunchedEffect(key1 = true, block = {
-        total.value = (total.value + product.variant[variantIndex].size[0].price.retail).toInt()
+        total.value = (total.value + product.price.toInt())
     })
     Card {
         Row(
@@ -261,12 +277,14 @@ fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
                 modifier = Modifier.size(112.dp),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                model = product.variant[variantIndex].media.images[0]
+                model = product.productImage
             )
             Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                Text(
-                    text = product.name, style = typography.titleMedium
-                )
+                product.productName?.let {
+                    Text(
+                        text = it, style = typography.titleMedium
+                    )
+                }
                 SpacerVerticalOne()
                 Surface(
                     tonalElevation = Dimens.surface_elevation_1, shape = MaterialTheme.shapes.medium
@@ -275,13 +293,13 @@ fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
                         RobinAsyncImage(
                             modifier = Modifier.size(24.dp),
                             contentDescription = "",
-                            model = product.brand.url
+                            model = product.brand?.url
                         )
                         SpacerHorizontalOne()
-                        Text(text = product.brand.name, style = typography.bodyMedium)
+                        product.brand?.name?.let { Text(text = it, style = typography.bodyMedium) }
                         SpacerHorizontalTwo()
                         Text(
-                            text = "₹ ${product.variant[variantIndex].size[0].price.retail}",
+                            text = "₹ ${product.price}",
                             style = typography.titleMedium
                         )
                         SpacerHorizontalOne()
@@ -303,7 +321,10 @@ fun CartItem(product: Product, variantIndex: Int, total: MutableState<Int>) {
                             )
                         }
                     }
-                    FilledTonalIconButton(onClick = { /*TODO*/ }) {
+                    FilledTonalIconButton(onClick = {
+                        onRemoveButtonClick()
+
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.delete_fill0_wght700_grad200_opsz24),
                             contentDescription = "",

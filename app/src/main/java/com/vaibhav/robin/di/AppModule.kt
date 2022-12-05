@@ -6,12 +6,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.remote.FirestoreSource
 import com.vaibhav.robin.data.repository.AuthRepositoryImpl
-import com.vaibhav.robin.data.repository.FirestoreRepositoryImpl
+import com.vaibhav.robin.data.repository.FirebaseRepositoryImpl
 import com.vaibhav.robin.domain.repository.AuthRepository
-import com.vaibhav.robin.domain.repository.FirestoreDatabaseRepository
+import com.vaibhav.robin.domain.repository.DatabaseRepository
 import com.vaibhav.robin.domain.use_case.auth.*
 import com.vaibhav.robin.domain.use_case.database.*
 import dagger.Module
@@ -42,7 +41,7 @@ class AppModule {
         firestore: FirebaseFirestore,
         authRepo: AuthRepository,
         source: FirestoreSource
-    ): FirestoreDatabaseRepository = FirestoreRepositoryImpl(firestore, source, authRepo)
+    ): DatabaseRepository = FirebaseRepositoryImpl(firestore, source, authRepo)
 
     @Provides
     fun provideAuthUseCases(
@@ -58,7 +57,7 @@ class AppModule {
     )
 
     @Provides
-    fun provideDatabaseUseCases(repo: FirestoreDatabaseRepository) =
+    fun provideDatabaseUseCases(repo: DatabaseRepository) =
         DatabaseUseCases(
             updateProfileDateAndGender = UpdateProfileDateAndGender(repo),
             updateAddressAndPhone = UpdateAddressAndPhone(repo),
@@ -72,6 +71,8 @@ class AppModule {
             checkFavourite = CheckFavourite(repo),
             addCartItem = AddCartItem(repo),
             getCartItem = GetCartItem(repo),
-            getProducts = GetProducts(repo)
+            getProducts = GetProducts(repo),
+            listenForCartItems = ListenForCartItems(repo),
+            removeCartItems = RemoveCartItems(repo)
         )
 }
