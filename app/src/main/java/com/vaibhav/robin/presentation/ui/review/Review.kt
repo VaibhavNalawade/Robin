@@ -1,10 +1,8 @@
 package com.vaibhav.robin.presentation.ui.review
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.*
@@ -25,7 +23,7 @@ import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.CircularImage
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
@@ -33,7 +31,6 @@ import com.vaibhav.robin.presentation.ui.common.ShowError
 import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalTwo
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
-import com.vaibhav.robin.presentation.ui.theme.Values
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
@@ -210,7 +207,7 @@ private fun InitUI(viewModel: ReviewViewModel) {
 @Preview
 @Composable
 fun ReviewPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         Review(navController = NavController(LocalContext.current), viewModel = hiltViewModel())
     }
 }

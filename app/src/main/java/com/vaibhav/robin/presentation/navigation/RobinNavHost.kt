@@ -2,7 +2,6 @@ package com.vaibhav.robin.presentation.navigation
 
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,9 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
+import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.domain.model.ProfileData
+import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
 import com.vaibhav.robin.presentation.ui.account.Login
@@ -25,14 +25,23 @@ import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
 
 @Composable
-fun RobinNavHost(navController: NavHostController) {
+fun RobinNavHost(
+    navController: NavHostController,
+    profileUiState: ProfileData?,
+    toggleDrawer: () -> Unit,
+    productUiState: Response<List<Product>>,
+    messageBarState: MessageBarState
+) {
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
     ) {
         composable(RobinDestinations.HOME) {
             Home(
-                navController,
-                hiltViewModel()
+                navController = navController,
+                profileUiState = profileUiState,
+                toggleDrawer=toggleDrawer,
+                productUiState=productUiState,
+                messageBarState=messageBarState
             )
         }
 
@@ -40,7 +49,7 @@ fun RobinNavHost(navController: NavHostController) {
             RobinDestinations.searchQuery("{query}"),
             listOf(navArgument("query") { type = NavType.StringType })
         ) { SearchBar(navController) }
-        composable(RobinDestinations.CART) { Cart(hiltViewModel(),navController) }
+        composable(RobinDestinations.CART) { Cart(hiltViewModel(), navController) }
         composable(
             RobinDestinations.REVIEW_SIGNATURE,
             listOf(

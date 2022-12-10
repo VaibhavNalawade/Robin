@@ -4,10 +4,9 @@ import android.net.Uri
 import com.google.firebase.auth.UserInfo
 
 data class ProfileData(
-    val Name:String?,
-    val Image:Uri?,
+    val name:String?,
+    val image:Uri?,
     val email:String?,
     val userIsVerified:Boolean,
     val phone:String?,
-    val providerData: MutableList<out UserInfo>
 )

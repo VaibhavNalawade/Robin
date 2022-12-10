@@ -114,7 +114,7 @@ package com.vaibhav.robin.presentation.ui.common
         showToastOnCopy: Boolean
     ) {
         var showMessageBar by remember { mutableStateOf(false) }
-        val error by rememberUpdatedState(newValue = messageBarState.error?.message)
+        val error by rememberUpdatedState(newValue = messageBarState.error)
         val message by rememberUpdatedState(newValue = messageBarState.success)
 
         DisposableEffect(key1 = messageBarState.updated) {

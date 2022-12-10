@@ -28,7 +28,7 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import java.text.SimpleDateFormat
@@ -181,7 +181,7 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 @Preview
 @Composable
 fun DateAndGenderSelectLightPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         DateAndGenderSelect(
             NavHostController(LocalContext.current),
             viewModel = viewModel()
@@ -192,7 +192,7 @@ fun DateAndGenderSelectLightPreview() {
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun DateAndGenderSelectDarkPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         DateAndGenderSelect(
             NavHostController(LocalContext.current),
             viewModel = viewModel()

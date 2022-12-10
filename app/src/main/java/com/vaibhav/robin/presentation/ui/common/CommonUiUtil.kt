@@ -4,7 +4,6 @@ import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -20,13 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
@@ -229,7 +227,7 @@ fun ChipDummy() {
 @Preview
 @Composable
 fun PreviewUi() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         ChipDummy()
     }
 }

@@ -1,13 +1,11 @@
 package com.vaibhav.robin.presentation.ui.account
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,14 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
-import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values
 
@@ -109,7 +105,7 @@ private fun InitUi(viewModel: SignUpViewModel, navController: NavHostController)
 @Preview
 @Composable
 fun SignupPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         SignUp(NavHostController(LocalContext.current), viewModel = viewModel())
     }
 }

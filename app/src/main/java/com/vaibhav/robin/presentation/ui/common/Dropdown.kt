@@ -2,24 +2,16 @@ package com.vaibhav.robin.presentation.ui.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.models.state.DropdownState
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
@@ -95,7 +87,7 @@ fun RobinDropdownMenuBox(
 @Preview(uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun DropdownPreviewLight() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         Box(
             modifier = Modifier.padding(
                 horizontal = Dimens.gird_two,
@@ -115,7 +107,7 @@ fun DropdownPreviewLight() {
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun DropdownPreviewDark() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         Box(
             modifier = Modifier.padding(
                 horizontal = Dimens.gird_two,

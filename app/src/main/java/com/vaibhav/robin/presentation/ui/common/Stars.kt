@@ -6,13 +6,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vaibhav.robin.R
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 
 @Composable
 fun Star(modifier:Modifier=Modifier,onClick: (Int) -> Unit, stars: Int) {
@@ -34,7 +33,7 @@ fun Star(modifier:Modifier=Modifier,onClick: (Int) -> Unit, stars: Int) {
 @Preview
 @Composable
 private fun StarPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
     Star(onClick = {}, stars =5 )
     }
 }

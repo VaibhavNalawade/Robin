@@ -3,19 +3,28 @@ package com.vaibhav.robin.presentation
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.presentation.ui.MainViewModel
+import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
@@ -31,15 +40,40 @@ class MainActivity : ComponentActivity() {
                 slideUp.doOnEnd { splashScreenView.remove() }
                 slideUp.start()
             }
-        var keepSplashOnScreen = true
-        val delay = 1000L
-        installSplashScreen().setKeepOnScreenCondition { keepSplashOnScreen }
-        Handler(Looper.getMainLooper()).postDelayed({ keepSplashOnScreen = false }, delay)
-
         super.onCreate(savedInstanceState)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            RobinAppScaffold()
+            val windowSize = calculateWindowSizeClass(this)
+            val displayFeatures = calculateDisplayFeatures(this)
+            RobinTheme {
+                RobinApp(
+                    windowSize = windowSize,
+                    displayFeatures = displayFeatures,
+                    profileUiState = viewModel.profileData,
+                    userAuthenticated = viewModel.userAuthenticated,
+                    productUiState=viewModel.products,
+                    signOut = {
+                        viewModel.signOut()
+                    }
+                )
+            }
         }
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    // Check if the initial data is ready.
+                    return if (viewModel.products is Response.Success) {
+                        // The content is ready; start drawing.
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        // The content is not ready; suspend.
+                        false
+                    }
+                }
+            }
+        )
     }
 }

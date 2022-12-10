@@ -110,7 +110,6 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
                     email,
                     isEmailVerified,
                     phoneNumber,
-                    providerData
                 )
             }
         } catch (e: Exception) {

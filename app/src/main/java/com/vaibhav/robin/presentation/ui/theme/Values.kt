@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.ui.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 
 
@@ -22,6 +23,14 @@ sealed class Values{
         val appbarSize=64.dp
         val bottomSheetOnTop=24.dp
 
+    }
+    object Shapes{
+        val NavigationItemShape= RoundedCornerShape(
+            topStartPercent = 0,
+            topEndPercent = 100,
+            bottomStartPercent = 0,
+            bottomEndPercent = 100
+        )
     }
 }
 

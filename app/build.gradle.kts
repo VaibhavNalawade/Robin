@@ -75,6 +75,8 @@ dependencies {
     implementation(Dependencies.Google.Accompanist.pager)
     implementation(Dependencies.Google.Accompanist.pagerIndicator)
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
+    implementation(Dependencies.Google.Accompanist.adaptive)
+
 
     implementation(platform(Dependencies.Firebase.BOM))
     implementation(Dependencies.Firebase.firestore)
@@ -117,5 +119,4 @@ dependencies {
     androidTestImplementation(Dependencies.Test.AndroidTest.composeUITest)
     debugImplementation(Dependencies.Test.Debug.uiToolingDebug)
     debugImplementation(Dependencies.Test.Debug.uiTestManifest)
-    implementation ("com.google.code.gson:gson:2.9.1")
 }

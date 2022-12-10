@@ -35,28 +35,7 @@ class HomeViewModel @Inject constructor(
 /*    private val _trendingItemsState = MutableStateFlow<TrendingChipState>(TrendingChipState.Loading)
     val trendingItemsState = _trendingItemsState*/
 
-    var userAuthenticated by mutableStateOf(authUseCases.isUserAuthenticated())
-        private set
 
-    var profileData by mutableStateOf(authUseCases.getProfileData())
-        private set
-    var products by mutableStateOf<Response<List<Product>>>(Response.Loading)
-
-    init {
-        viewModelScope.launch {
-            authUseCases.getAuthState().collect {
-                userAuthenticated = it
-                profileData = authUseCases.getProfileData()
-            }
-        }
-        viewModelScope.launch {
-            databaseUseCases.getProducts().collect{
-                products = it
-            }
-        }
-    }
-
-    suspend fun signOut() = authUseCases.signOut()
 
 
 }

@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.models.common.DropdownOption
 import com.vaibhav.robin.presentation.models.state.DropdownState
 import com.vaibhav.robin.presentation.UiText
@@ -37,7 +37,7 @@ class DropDownMenuTest {
 
     @Test
     fun dropDownMenuTestClickTest() {        composeTestRule.setContent {
-            RobinAppPreviewScaffold {
+            RobinAppPreview {
                 RobinDropdownMenuBox(
                     state = state,
                     dropdownOptionList = options
@@ -86,7 +86,7 @@ class DropDownMenuTest {
     @Test
     fun checkDisplayErrorTest(){
         composeTestRule.setContent {
-            RobinAppPreviewScaffold {
+            RobinAppPreview {
                 state.value=state.value.copy(error=true, errorMessage = UiText.DynamicString("Error Occurred"))
                 RobinDropdownMenuBox(
                     state = state,

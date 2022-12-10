@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values
 
@@ -99,7 +99,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
 @Preview
 @Composable
 fun Preview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         PersonalDetails(NavHostController(LocalContext.current), viewModel = viewModel())
     }
 }

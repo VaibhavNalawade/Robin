@@ -282,3 +282,6 @@ fun timeStampHandler(timestamp: Timestamp): String {
         "$months ${stringResource(id = R.string.months)}"
     else   "$years ${stringResource(id = R.string.years)}"
 }
+enum class RobinNavigationType {
+     PERMANENT_NAVIGATION_DRAWER,NAVIGATION_DRAWER,NAVIGATION_RAILS
+}

@@ -5,7 +5,7 @@ object Dependencies {
     const val COMPOSE_COMPILER_VERSION = "1.3.2"
     private const val MDC3_VERSION = "1.1.0-alpha02"
     private const val GSM_VERSION = "4.3.13"
-    private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
+    private const val ACCOMPANIST_VERSION = "0.28.0"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
@@ -33,6 +33,7 @@ object Dependencies {
                 "com.google.accompanist:accompanist-pager-indicators:$ACCOMPANIST_VERSION"
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
+            const val adaptive="com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
         }
         object DaggerHilt{
             const val daggerHilt="com.google.dagger:hilt-android:$DAGGERHILT_VERSION"
