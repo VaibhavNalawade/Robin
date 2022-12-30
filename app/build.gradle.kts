@@ -76,6 +76,7 @@ dependencies {
     implementation(Dependencies.Google.Accompanist.pagerIndicator)
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
     implementation(Dependencies.Google.Accompanist.adaptive)
+    implementation(Dependencies.Google.Accompanist.flowLayout)
 
 
     implementation(platform(Dependencies.Firebase.BOM))
@@ -100,7 +101,6 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.ACTIVITY)
 
     implementation(Dependencies.AndroidX.Material.material)
-    implementation(Dependencies.AndroidX.Material.materialIconExtended)
     implementation(Dependencies.AndroidX.Material.material3Compose)
     implementation(Dependencies.AndroidX.Material.material3ComposeWindowsSizeClass)
 

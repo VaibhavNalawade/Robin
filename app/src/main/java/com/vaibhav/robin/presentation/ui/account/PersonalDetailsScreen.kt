@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,7 +68,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
         RobinTextField(
             state = viewModel.firstName,
             label = { Text("First Name") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Badge, contentDescription = "") },
+            leadingIcon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = "") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -79,7 +79,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
         RobinTextField(
             state = viewModel.lastName,
             label = { Text("Last Name") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Badge, contentDescription = "") },
+            leadingIcon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = "") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

@@ -67,27 +67,27 @@ fun InitUi(viewModel: AddressPhoneViewModel) {
         RobinTextField(
             state =viewModel.apartmentSuitesBuilding,
             label = {Text("Apartment Suites Building")},
-            leadingIcon = {Icon(imageVector = Icons.Filled.Apartment, contentDescription ="" )},
+           // leadingIcon = {Icon(imageVector = Icons.Filled.Apartment, contentDescription ="" )},
         )
         SpacerVerticalTwo()
         RobinTextField(
             state =viewModel.streetAddressAndCity,
             label = {Text("Street address and city")},
-            leadingIcon = {Icon(imageVector = Icons.Filled.LocationCity, contentDescription ="" )},
+           // leadingIcon = {Icon(imageVector = Icons.Filled.LocationCity, contentDescription ="" )},
 
             )
         SpacerVerticalTwo()
         RobinTextField(
             state =viewModel.postcode,
             label = {Text(" Postcode ")},
-            leadingIcon = { Icon(imageVector = Icons.Filled.LocalPostOffice , contentDescription ="" )},
+           // leadingIcon = { Icon(imageVector = Icons.Filled.LocalPostOffice , contentDescription ="" )},
         )
         SpacerVerticalTwo()
 
         RobinTextField(
             state = viewModel.phone,
             label = { Text("phone") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.PhoneInTalk, contentDescription = "") },
+         //   leadingIcon = { Icon(imageVector = Icons.Filled.PhoneInTalk, contentDescription = "") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

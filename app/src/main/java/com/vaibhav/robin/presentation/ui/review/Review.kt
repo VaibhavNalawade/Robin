@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -175,7 +175,7 @@ private fun InitUI(viewModel: ReviewViewModel) {
                                 content = {
                                     Icon(
                                         modifier = Modifier.size(48.dp),
-                                        imageVector = if (stars > i) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                                        imageVector = if (stars > i) Icons.Outlined.Star else Icons.Outlined.Warning,
                                         contentDescription = null,
                                         tint = colorScheme.primary
                                     )

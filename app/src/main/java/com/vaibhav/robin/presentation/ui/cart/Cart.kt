@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Store
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -212,7 +212,7 @@ fun FrontLayout(subTotal: MutableState<Int>) {
                 .align(Alignment.CenterHorizontally),
                 onClick = { /*TODO*/ }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24),
+                    painter = painterResource(id = R.drawable.shopping_cart),
                     contentDescription = ""
                 )
                 SpacerHorizontalOne()
@@ -236,7 +236,7 @@ fun CartAppBar(items: Int, onBackButton: () -> Unit) {
 
             IconButton(onClick = onBackButton) {
                 Icon(
-                    painter = painterResource(id = R.drawable.close_fill0_wght700_grad0_opsz24),
+                    painter = painterResource(id = R.drawable.cancel),
                     contentDescription = stringResource(id = R.string.close)
                 )
             }
@@ -309,14 +309,14 @@ fun CartItem(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.add_circle_fill0_wght200_grad200_opsz20),
+                                painter = painterResource(id = R.drawable.cancel),
                                 contentDescription = ""
                             )
                         }
                         Text(text = "1", style = typography.labelLarge)
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.do_not_disturb_on_fill0_wght200_grad200_opsz20),
+                                painter = painterResource(id = R.drawable.cancel),
                                 contentDescription = ""
                             )
                         }
@@ -326,7 +326,7 @@ fun CartItem(
 
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.delete_fill0_wght700_grad200_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "",
                             tint = colorScheme.onSurfaceVariant
                         )
@@ -391,7 +391,7 @@ fun EmptyCart() {
     ) {
         Image(
             modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.desert),
+            painter = painterResource(id = R.drawable.cancel),
             contentDescription = "",
             contentScale = ContentScale.Crop
         )
@@ -410,7 +410,7 @@ fun EmptyCart() {
         SpacerVerticalFour()
         Button(onClick = { /* Do something! */ }) {
             Icon(
-                Icons.Filled.Store,
+                Icons.Filled.Warning,
                 contentDescription = "Localized description",
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )

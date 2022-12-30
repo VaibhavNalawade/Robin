@@ -1,8 +1,12 @@
 package com.vaibhav.robin.domain.repository
 
+import com.vaibhav.robin.data.models.Brand
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.Favourite
+import com.vaibhav.robin.data.models.MainBrand
+import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.model.Response
 import kotlinx.coroutines.flow.Flow
@@ -31,4 +35,7 @@ interface DatabaseRepository {
     suspend fun getProducts():Flow<Response<List<Product>>>
     suspend fun  listenForCartItems():Flow<Response<List<CartItem>>>
     suspend fun deleteCartItem(productId: String):Flow<Response<Boolean>>
+    suspend fun getCategory():Flow<Response<List<MainCategory>>>
+    suspend fun getBrand():Flow<Response<List<MainBrand>>>
+    suspend fun queryProduct(queryProduct: QueryProduct):Flow<Response<List<Product>>>
 }

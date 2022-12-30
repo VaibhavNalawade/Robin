@@ -1,7 +1,8 @@
 package com.vaibhav.androidtest
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Factory
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -22,14 +23,14 @@ class DropDownMenuTest {
     val composeTestRule = createComposeRule()
 
     private val options = listOf(
-        DropdownOption(options = "Select", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "A", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "B", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "C", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "D", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "E", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "F", leadingIcon = Icons.Filled.Factory),
-        DropdownOption(options = "G", leadingIcon = Icons.Filled.Factory)
+        DropdownOption(options = "Select", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "A", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "B", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "C", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "D", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "E", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "F", leadingIcon = Icons.Filled.Warning),
+        DropdownOption(options = "G", leadingIcon = Icons.Filled.Warning)
 
     )
     private val state: MutableState<DropdownState> = mutableStateOf(DropdownState())

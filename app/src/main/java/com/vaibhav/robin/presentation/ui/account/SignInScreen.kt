@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Login
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -239,7 +239,7 @@ fun LoginButtonState(
 @Composable
 fun DefaultButtonAppearance() {
     Icon(
-        Icons.Filled.Login,
+        Icons.Filled.Warning,
         contentDescription = stringResource(R.string.complete_the_payment),
         modifier = Modifier.size(ButtonDefaults.IconSize)
     )

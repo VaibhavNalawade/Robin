@@ -19,7 +19,7 @@ fun ExpandingCard(
     modifier: Modifier,
     onClick: () -> Unit = {},
     content: @Composable (expanded: Boolean) -> Unit
-): Unit {
+) {
     var cardExpanded by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (cardExpanded) 180f else 0f
@@ -36,7 +36,7 @@ fun ExpandingCard(
                 .animateContentSize(
                     tweenSpec()
                 ),
-            painter = painterResource(id = R.drawable.arrow_circle_down_fill0_wght500_grad0_opsz24),
+            painter = painterResource(id = R.drawable.cancel),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

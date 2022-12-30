@@ -17,7 +17,6 @@ import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.ui.MainViewModel
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 
 @AndroidEntryPoint
@@ -41,7 +40,8 @@ class MainActivity : ComponentActivity() {
                 slideUp.start()
             }
         super.onCreate(savedInstanceState)
-
+        if (viewModel.products !is Response.Success)
+            viewModel.fetchUiState()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val windowSize = calculateWindowSizeClass(this)
@@ -52,9 +52,14 @@ class MainActivity : ComponentActivity() {
                     displayFeatures = displayFeatures,
                     profileUiState = viewModel.profileData,
                     userAuthenticated = viewModel.userAuthenticated,
-                    productUiState=viewModel.products,
+                    productUiState = viewModel.products,
+                    brandsUiState = viewModel.brands,
+                    categoriesUiState = viewModel.categories,
                     signOut = {
                         viewModel.signOut()
+                    },
+                    onApply = {
+                        viewModel.quarry()
                     }
                 )
             }
@@ -64,14 +69,12 @@ class MainActivity : ComponentActivity() {
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     // Check if the initial data is ready.
-                    return if (viewModel.products is Response.Success) {
+                    return if (viewModel.products !is Response.Loading) {
                         // The content is ready; start drawing.
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true
-                    } else {
-                        // The content is not ready; suspend.
-                        false
-                    }
+                    } else false
+
                 }
             }
         )

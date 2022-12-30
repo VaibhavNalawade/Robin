@@ -69,4 +69,7 @@
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
     <string name="profile_photo_test" translatable="false" tools:ignore="TypographyDashes">https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&amp;token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda</string>
     <string name="filter">Filter</string>
+    <string name="home">Home</string>
+    <string name="your_orders">Your Orders</string>
+    <string name="profile">Profile</string>
 </resources>

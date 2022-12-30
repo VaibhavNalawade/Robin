@@ -7,9 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Boy
-import androidx.compose.material.icons.filled.Girl
-import androidx.compose.material.icons.twotone.CalendarMonth
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -122,7 +121,7 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = Icons.TwoTone.CalendarMonth,
+                   imageVector = Icons.TwoTone.Warning,
                     contentDescription = stringResource(id = R.string.calender)
                 )
 
@@ -148,8 +147,8 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
         val list = listOf(
             DropdownOption(array[0]),
-            DropdownOption(array[1], Icons.Filled.Boy),
-            DropdownOption(array[2], Icons.Filled.Girl)
+            DropdownOption(array[1], Icons.Filled.Warning),
+            DropdownOption(array[2], Icons.Filled.Warning)
         )
 
         RobinDropdownMenuBox(

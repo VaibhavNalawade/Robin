@@ -12,7 +12,7 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -152,7 +152,7 @@ fun fabState(
                 FabState(text = stringResource(R.string.add_to_cart),
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.add_shopping_cart_fill0_wght700_grad200_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = null,
                         )
                     },
@@ -171,7 +171,7 @@ fun fabState(
         is Error -> FabState(text = stringResource(R.string.error_occurred),
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.Error,
+                    imageVector = Icons.Filled.Warning,
                     contentDescription = stringResource(R.string.error_occurred),
                 )
             },
@@ -219,7 +219,7 @@ fun BackLayer(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.arrow_back_fill1_wght700_grad0_opsz24),
+                        painter = painterResource(id = R.drawable.cancel),
                         contentDescription = ""
                     )
                 }
@@ -242,11 +242,11 @@ fun BackLayer(
                     }) {
                     if (viewModel.favouriteToggleButtonState)
                         Icon(
-                            painter = painterResource(id = R.drawable.favorite_fill1_wght700_grad0_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "Localized description",
                         )
                     else Icon(
-                        painter = painterResource(id = R.drawable.favorite_fill0_wght700_grad0_opsz24),
+                        painter = painterResource(id = R.drawable.cancel),
                         contentDescription = "Localized description",
                     )
                 }
@@ -372,7 +372,7 @@ fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: 
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp),
-                            model = R.drawable.desert,
+                            model = R.drawable.cancel,
                             contentScale = ContentScale.Fit,
                             contentDescription = "",
                         )
@@ -431,7 +431,7 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .size(20.dp),
-                    painter = painterResource(id = R.drawable.star_rate_half_fill0_wght500_grad0_opsz24),
+                    painter = painterResource(id = R.drawable.cancel),
                     contentDescription = null,
                     tint = colorScheme.primary
                 )
@@ -453,7 +453,7 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
                     modifier = Modifier
                         .size(26.dp)
                         .align(Alignment.Bottom),
-                    painter = painterResource(id = R.drawable.currency_rupee_fill0_wght600_grad0_opsz24),
+                    painter = painterResource(id = R.drawable.cancel),
                     contentDescription = null,
                     tint = colorScheme.primary
                 )
@@ -559,7 +559,7 @@ fun Size(
                     leadingIcon = if (selectedThis) {
                         {
                             Icon(
-                                painter = painterResource(id = R.drawable.done_fill0_wght700_grad0_opsz24),
+                                painter = painterResource(id = R.drawable.cancel),
                                 contentDescription = null,
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
@@ -700,7 +700,7 @@ fun ReviewContent(
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .size(20.dp),
-                            painter = painterResource(id = R.drawable.star_rate_half_fill0_wght500_grad0_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = null,
                             tint = colorScheme.primary
                         )
@@ -723,12 +723,12 @@ fun ReviewContent(
                 FilledIconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
                     if (checked) {
                         Icon(
-                            painter = painterResource(id = R.drawable.thumb_up_fill1_wght600_grad0_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "Localized description"
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.thumb_up_fill0_wght600_grad0_opsz24),
+                            painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "Localized description"
                         )
                     }
@@ -736,7 +736,7 @@ fun ReviewContent(
             } else {
                 OutlinedIconButton(onClick = { onClick() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.edit_fill1_wght700_grad0_opsz24),
+                        painter = painterResource(id = R.drawable.cancel),
                         contentDescription = null
                     )
                 }

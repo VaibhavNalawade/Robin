@@ -9,7 +9,7 @@ object Dependencies {
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha09"
+    private const val AGP_VERSION = "8.0.0-alpha10"
     private const val DAGGERHILT_VERSION="2.44"
 
     /**
@@ -34,6 +34,7 @@ object Dependencies {
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
             const val adaptive="com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
+            const val flowLayout="com.google.accompanist:accompanist-flowlayout:$ACCOMPANIST_VERSION"
         }
         object DaggerHilt{
             const val daggerHilt="com.google.dagger:hilt-android:$DAGGERHILT_VERSION"
@@ -84,7 +85,6 @@ object Dependencies {
         }
         object Material{
             const val material="com.google.android.material:material:1.7.0-beta01"
-            const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.3.0-alpha03"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
             const val material3ComposeWindowsSizeClass="androidx.compose.material3:material3-window-size-class:$MDC3_VERSION"
         }

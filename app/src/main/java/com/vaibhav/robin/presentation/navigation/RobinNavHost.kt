@@ -2,6 +2,8 @@ package com.vaibhav.robin.presentation.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,6 +14,9 @@ import androidx.navigation.navigation
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.presentation.RobinAppBarType
+import com.vaibhav.robin.presentation.RobinNavigationType
+import com.vaibhav.robin.presentation.models.state.FilterChipState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
@@ -30,7 +35,12 @@ fun RobinNavHost(
     profileUiState: ProfileData?,
     toggleDrawer: () -> Unit,
     productUiState: Response<List<Product>>,
-    messageBarState: MessageBarState
+    messageBarState: MessageBarState,
+    navigationType: RobinNavigationType,
+    appBarType: RobinAppBarType,
+    brandsUiState: SnapshotStateList<FilterChipState>,
+    categoriesUiState: SnapshotStateList<FilterChipState>,
+    filter: MutableState<Boolean>
 ) {
     NavHost(
         navController = navController, startDestination = RobinDestinations.HOME
@@ -39,9 +49,12 @@ fun RobinNavHost(
             Home(
                 navController = navController,
                 profileUiState = profileUiState,
-                toggleDrawer=toggleDrawer,
-                productUiState=productUiState,
-                messageBarState=messageBarState
+                toggleDrawer =toggleDrawer,
+                productUiState =productUiState,
+                messageBarState =messageBarState,
+                navigationType =navigationType,
+                appBarType =appBarType,
+                filter=filter
             )
         }
 

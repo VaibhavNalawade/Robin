@@ -20,8 +20,8 @@ fun Star(modifier:Modifier=Modifier,onClick: (Int) -> Unit, stars: Int) {
             IconButton(modifier = Modifier.size(64.dp), onClick = { onClick(1 + i) }, content = {
                 Icon(
                     modifier = Modifier.size(48.dp),
-                    painter = if (stars > i) painterResource(id = R.drawable.star_rate_fill1_wght200_grad200_opsz48)
-                    else painterResource(id = R.drawable.star_rate_fill0_wght200_grad200_opsz48),
+                    painter = if (stars > i) painterResource(id = R.drawable.cancel)
+                    else painterResource(id = R.drawable.cancel),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )

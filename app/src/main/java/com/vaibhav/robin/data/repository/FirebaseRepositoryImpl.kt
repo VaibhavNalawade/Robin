@@ -3,9 +3,13 @@ package com.vaibhav.robin.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.vaibhav.robin.data.models.Brand
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.Favourite
+import com.vaibhav.robin.data.models.MainBrand
+import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.data.remote.FirestoreSource
 import com.vaibhav.robin.domain.model.Response
@@ -133,6 +137,17 @@ class FirebaseRepositoryImpl @Inject constructor(
                 .document(auth.getUserUid()!!)
                 .collection("Cart").document(productId))
     }
+
+    override suspend fun getCategory():Flow<Response<List<MainCategory>>> =
+        source.fetchFromReferenceToObject(firestore.collection("Category"),100L)
+
+
+    override suspend fun getBrand(): Flow<Response<List<MainBrand>>> =
+        source.fetchFromReferenceToObject(firestore.collection("Brand"),100L)
+
+    override suspend fun queryProduct(queryProduct: QueryProduct): Flow<Response<List<Product>>> =
+       source.fetchFromReferenceToObject(firestore.collection("Product"))
+
 
 
     private suspend fun <T>tryCatchScaffold(tryBlock:suspend ()->Flow<Response<T>>):Flow<Response<T>> =
