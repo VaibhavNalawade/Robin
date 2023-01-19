@@ -26,7 +26,7 @@ import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.BottomSheetHandle
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage

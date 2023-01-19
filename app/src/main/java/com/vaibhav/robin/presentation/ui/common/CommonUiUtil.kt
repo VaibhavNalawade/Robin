@@ -207,7 +207,6 @@ fun DividerHorizontal(modifier: Modifier = Modifier) {
 
 @Composable
 fun ChipDummy() {
-
     Surface(
         modifier = Modifier
             .height(32.dp)
@@ -217,9 +216,7 @@ fun ChipDummy() {
             .fillMaxSize()
             .clip(MaterialTheme.shapes.small)
             .placeholder(true)) {
-
         }
-
     }
 }
 

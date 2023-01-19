@@ -1,16 +1,18 @@
 package com.vaibhav.robin.presentation
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vaibhav.robin.data.models.MainBrand
+import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.presentation.models.state.FilterChipState
+import com.vaibhav.robin.presentation.models.state.FilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,9 +28,9 @@ class MainViewModel @Inject constructor(
 
     var profileData by mutableStateOf(authUseCases.getProfileData())
         private set
-    val categories = mutableStateListOf<FilterChipState>()
 
-    val brands = mutableStateListOf<FilterChipState>()
+    var categories by mutableStateOf<Response<List<MainCategory>>>(Response.Loading)
+    var brands by mutableStateOf<Response<List<MainBrand>>>(Response.Loading)
 
 
     fun signOut() = viewModelScope.launch {
@@ -50,10 +52,7 @@ class MainViewModel @Inject constructor(
                     is Response.Error ->{}
                     Response.Loading ->{}
                     is Response.Success -> {
-                        categories.clear()
-                        it.data.forEach {
-                            categories.add(FilterChipState(it.name))
-                        }
+                        categories=it
                     }
                 }
             }
@@ -62,10 +61,7 @@ class MainViewModel @Inject constructor(
                     is Response.Error -> {}
                     Response.Loading -> {}
                     is Response.Success -> {
-                        brands.clear()
-                        it.data.forEach {
-                            brands.add(FilterChipState(it.name))
-                        }
+                        brands=it
                     }
                 }
             }
@@ -76,12 +72,15 @@ class MainViewModel @Inject constructor(
 
     fun fetchUiState() =
         viewModelScope.launch(Dispatchers.IO) {
-            databaseUseCases.getProducts().collect {
+            databaseUseCases.filterProducts(queryProduct = QueryProduct(null,null,null)).collect {
                 products = it
             }
         }
 
-    fun quarry() =viewModelScope.launch {
-      //  databaseUseCases.
+    fun quarry(queryProduct: QueryProduct) =viewModelScope.launch {
+        databaseUseCases.filterProducts(queryProduct =queryProduct).collect {
+            products = it
+        }
     }
+    val filterState by mutableStateOf(FilterState())
 }

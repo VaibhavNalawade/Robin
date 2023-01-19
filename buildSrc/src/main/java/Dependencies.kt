@@ -1,15 +1,15 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.7.20"
-    const val COMPOSE_VERSION = "1.4.0-alpha01"
-    const val COMPOSE_COMPILER_VERSION = "1.3.2"
-    private const val MDC3_VERSION = "1.1.0-alpha02"
+    const val KOTLIN_VERSION = "1.7.21"
+    const val COMPOSE_VERSION = "1.4.0-alpha04"
+    const val COMPOSE_COMPILER_VERSION = "1.4.0-alpha02"
+    private const val MDC3_VERSION = "1.1.0-alpha04"
     private const val GSM_VERSION = "4.3.13"
-    private const val ACCOMPANIST_VERSION = "0.28.0"
+    private const val ACCOMPANIST_VERSION = "0.29.0-alpha"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha10"
+    private const val AGP_VERSION = "8.0.0-alpha11"
     private const val DAGGERHILT_VERSION="2.44"
 
     /**
@@ -84,7 +84,6 @@ object Dependencies {
             const val compose = "androidx.paging:paging-compose:1.0.0-alpha17"
         }
         object Material{
-            const val material="com.google.android.material:material:1.7.0-beta01"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
             const val material3ComposeWindowsSizeClass="androidx.compose.material3:material3-window-size-class:$MDC3_VERSION"
         }

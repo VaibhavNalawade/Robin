@@ -1,9 +1,8 @@
-package com.vaibhav.robin.presentation.navigation
+package com.vaibhav.robin.presentation.ui.navigation
 
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,11 +15,10 @@ import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
-import com.vaibhav.robin.presentation.models.state.FilterChipState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
-import com.vaibhav.robin.presentation.ui.account.Login
+import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.PersonalDetails
 import com.vaibhav.robin.presentation.ui.account.SignUp
 import com.vaibhav.robin.presentation.ui.cart.Cart
@@ -38,8 +36,6 @@ fun RobinNavHost(
     messageBarState: MessageBarState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
-    brandsUiState: SnapshotStateList<FilterChipState>,
-    categoriesUiState: SnapshotStateList<FilterChipState>,
     filter: MutableState<Boolean>
 ) {
     NavHost(
@@ -83,7 +79,8 @@ fun RobinNavHost(
         ) {
             ProductDetails(
                 navController = navController,
-                viewModel = hiltViewModel()
+                viewModel = hiltViewModel(),
+                selectedProductUiState = Product()
             )
         }
         navigation(
@@ -91,14 +88,20 @@ fun RobinNavHost(
         ) {
 
             composable(RobinDestinations.LOGIN) {
-                Login(
-                    navController = navController, viewModel = hiltViewModel()
+                SignIn(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                    messageBarState=messageBarState,
+                    navigationType=navigationType
                 )
             }
             composable(RobinDestinations.SIGN_UP) {
 
                 SignUp(
-                    navController = navController, viewModel = hiltViewModel()
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                    messageBarState=messageBarState,
+                    navigationType=navigationType
                 )
             }
             composable(RobinDestinations.PERSONAL_DETAILS) {

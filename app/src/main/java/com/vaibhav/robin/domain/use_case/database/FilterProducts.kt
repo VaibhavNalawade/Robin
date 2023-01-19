@@ -5,5 +5,5 @@ import com.vaibhav.robin.domain.repository.DatabaseRepository
 import javax.inject.Inject
 
 class FilterProducts@Inject constructor(private val repository: DatabaseRepository) {
-  //  override operator fun invoke(querry:QueryProduct)=repository.
+    suspend operator fun invoke(queryProduct: QueryProduct)=repository.queryProduct(queryProduct)
 }

@@ -100,7 +100,6 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.NAVIGATION)
     implementation(Dependencies.AndroidX.Compose.ACTIVITY)
 
-    implementation(Dependencies.AndroidX.Material.material)
     implementation(Dependencies.AndroidX.Material.material3Compose)
     implementation(Dependencies.AndroidX.Material.material3ComposeWindowsSizeClass)
 

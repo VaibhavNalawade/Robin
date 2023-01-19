@@ -9,6 +9,7 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.animation.doOnEnd
@@ -47,21 +48,24 @@ class MainActivity : ComponentActivity() {
             val windowSize = calculateWindowSizeClass(this)
             val displayFeatures = calculateDisplayFeatures(this)
             RobinTheme {
-                RobinApp(
-                    windowSize = windowSize,
-                    displayFeatures = displayFeatures,
-                    profileUiState = viewModel.profileData,
-                    userAuthenticated = viewModel.userAuthenticated,
-                    productUiState = viewModel.products,
-                    brandsUiState = viewModel.brands,
-                    categoriesUiState = viewModel.categories,
-                    signOut = {
-                        viewModel.signOut()
-                    },
-                    onApply = {
-                        viewModel.quarry()
-                    }
-                )
+                Surface {
+                    RobinApp(
+                        windowSize = windowSize,
+                        displayFeatures = displayFeatures,
+                        profileUiState = viewModel.profileData,
+                        userAuthenticated = viewModel.userAuthenticated,
+                        productUiState = viewModel.products,
+                        brandsUiState = viewModel.brands,
+                        categoriesUiState = viewModel.categories,
+                        filterState = viewModel.filterState,
+                        signOut = {
+                            viewModel.signOut()
+                        },
+                        onApply = {
+                            viewModel.quarry(it)
+                        }
+                    )
+                }
             }
         }
         val content: View = findViewById(android.R.id.content)

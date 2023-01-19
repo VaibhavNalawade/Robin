@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.ui.product
 
+import android.app.PictureInPictureUiState
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
@@ -36,7 +37,7 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.*
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.*
@@ -60,128 +61,18 @@ import kotlin.random.Random
 fun ProductDetails(
     viewModel: ProductViewModel,
     navController: NavHostController,
+    selectedProductUiState: Product
 ) {
 
     val id = remember {
         navController.currentBackStackEntry?.arguments?.getString("Id") ?: ""
     }
-    LaunchedEffect(key1 = true, block = { viewModel.setProductId(id) })
-    val bottomSheetState = rememberBottomSheetScaffoldState()
-    val expandedFab by remember { derivedStateOf { !bottomSheetState.bottomSheetState.isCollapsed } }
 
-
-    val onObjectHeight = remember { mutableStateOf(0) }
-    val response = viewModel.productResponse
-    val fab = fabState(addToCart = viewModel.cartAdd)
-    val snackbarHost = remember {
-        SnackbarHostState()
-    }
-
-    BottomSheetScaffold(
-        modifier = Modifier,
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    if (viewModel.getAuthState())
-                    viewModel.addCartItem()
-                    else navController.navigate(RobinDestinations.LOGIN_ROUTE){
-                        popUpTo(RobinDestinations.LOGIN_ROUTE){
-                            inclusive=true
-                        }
-                    }
-                          },
-                expanded = expandedFab,
-                icon = fab.icon,
-                text = { Text(text = fab.text) },
-            )
-        },
-        sheetContent = {
-            when (response) {
-                is Success -> {
-                    FrontLayer(viewModel, navController)
-                }
-
-                is Loading -> {
-                    FrontScreenLoading()
-                }
-
-                is Error -> {
-                    ShowError(exception = response.message) {}
-                }
-            }
-        },
-        scaffoldState = bottomSheetState,
-        content = {
-            BackLayer(
-                viewModel, onObjectHeight, navController,
-            )
-        },
-        sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
-        sheetPeekHeight = peekHeightCalculation(),
-    )
 }
 
-@Composable
-fun peekHeightCalculation() =
-    LocalConfiguration.current.screenHeightDp.dp.times(.3f) + WindowInsets.statusBars.asPaddingValues()
-        .calculateTopPadding()
-
-@Composable
-fun frontLayoutHeightCalculation() = LocalConfiguration.current.screenHeightDp.dp - appbarSize
 data class FabState(
     val text: String = "", val icon: @Composable () -> Unit = {}, val OnClick: () -> Unit = {}
 )
-
-@Composable
-fun fabState(
-    addToCart: Response<Boolean>,
-): FabState {
-    return when (addToCart) {
-        is Success ->
-            return if (addToCart.data)
-                FabState(text = stringResource(R.string.added_to_cart),
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = null,
-                        )
-                    },
-                    OnClick = {}
-                )
-            else
-                FabState(text = stringResource(R.string.add_to_cart),
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cancel),
-                            contentDescription = null,
-                        )
-                    },
-                    OnClick = {}
-                )
-
-        Loading -> FabState(text = stringResource(R.string.loading), icon = {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp), strokeWidth = 2.dp
-            )
-        }, OnClick = {
-
-
-        })
-
-        is Error -> FabState(text = stringResource(R.string.error_occurred),
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Warning,
-                    contentDescription = stringResource(R.string.error_occurred),
-                )
-            },
-            OnClick = {
-
-            })
-
-    }
-}
-
 
 @Composable
 fun BackLayer(
@@ -201,7 +92,7 @@ fun BackLayer(
                 is Loading -> {}
                 is Success -> {
                     ImageSlider(
-                        bannerImage = response.data.variant[viewModel.selectedVariant.value].media.images,
+                        bannerImage = response.data.media[response.data.variant[viewModel.selectedVariant.value]]!!,
                         contentScale = ContentScale.Crop,
                         urlParam = "&w=640&q=80",
                     ) {}
@@ -255,11 +146,11 @@ fun BackLayer(
         }
     }
 }
-
-/**
+/*
+*//**
  * Todo- Remember To remove Surface layer When Using Material 3 BottomSheet
  * Well it is workaround for Material2 Background Issue With Material 3 wrapper
- * */
+ * *//*
 @Composable
 fun FrontLayer(viewModel: ProductViewModel, navController: NavHostController) {
     Surface(
@@ -777,7 +668,7 @@ fun FrontScreenLoading() {
             }
         }
     }
-}
+}*/
 
 /*suspend fun showSnackbar(
     message: String,
@@ -792,6 +683,7 @@ fun FrontScreenLoading() {
     SnackbarResult.Dismissed -> dismissed.invoke()
     SnackbarResult.ActionPerformed -> actionPerformed.invoke()
 }*/
+/*
 
 @Preview
 @Composable
@@ -847,4 +739,4 @@ fun IntroductionPreviewDark() {
             ), selectedVariant = 0, selectedSize = 0
         )
     }
-}
+}*/

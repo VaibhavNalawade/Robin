@@ -1,4 +1,4 @@
-package com.vaibhav.robin.presentation.navigation
+package com.vaibhav.robin.presentation.ui.navigation
 
 object RobinDestinations {
     const val HOME = "Home"

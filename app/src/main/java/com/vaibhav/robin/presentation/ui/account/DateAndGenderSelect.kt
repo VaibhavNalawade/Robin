@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.models.common.DropdownOption
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
@@ -54,7 +54,7 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
                 Loading(
                     Modifier
                         .height(68.dp)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(colorScheme.surface)
                 )
             }
         }
@@ -88,16 +88,8 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
         var showPicker by remember { mutableStateOf(value = false) }
 
-        if (showPicker)
-            DatePicker(
-                onDateSelected = { selectedDate ->
-                    val formatDate = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-                    date.value = date.value.copy(text = formatDate.format(selectedDate))
-                },
-                onDismissRequest = {
-                    showPicker = false
-                }
-            )
+        //if (showPicker)
+
 
         Box(
             modifier = Modifier

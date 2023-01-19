@@ -1,6 +1,8 @@
 package com.vaibhav.robin.presentation.ui.account
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.domain.model.Response
@@ -24,25 +26,30 @@ class SignUpViewModel @Inject constructor(
     private val _signUpPassword = mutableStateOf(TextFieldState())
     val signUpPassword get() = _signUpPassword
 
+
     private val _signUpConfirmPassword = mutableStateOf(TextFieldState())
     val signUpConfirmPassword get() = _signUpConfirmPassword
 
-    private val _signUpResponse = mutableStateOf<Response<Boolean>>(Response.Success(false))
-    val signUpResponse get() = _signUpResponse
+    private val _signUpName = mutableStateOf(TextFieldState())
+    val signUpName get() = _signUpName
+
+     var signUpResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
+         private set
 
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
-        authUseCases.signUpWithEmailPassword.invoke(
+        authUseCases.signUpWithEmailPassword(
             _signUpEmail,
             _signUpPassword,
-            _signUpConfirmPassword
+            _signUpConfirmPassword,
+            _signUpName
         ).collect { response ->
-            signUpResponse.value = response
+            signUpResponse = response
         }
     }
 
     fun retry() {
-        _signUpResponse.value = Response.Success(false)
+        signUpResponse = Response.Success(false)
     }
 
 /*    private fun createProfile() = viewModelScope.launch(Dispatchers.IO) {

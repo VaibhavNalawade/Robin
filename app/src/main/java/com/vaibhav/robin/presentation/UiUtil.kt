@@ -287,3 +287,7 @@ enum class RobinNavigationType {
 enum class RobinAppBarType{
     COLLAPSING_APPBAR,PERMANENT_APPBAR
 }
+enum class Order{
+    ASCENDING,
+    DESCENDING
+}

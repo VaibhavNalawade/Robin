@@ -1,5 +1,8 @@
 package com.vaibhav.robin.presentation
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,20 +15,23 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
+import com.vaibhav.robin.data.models.MainBrand
+import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.models.state.FilterChipState
+import com.vaibhav.robin.presentation.models.state.FilterState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
-import com.vaibhav.robin.presentation.navigation.RobinNavHost
+import com.vaibhav.robin.presentation.ui.navigation.RobinNavHost
 import com.vaibhav.robin.presentation.ui.common.ContentWithMessageBar
-import com.vaibhav.robin.presentation.ui.common.DrawerContent
+import com.vaibhav.robin.presentation.ui.common.NavigationDrawer
 import com.vaibhav.robin.presentation.ui.common.MessageBarPosition
 import com.vaibhav.robin.presentation.ui.common.NavigationRailsContent
 import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
@@ -40,9 +46,10 @@ fun RobinApp(
     userAuthenticated: Boolean,
     profileUiState: ProfileData?,
     productUiState: Response<List<Product>>,
-    categoriesUiState: SnapshotStateList<FilterChipState>,
-    brandsUiState: SnapshotStateList<FilterChipState>,
-    onApply: () -> Unit
+    categoriesUiState: Response<List<MainCategory>>,
+    brandsUiState: Response<List<MainBrand>>,
+    onApply: (QueryProduct) -> Unit,
+    filterState: FilterState
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -74,7 +81,8 @@ fun RobinApp(
         appBarType = appBarType,
         categoriesUiState = categoriesUiState,
         brandsUiState = brandsUiState,
-        onApply = onApply
+        onApply = onApply,
+        filterState = filterState
     )
 }
 
@@ -88,9 +96,10 @@ fun RobinNavigationWrapper(
     userAuthenticated: Boolean,
     productUiState: Response<List<Product>>,
     appBarType: RobinAppBarType,
-    categoriesUiState: SnapshotStateList<FilterChipState>,
-    brandsUiState: SnapshotStateList<FilterChipState>,
-    onApply: () -> Unit
+    categoriesUiState: Response<List<MainCategory>>,
+    brandsUiState: Response<List<MainBrand>>,
+    onApply: (QueryProduct) -> Unit,
+    filterState: FilterState
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -102,14 +111,32 @@ fun RobinNavigationWrapper(
 
     val closeDrawer: () -> Unit = {
         scope.launch {
-            drawerState.close()
+            drawerState.animateTo(
+                DrawerValue.Closed,
+                TweenSpec(
+                    durationMillis = 400,
+                    easing = FastOutSlowInEasing
+                )
+            )
         }
     }
     val toggleDrawer: () -> Unit = {
         scope.launch {
             if (drawerState.isClosed)
-                drawerState.open()
-            else drawerState.close()
+                drawerState.animateTo(
+                    DrawerValue.Open,
+                    TweenSpec(
+                        durationMillis = 400,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
+            else drawerState.animateTo(
+                DrawerValue.Closed,
+                TweenSpec(
+                    durationMillis=400,
+                    easing = FastOutSlowInEasing
+                )
+            )
         }
     }
     val filter = remember {
@@ -119,7 +146,7 @@ fun RobinNavigationWrapper(
     when (navigationType) {
         RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawer(
             drawerContent = {
-                DrawerContent(
+                NavigationDrawer(
                     userAuthenticated = userAuthenticated,
                     navController = navController,
                     signOut = signOut,
@@ -127,8 +154,9 @@ fun RobinNavigationWrapper(
                     brandsUiState = brandsUiState,
                     categoriesUiState = categoriesUiState,
                     showNavContent = filter,
-                    navContent = {},
-                    onApply = onApply
+                    onApply = onApply,
+                    navigationType = navigationType,
+                    filterState = filterState
                 )
             },
             content = {
@@ -144,9 +172,7 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            categoriesUiState = categoriesUiState,
-                            brandsUiState = brandsUiState,
-                            filter = filter
+                            filter = filter,
                         )
                     }
                 )
@@ -156,8 +182,8 @@ fun RobinNavigationWrapper(
         RobinNavigationType.NAVIGATION_RAILS -> {
             ModalNavigationDrawer(
                 drawerContent = {
-                    ModalDrawerSheet {
-                        DrawerContent(
+                    ModalDrawerSheet() {
+                        NavigationDrawer(
                             userAuthenticated = userAuthenticated,
                             navController = navController,
                             signOut = signOut,
@@ -165,8 +191,9 @@ fun RobinNavigationWrapper(
                             brandsUiState = brandsUiState,
                             categoriesUiState = categoriesUiState,
                             showNavContent = filter,
-                            navContent = {},
-                            onApply = onApply
+                            navigationType = navigationType,
+                            onApply = onApply,
+                            filterState = filterState
                         )
                     }
                 },
@@ -191,20 +218,20 @@ fun RobinNavigationWrapper(
                                     messageBarState = state,
                                     navigationType = navigationType,
                                     appBarType = appBarType,
-                                    brandsUiState = brandsUiState,
-                                    categoriesUiState = categoriesUiState,
                                     filter = filter
                                 )
                             }
                         )
                     }
-                })
+                },
+                drawerState = drawerState
+            )
         }
 
         else -> ModalNavigationDrawer(
             drawerContent = {
                 ModalDrawerSheet {
-                    DrawerContent(
+                    NavigationDrawer(
                         userAuthenticated = userAuthenticated,
                         navController = navController,
                         signOut = signOut,
@@ -212,8 +239,9 @@ fun RobinNavigationWrapper(
                         brandsUiState = brandsUiState,
                         categoriesUiState = categoriesUiState,
                         showNavContent = filter,
-                        navContent = {},
-                        onApply = onApply
+                        navigationType = navigationType,
+                        onApply = onApply,
+                        filterState = filterState
                     )
                 }
             },
@@ -230,8 +258,6 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            brandsUiState = brandsUiState,
-                            categoriesUiState = categoriesUiState,
                             filter = filter
                         )
                     }

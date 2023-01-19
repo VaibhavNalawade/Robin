@@ -14,7 +14,7 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,7 +118,7 @@ class ProductViewModel @Inject constructor(
 
     fun addCartItem() =
         viewModelScope.launch(Dispatchers.IO) {
-            val item=productResponse as? Success
+  /*          val item=productResponse as? Success
             if (item != null) {
                 databaseUseCases.addCartItem(
                     CartItem(
@@ -133,7 +133,7 @@ class ProductViewModel @Inject constructor(
                 ).collect {
                     cartAdd = it
                 }
-            }
+            }*/
         }
 }
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,23 +28,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.models.Media
-import com.vaibhav.robin.data.models.Price
 import com.vaibhav.robin.data.models.Product
-import com.vaibhav.robin.data.models.Size
-import com.vaibhav.robin.data.models.Variant
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.RobinNavigationType
 import com.vaibhav.robin.presentation.models.state.MessageBarState
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.theme.Values
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
@@ -60,6 +60,9 @@ fun Home(
     filter: MutableState<Boolean>,
 ) {
     val lazyGridState = rememberLazyGridState()
+    var items by remember {
+        mutableStateOf(0)
+    }
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -70,7 +73,8 @@ fun Home(
                 scrollState = lazyGridState,
                 navigationType = navigationType,
                 appBarType = appBarType,
-                toggleFilter =filter
+                toggleFilter = filter,
+                productSize = items
             )
         },
         floatingActionButton = {
@@ -94,23 +98,26 @@ fun Home(
                     is Response.Error -> ShowError(productUiState.message) {}
                     is Response.Loading -> Loading()
                     is Response.Success -> {
-                        LazyVerticalGrid(
-                            contentPadding = PaddingValues(
-                                vertical = 110.dp,
-                                horizontal = Dimens.gird_one
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
-                            verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
-                            columns = GridCells.Adaptive(minSize = 164.dp),
-                            state = lazyGridState
-                        ) {
-                            items(items = productUiState.data) { product ->
-                                GridItem(product = product) { id ->
-                                    navController.navigate(
-                                        RobinDestinations.product(id).also { Log.e("nav", it) })
+                        items = productUiState.data.size
+                        if (items != 0)
+                            LazyVerticalGrid(
+                                contentPadding = PaddingValues(
+                                    vertical = 110.dp,
+                                    horizontal = Dimens.gird_one
+                                ),
+                                horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
+                                verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
+                                columns = GridCells.Adaptive(minSize = 164.dp),
+                                state = lazyGridState
+                            ) {
+                                items(items = productUiState.data) { product ->
+                                    GridItem(product = product) { id ->
+                                        navController.navigate(
+                                            RobinDestinations.product(id).also { Log.e("nav", it) })
+                                    }
                                 }
                             }
-                        }
+                        else EmptyProduct()
                     }
                 }
             }
@@ -119,7 +126,6 @@ fun Home(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RobinAppBar(
     profileData: ProfileData?,
@@ -128,34 +134,44 @@ fun RobinAppBar(
     scrollState: LazyGridState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
-    toggleFilter: MutableState<Boolean>
+    toggleFilter: MutableState<Boolean>,
+    productSize: Int
 ) {
     when (navigationType) {
         RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
-                PermanentAppBar()
+                PermanentAppBar(toggleFilter, productSize = productSize)
             else CollapsingAppBar(
                 profileData = profileData,
                 messageBarState = messageBarState,
                 toggleDrawer = toggleDrawer,
                 scrollState = scrollState,
-                toggleFilter =toggleFilter
+                toggleFilter = toggleFilter,
+                productSize = productSize
             )
         }
 
         RobinNavigationType.NAVIGATION_DRAWER -> {
-             CollapsingAppBar(messageBarState, profileData, toggleDrawer, scrollState, toggleFilter)
+            CollapsingAppBar(
+                messageBarState,
+                profileData,
+                toggleDrawer,
+                scrollState,
+                toggleFilter,
+                productSize
+            )
         }
 
         RobinNavigationType.NAVIGATION_RAILS -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
-                PermanentAppBar()
+                PermanentAppBar(toggleFilter, productSize = productSize)
             else CollapsingAppBar(
                 messageBarState,
                 profileData,
                 toggleDrawer,
                 scrollState,
-                toggleFilter
+                toggleFilter,
+                productSize
             )
         }
     }
@@ -168,7 +184,8 @@ fun CollapsingAppBar(
     profileData: ProfileData?,
     toggleDrawer: () -> Unit,
     scrollState: LazyGridState,
-    toggleFilter: MutableState<Boolean>
+    toggleFilter: MutableState<Boolean>,
+    productSize: Int
 ) {
     var oldPosition by remember { mutableStateOf(0) }
     val scrollUp = remember { mutableStateOf(false) }
@@ -191,12 +208,10 @@ fun CollapsingAppBar(
         } else 0f
     )
     Surface(
-        modifier = Modifier.graphicsLayer { translationY = position },
-        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_2),
-        shadowElevation = 1.dp
+        modifier = Modifier
+            .graphicsLayer { translationY = position },
     ) {
         Column {
-            SpacerVerticalOne()
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -205,7 +220,6 @@ fun CollapsingAppBar(
                     .statusBarsPadding()
                     .height(height = 48.dp),
                 tonalElevation = Dimens.surface_elevation_5,
-                shadowElevation = 1.dp,
                 shape = RoundedCornerShape(percent = 100)
             ) {
                 Box(
@@ -236,7 +250,8 @@ fun CollapsingAppBar(
                         onClick = { messageBarState.addError("Not Implemented") }
                     ) {
                         if (profileData?.image == null)
-                            Icon(modifier=Modifier.size(24.dp),
+                            Icon(
+                                modifier = Modifier.size(24.dp),
                                 painter = painterResource(
                                     id = R.drawable.profile_placeholder
                                 ),
@@ -252,53 +267,22 @@ fun CollapsingAppBar(
                     }
                 }
             }
-            Row(
+            SpaceBetweenContainer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.gird_two),
+                    .padding(horizontal = Dimens.gird_four),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
             ) {
-
-                val scope = rememberCoroutineScope()
-                LazyRow(
-                    modifier = Modifier,
-                    content = {
-                        item {
-                            FilterChip(
-                                true,
-                                onClick = {
-                                },
-                                label = { Text(text = "#Trending") }
-                            )
-                        }
-                        item {
-                            SpacerHorizontalOne()
-                        }
-                        item {
-                            FilterChip(
-                                true,
-                                onClick = {
-
-                                },
-                                label = {
-                                    Text(text = "#2022")
-                                }
-                            )
-                        }
-                    })
-                SpacerHorizontalFour()
-                Divider(
-                    modifier = Modifier
-                        .height(FilterChipDefaults.Height)
-                        .width(1.dp)
-                        .padding(vertical = Dimens.gird_quarter),
-                    thickness = 1.dp
+                Text(
+                    text = "$productSize Products",
+                    style = typography.titleSmall
                 )
+                SpacerHorizontalFour()
                 SpacerHorizontalOne()
-                ElevatedFilterChip(selected = toggleFilter.value,
+                FilterChip(
+                    selected = toggleFilter.value,
                     onClick = {
-                        toggleFilter.value=true
+                        toggleFilter.value = true
                         toggleDrawer()
                     },
                     label = { Text(text = stringResource(R.string.filter)) },
@@ -317,7 +301,7 @@ fun CollapsingAppBar(
 }
 
 @Composable
-fun PermanentAppBar() {
+fun PermanentAppBar(toggleFilter: MutableState<Boolean>, productSize: Int) {
     Surface {
         Column(
             modifier = Modifier
@@ -365,8 +349,8 @@ fun PermanentAppBar() {
                     }
                 }
                 FilledIconToggleButton(
-                    checked = false,
-                    onCheckedChange = {},
+                    checked = toggleFilter.value,
+                    onCheckedChange = { toggleFilter.value = it },
                     content = {
                         Icon(
                             painter = painterResource(id = R.drawable.filter_alt),
@@ -377,7 +361,7 @@ fun PermanentAppBar() {
             }
             SpacerVerticalTwo()
             Text(
-                text = "28 Products",
+                text = "$productSize Products",
                 modifier = Modifier.align(Alignment.Start)
             )
         }
@@ -445,7 +429,7 @@ fun GridItem(
                     .fillMaxWidth(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                model = product.variant[0].media.images[0]
+                model = product.media["variant_0"]?.get(0)
             )
             SpacerVerticalOne()
             Column(
@@ -454,12 +438,19 @@ fun GridItem(
             ) {
                 Text(
                     text = product.name,
-                    style = typography.bodyLarge,
+                    style = typography.titleSmall,
                     color = colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
+                val price = remember {
+                    if (product.minPrice != product.maxPrice)
+                        "₹ ${product.minPrice.toInt()} - ${product.maxPrice.toInt()}"
+                    else
+                        "₹ ${product.minPrice.toInt()}"
+                }
+
                 Text(
-                    text = "₹ ${product.variant[0].size[0].price.retail}",
+                    text = price,
                     style = typography.bodyMedium,
                     color = colorScheme.primary,
                     maxLines = 1
@@ -470,6 +461,58 @@ fun GridItem(
     }
 }
 
+@Composable
+fun EmptyProduct() {
+    Box {
+        Text(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(
+                    horizontal = Dimens.gird_two,
+                    vertical = Dimens.gird_four
+                ),
+            text = stringResource(id = R.string.app_name),
+            style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(Dimens.gird_four),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            RobinAsyncImage(
+                modifier = Modifier,
+                model = R.drawable.empty_products,
+                contentDescription = null,
+            )
+
+            SpacerVerticalTwo()
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.nothing_to_see_here),
+                textAlign = TextAlign.Center,
+                style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
+            )
+            SpacerVerticalOne()
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Please clear the filters and try again",
+                textAlign = TextAlign.Center,
+                style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant)
+            )
+            SpacerVerticalTwo()
+            Button(onClick = {
+
+            }) {
+                Text(text = stringResource(R.string.try_again))
+            }
+        }
+    }
+}
+
+/*
 
 @Preview(group = "Grid", uiMode = UI_MODE_NIGHT_YES)
 @Composable
@@ -504,12 +547,13 @@ private fun GirdPreviewLight() {
         ) {}
     }
 }
+*/
 
 @Preview(group = "AppBar", widthDp = 840)
 @Composable
 private fun PermanentAppbarPreviewLight() {
     RobinAppPreview {
-        PermanentAppBar()
+        // PermanentAppBar(true)
     }
 }
 
@@ -517,6 +561,6 @@ private fun PermanentAppbarPreviewLight() {
 @Composable
 private fun PermanentAppbarPreviewDark() {
     RobinAppPreview {
-        PermanentAppBar()
+        // PermanentAppBar(true)
     }
 }

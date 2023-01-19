@@ -17,6 +17,7 @@ class SignUpWithEmailPassword @Inject constructor(
         emailState: MutableState<TextFieldState>,
         passwordState: MutableState<TextFieldState>,
         confirmPasswordState: MutableState<TextFieldState>,
+        nameState:MutableState<TextFieldState>
     ): Flow<Response<Boolean>> {
         emailState.value = Validators.email(emailState.value)
         passwordState.value = Validators.password(passwordState.value)
@@ -24,14 +25,17 @@ class SignUpWithEmailPassword @Inject constructor(
             confirmPasswordState.value,
             passwordState.value
         )
+        nameState.value=Validators.personalDetails(nameState.value)
         return if (
             (!emailState.value.error) &&
             (!passwordState.value.error) &&
-            (!confirmPasswordState.value.error)
+            (!confirmPasswordState.value.error) &&
+            (!nameState.value.error)
         )
             repository.signUpWithEmailPassword(
                 emailState.value.text,
-                passwordState.value.text
+                passwordState.value.text,
+                nameState.value.text
             )
         else flow { emit(Response.Error(ValidationFailedException())) }
     }

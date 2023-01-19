@@ -17,6 +17,7 @@ class RobinApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Firebase.initialize(this)
+    //    Firebase.firestore.useEmulator( "192.168.34.174",9090)
         Firebase.firestore.firestoreSettings = firestoreSettings {
             isPersistenceEnabled = true
 
