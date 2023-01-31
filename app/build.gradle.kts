@@ -72,8 +72,6 @@ dependencies {
     implementation(Dependencies.Kotlin.Coroutines.android)
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
 
-    implementation(Dependencies.Google.Accompanist.pager)
-    implementation(Dependencies.Google.Accompanist.pagerIndicator)
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
     implementation(Dependencies.Google.Accompanist.adaptive)
     implementation(Dependencies.Google.Accompanist.flowLayout)

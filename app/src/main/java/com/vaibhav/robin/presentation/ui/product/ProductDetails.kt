@@ -1,20 +1,12 @@
 package com.vaibhav.robin.presentation.ui.product
 
-import android.app.PictureInPictureUiState
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -23,13 +15,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.ScaleFactor
+import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -37,257 +30,230 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.*
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.presentation.models.state.MessageBarState
+import com.vaibhav.robin.presentation.timeStampHandler
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.*
-import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.appbarSize
-import com.vaibhav.robin.presentation.timeStampHandler
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import kotlin.random.Random
+import kotlin.math.abs
 
 
-/**
- * Todo: In this screen we use legacy Material2 BottomSheet so Wait for Material 3 Implementation.
- * TBD is Currently Unknown.
- *
- * Todo: Add video media support on back layer.
- */
 @OptIn(
-    ExperimentalMaterialApi::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun ProductDetails(
     viewModel: ProductViewModel,
     navController: NavHostController,
-    selectedProductUiState: Product
+    selectedProductUiState: Product,
+    cartItems: Response<List<CartItem>>,
+    messageBarState: MessageBarState
 ) {
-
-    val id = remember {
-        navController.currentBackStackEntry?.arguments?.getString("Id") ?: ""
-    }
-
-}
-
-data class FabState(
-    val text: String = "", val icon: @Composable () -> Unit = {}, val OnClick: () -> Unit = {}
-)
-
-@Composable
-fun BackLayer(
-    viewModel: ProductViewModel,
-    sheetPeekHeight: MutableState<Int>,
-    navController: NavHostController,
-) {
-    val response = viewModel.productResponse
-    Surface(tonalElevation = Dimens.surface_elevation_1) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight(.7f)
-                .onGloballyPositioned { sheetPeekHeight.value = it.size.height },
-        ) {
-            when (response) {
-                is Error -> {}
-                is Loading -> {}
+    LaunchedEffect(
+        key1 = true,
+        block = {
+            viewModel.loadCurrentUserReview(productId = selectedProductUiState.id)
+            viewModel.loadReview(productId = selectedProductUiState.id)
+            viewModel.checkFavorite(productId = selectedProductUiState.id)
+            when(cartItems){
                 is Success -> {
-                    ImageSlider(
-                        bannerImage = response.data.media[response.data.variant[viewModel.selectedVariant.value]]!!,
-                        contentScale = ContentScale.Crop,
-                        urlParam = "&w=640&q=80",
-                    ) {}
+                    cartItems.data.forEach {
+                        if (it.productId==selectedProductUiState.id) {
+                            messageBarState.addError("Item already exits in your cart")
+                            return@forEach
+                        }
+                    }
                 }
+                else->{}
             }
-            SpaceBetweenContainer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(appbarSize)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FilledIconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.cancel),
-                        contentDescription = ""
+        }
+    )
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Details",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-                }
-
-
-                FilledIconToggleButton(
-                    checked = viewModel.favouriteToggleButtonState,
-                    onCheckedChange = {
-                        if (viewModel.getAuthState())
-                            if (it)
-                                viewModel.addFavorite()
-                            else
-                                viewModel.removeFavorite()
-                        else
-                            navController.navigate(RobinDestinations.LOGIN_ROUTE) {
-                                popUpTo(RobinDestinations.LOGIN_ROUTE) {
-                                    inclusive = true
-                                }
-                            }
-                    }) {
-                    if (viewModel.favouriteToggleButtonState)
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.cancel),
-                            contentDescription = "Localized description",
+                            painter = painterResource(id = R.drawable.arrow_back),
+                            contentDescription = "Localized description"
                         )
-                    else Icon(
-                        painter = painterResource(id = R.drawable.cancel),
-                        contentDescription = "Localized description",
+                    }
+                },
+                actions = {
+                    IconToggleButton(
+                        checked = viewModel.favouriteToggleButtonState,
+                        onCheckedChange = {
+                            if (viewModel.getAuthState())
+                                if (it)
+                                    viewModel.addFavorite(selectedProductUiState)
+                                else
+                                    viewModel.removeFavorite(selectedProductUiState.id)
+                            else
+                                navController.navigate(RobinDestinations.LOGIN_ROUTE) {
+                                    popUpTo(RobinDestinations.LOGIN_ROUTE) {
+                                        inclusive = true
+                                    }
+                                }
+                        },
+                        content = {
+                            if (viewModel.favouriteToggleButtonState)
+                                Icon(
+                                    painter = painterResource(id = R.drawable.favorite_fill),
+                                    contentDescription = "Localized description",
+                                )
+                            else Icon(
+                                painter = painterResource(id = R.drawable.favorite),
+                                contentDescription = "Localized description",
+                            )
+                        }
                     )
-                }
-
-            }
-        }
-    }
-}
-/*
-*//**
- * Todo- Remember To remove Surface layer When Using Material 3 BottomSheet
- * Well it is workaround for Material2 Background Issue With Material 3 wrapper
- * *//*
-@Composable
-fun FrontLayer(viewModel: ProductViewModel, navController: NavHostController) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(frontLayoutHeightCalculation()),
-        tonalElevation = Dimens.surface_elevation_1,
-    ) {
-        Column {
-            BottomSheetHandle()
-            when (val product = viewModel.productResponse) {
-                is Success -> LoadProductUi(
-                    product = product.data, viewModel = viewModel, navController = navController
-                )
-
-                else -> {
-                    TODO()
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun LoadProductUi(product: Product, viewModel: ProductViewModel, navController: NavHostController) {
-
-    val selectedVariant = viewModel.selectedVariant
-    val selectedSize = viewModel.selectedSize
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.gird_one)
-    ) {
-        item {
-            TitleDescription(
-                product = product,
-                selectedVariant = selectedVariant.value,
-                selectedSize = selectedSize.value
+                },
+                scrollBehavior = scrollBehavior
             )
-        }
-        item {
-            VariantSelector(
-                product = product,
-                selectedVariantState = selectedVariant,
-                selectedSizeState = selectedSize
-            )
-        }
-
-        item {
-            Size(
-                product = product,
-                selectedVariant = selectedVariant.value,
-                selectedSizeState = selectedSize
-            )
-        }
-
-        item {
-            Details(product = product)
-        }
-
-        item {
-            LaunchedEffect(key1 = true, block = { viewModel.loadCurrentUserReview() })
-            Rating(
-                starState = viewModel.stars, review = viewModel.yourReviewResponse
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
             ) {
-                navController.navigate(
-                    RobinDestinations.review(
-                        // todo revisedcode
-                        Id = navController.currentBackStackEntry?.arguments?.getString(
-                            "Id"
-                        )!!, name = product.name, image = URLEncoder.encode(
-                            product.variant[selectedVariant.value].media.selection,
-                            StandardCharsets.UTF_8.toString()
-                        ), star = viewModel.stars.value
-                    )
+                val pager= rememberPagerState()
+                Surface(tonalElevation = Dimens.surface_elevation_5) {
+                    selectedProductUiState.media[viewModel.selectedVariant.value
+                        ?: selectedProductUiState.variantIndex[0]].let { item ->
+                        if (item != null) {
+                            HorizontalPager(
+                               state = pager ,
+                                pageCount = item.size,
+                                pageSize = PageSize.Fill,
+                                contentPadding = PaddingValues(horizontal = Dimens.gird_four),
+                                pageSpacing = Dimens.gird_half
+                            ) {
+                                AsyncImage(
+                                    modifier= Modifier
+                                        .aspectRatio(0.6f)
+                                        .graphicsLayer {
+                                            lerp(
+                                                start = ScaleFactor(.8f, .8f),
+                                                stop = ScaleFactor(1f, 1f),
+                                                fraction = if (it == pager.currentPage) 1f
+                                                else abs(pager.currentPageOffsetFraction) + .5f
+                                            ).also { scale ->
+                                                scaleX = scale.scaleX
+                                                scaleY = scale.scaleY
+                                            }
+
+                                            alpha = lerp(
+                                                start = ScaleFactor(.5f, .5f),
+                                                stop = ScaleFactor(1f, 1f),
+                                                fraction = 1f - pager.currentPageOffsetFraction
+                                            ).scaleY
+                                        },
+                                    model = item[it],
+                                    contentDescription = ""
+                                )
+                            }
+                        }
+                    }
+                }
+                SpacerVerticalTwo()
+                TitleDescription(
+                    product = selectedProductUiState,
+                    selectedVariant = viewModel.selectedVariant.value
+                        ?: selectedProductUiState.variantIndex[0],
+                    selectedSize = viewModel.selectedSize.value ?: 0
                 )
-            }
-        }
-
-        item {
-            LaunchedEffect(key1 = true, block = {
-                viewModel.loadReview()
-            })
-            SpacerVerticalTwo()
-            Text(
-                modifier = Modifier.padding(horizontal = Dimens.gird_four),
-                text = stringResource(id = R.string.rating_and_reviews),
-                style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
-            )
-        }
-
-        when (val reviewResponse = viewModel.reviewsResponse) {
-            is Error -> item {
-                ShowError(exception = reviewResponse.message) {
-                }
-            }
-
-            Loading -> item {
-                Loading()
-            }
-
-            is Success -> {
-                if (reviewResponse.data.isNotEmpty())
-                    items(reviewResponse.data) { review ->
-                        ReviewContainer(review = review)
+                SpacerVerticalOne()
+                Box(modifier = Modifier.padding(horizontal = Dimens.gird_three)){
+                Button(modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.addCartItem(selectedProductUiState) },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_shopping_cart),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                        Text(text = "Add To Cart")
                     }
-                else item {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            model = R.drawable.cancel,
-                            contentScale = ContentScale.Fit,
-                            contentDescription = "",
-                        )
-                        Text(
-                            text = stringResource(id = R.string.nothing_to_see_here),
-                            style = typography.titleLarge
-                        )
-                        Text(
-                            text = stringResource(id = R.string.encourage_write_review),
-                            style = typography.titleMedium
-                        )
-                    }
+                )
                 }
+                SpacerVerticalOne()
+                VariantSelector(
+                    product = selectedProductUiState,
+                    selectedVariantState = viewModel.selectedVariant,
+                    selectedSizeState = viewModel.selectedSize
+                )
+                Size(
+                    product = selectedProductUiState,
+                    selectedVariant = viewModel.selectedVariant.value
+                        ?: selectedProductUiState.variantIndex[0],
+                    selectedSizeState = viewModel.selectedSize
+                )
+                Details(product = selectedProductUiState)
+                Rating(
+                    starState = viewModel.stars,
+                    review = viewModel.yourReviewResponse,
+                    onClick = {
+                        navController.navigate(RobinDestinations.review(star = viewModel.stars.value))
+                    }
+                )
+                SpacerVerticalTwo()
+                Text(
+                    modifier = Modifier.padding(horizontal = Dimens.gird_four),
+                    text = stringResource(id = R.string.rating_and_reviews),
+                    style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
+                )
+                SpacerVerticalOne()
+                when (val reviewResponse = viewModel.reviewsResponse) {
+                    is Error -> ShowError(exception = reviewResponse.message) {}
+
+                    Loading -> Loading()
+                    is Success -> {
+                        if (reviewResponse.data.isNotEmpty())
+                            reviewResponse.data.forEach { review ->
+                                ReviewContainer(review = review)
+                            }
+                        else
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp),
+                                    model = R.drawable.desert,
+                                    contentScale = ContentScale.Fit,
+                                    contentDescription = "",
+                                )
+                                Text(
+                                    text = stringResource(id = R.string.nothing_to_see_here),
+                                    style = typography.titleLarge
+                                )
+                                Text(
+                                    text = stringResource(id = R.string.encourage_write_review),
+                                    style = typography.titleMedium
+                                )
+                            }
+                    }
+
+                }
+                SpacerVerticalThree()
             }
+
         }
-        item { SpacerVerticalFour() }
-    }
+    )
 }
 
-
-
-
 @Composable
-fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) {
+fun TitleDescription(product: Product, selectedVariant: String, selectedSize: Int) {
     ExpandingCard(
         onClick = { },
         modifier = Modifier
@@ -309,12 +275,12 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
             ) {
                 CircularImage(
                     modifier = Modifier.size(24.dp),
-                    image = product.brand.url,
+                    image = product.brandLogo,
                     contentDescription = null
                 )
                 SpacerHorizontalOne()
                 Text(
-                    text = product.brand.name,
+                    text = product.brandName,
                     style = typography.bodyMedium.copy(colorScheme.primary)
                 )
                 SpacerHorizontalOne()
@@ -322,37 +288,28 @@ fun TitleDescription(product: Product, selectedVariant: Int, selectedSize: Int) 
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .size(20.dp),
-                    painter = painterResource(id = R.drawable.cancel),
+                    painter = painterResource(id = R.drawable.star_rate_half),
                     contentDescription = null,
                     tint = colorScheme.primary
                 )
                 Text(
-                    text = product.rating.stars?.toString() ?: "Not Rated",
+                    text = product.ratingStars?.toString() ?: "Not Rated",
                     style = typography.bodyMedium.copy(colorScheme.primary)
                 )
                 SpacerHorizontalOne()
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "(${product.rating.count} reviews)",
+                    text = "(${product.ratingCount} reviews)",
                     style = typography.labelSmall.copy(colorScheme.primary)
                 )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    modifier = Modifier
-                        .size(26.dp)
-                        .align(Alignment.Bottom),
-                    painter = painterResource(id = R.drawable.cancel),
-                    contentDescription = null,
-                    tint = colorScheme.primary
-                )
-                SpacerHorizontalOne()
+
                 Text(
                     modifier = Modifier,
-                    text = product.variant[selectedVariant].size[selectedSize].price.retail.toInt()
-                        .toString(),
+                    text = "₹ ${product.sizes[selectedVariant]?.get(selectedSize)?.get("price")}",
                     style = typography.titleLarge.copy(colorScheme.primary)
                 )
             }
@@ -401,16 +358,16 @@ fun BulletPoints(productData: Product, visible: Boolean) {
 @Composable
 fun VariantSelector(
     product: Product,
-    selectedVariantState: MutableState<Int>,
-    selectedSizeState: MutableState<Int>
+    selectedVariantState: MutableState<String?>,
+    selectedSizeState: MutableState<Int?>
 ) {
     SpacerVerticalOne()
     LazyRow {
 
-        product.variant.forEachIndexed { index, variant ->
+        product.variantIndex.forEach { variant ->
             item {
                 SpacerHorizontalTwo()
-                val selectedThis = index == selectedVariantState.value
+                val selectedThis = variant == selectedVariantState.value
                 RobinAsyncImage(
                     modifier = Modifier
                         .size(64.dp)
@@ -421,11 +378,11 @@ fun VariantSelector(
                             shape = shapes.small
                         )
                         .clickable {
-                            selectedVariantState.value = index
+                            selectedVariantState.value = variant
                             selectedSizeState.value = 0
                         },
                     contentDescription = null,
-                    model = variant.media.selection,
+                    model = (product.media[variant] as List<*>)[0],
                     contentScale = ContentScale.Crop
                 )
             }
@@ -433,24 +390,25 @@ fun VariantSelector(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Size(
-    product: Product, selectedVariant: Int, selectedSizeState: MutableState<Int>
+    product: Product, selectedVariant: String, selectedSizeState: MutableState<Int?>
 ) {
     SpacerVerticalOne()
     LazyRow {
-        product.variant[selectedVariant].size.forEachIndexed { index, size ->
+        product.sizes[selectedVariant]?.forEachIndexed { index, size ->
             item {
                 SpacerHorizontalTwo()
                 val selectedThis = index == selectedSizeState.value
                 FilterChip(selected = selectedThis,
                     onClick = { selectedSizeState.value = index },
-                    label = { Text(size.size) },
+                    label = { Text(size.get("size") as String) },
                     leadingIcon = if (selectedThis) {
                         {
                             Icon(
-                                painter = painterResource(id = R.drawable.cancel),
+                                painter = painterResource(id = R.drawable.check_circle),
                                 contentDescription = null,
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
@@ -461,6 +419,7 @@ fun Size(
     }
     SpacerVerticalOne()
 }
+
 
 @Composable
 fun Details(product: Product) {
@@ -502,6 +461,7 @@ fun Details(product: Product) {
     }
 
 }
+
 
 @Composable
 fun Rating(starState: MutableState<Int>, review: Response<Review>, onClick: () -> Unit) {
@@ -575,11 +535,14 @@ fun ReviewContent(
     Column(modifier = Modifier.padding(paddingValues)) {
         SpaceBetweenContainer(modifier = Modifier.fillMaxWidth()) {
             Row {
-                CircularImage(
-                    modifier = Modifier.size(36.dp),
-                    contentDescription = null,
-                    image = review.profileImage
-                )
+                if (!review.profileImage.isBlank())
+                    CircularImage(
+                        modifier = Modifier.size(36.dp),
+                        contentDescription = null,
+                        image = review.profileImage
+                    )
+                else
+                    ProfileInitial(profileName = review.userName)
                 SpacerHorizontalOne()
                 Column {
                     Text(
@@ -591,7 +554,7 @@ fun ReviewContent(
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
                                 .size(20.dp),
-                            painter = painterResource(id = R.drawable.cancel),
+                            painter = painterResource(id = R.drawable.star_rate_half),
                             contentDescription = null,
                             tint = colorScheme.primary
                         )
@@ -614,20 +577,20 @@ fun ReviewContent(
                 FilledIconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
                     if (checked) {
                         Icon(
-                            painter = painterResource(id = R.drawable.cancel),
+                            painter = painterResource(id = R.drawable.favorite_fill),
                             contentDescription = "Localized description"
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.cancel),
+                            painter = painterResource(id = R.drawable.favorite),
                             contentDescription = "Localized description"
                         )
                     }
                 }
             } else {
-                OutlinedIconButton(onClick = { onClick() }) {
+                FilledTonalIconButton(onClick = { onClick() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.cancel),
+                        painter = painterResource(id = R.drawable.drive_file_rename_outline),
                         contentDescription = null
                     )
                 }
@@ -642,101 +605,3 @@ fun ReviewContent(
         )
     }
 }
-
-@Composable
-fun FrontScreenLoading() {
-    Surface(tonalElevation = Dimens.surface_elevation_4) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.gird_three)
-        ) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .placeholder(true), content = {})
-            for (i in 1..6 step 1) {
-                SpacerVerticalTwo()
-                Box(modifier = Modifier
-                    .fillMaxWidth(
-                        Random
-                            .nextDouble(0.3, 1.0)
-                            .toFloat()
-                    )
-                    .height(16.dp)
-                    .placeholder(true), content = {})
-            }
-        }
-    }
-}*/
-
-/*suspend fun showSnackbar(
-    message: String,
-    actionLabel: String? = null,
-    snackbarHostState: SnackbarHostState,
-    dismissed: () -> Unit = {},
-    actionPerformed: () -> Unit = {}
-) = when (snackbarHostState.showSnackbar(
-    message = message,
-    actionLabel = actionLabel,
-)) {
-    SnackbarResult.Dismissed -> dismissed.invoke()
-    SnackbarResult.ActionPerformed -> actionPerformed.invoke()
-}*/
-/*
-
-@Preview
-@Composable
-fun IntroductionPreview() {
-    RobinAppPreview {
-        TitleDescription(
-            product = Product(
-                name = "Regular Fit Oxford shirt",
-                description = stringResource(id = R.string.lorem_ipsum),
-                brand = Brand(
-                    name = "Flame", url = stringResource(id = R.string.profile_photo_test)
-                ),
-                rating = Rating(count = 20020, stars = 4.0f),
-                variant = listOf(
-                    Variant(
-                        size = listOf(
-                            Size(
-                                Price(
-                                    retail = 500.7
-                                )
-                            )
-                        )
-                    )
-                )
-            ), selectedVariant = 0, selectedSize = 0
-        )
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun IntroductionPreviewDark() {
-    RobinAppPreview {
-        TitleDescription(
-            product = Product(
-                name = "Regular Fit Oxford shirt",
-                description = stringResource(id = R.string.lorem_ipsum),
-                brand = Brand(
-                    name = "Flame", url = stringResource(id = R.string.profile_photo_test)
-                ),
-                rating = Rating(count = 20020, stars = 4.0f),
-                variant = listOf(
-                    Variant(
-                        size = listOf(
-                            Size(
-                                Price(
-                                    retail = 500.7
-                                )
-                            )
-                        )
-                    )
-                )
-            ), selectedVariant = 0, selectedSize = 0
-        )
-    }
-}*/

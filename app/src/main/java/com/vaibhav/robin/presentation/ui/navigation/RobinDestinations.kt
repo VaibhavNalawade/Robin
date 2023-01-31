@@ -12,13 +12,13 @@ object RobinDestinations {
     const val DATE_AND_GENDER = "DATE_AND_GENDER"
     const val ADDRESS_AND_PHONE = "ADDRESS_AND_PHONE"
     private const val REVIEW = "REVIEW"
-    const val REVIEW_SIGNATURE="$REVIEW/{Id}/{name}/{image}/{star}"
+    const val REVIEW_SIGNATURE="$REVIEW/{star}"
 
-    fun review(Id: String, name: String, image: String, star: String) =
-        "$REVIEW/$Id/$name/$image/$star"
+    fun review( star: String) =
+        "$REVIEW/$star"
 
-    fun review(Id: String, name: String, image: String, star: Int) =
-        "$REVIEW/$Id/$name/$image/$star"
+    fun review( star: Int) =
+        "$REVIEW/$star"
 
     fun product(Id: String) = "$PRODUCT/$Id"
     fun searchQuery(query: String) = "$SEARCH/$query"

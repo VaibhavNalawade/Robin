@@ -55,14 +55,19 @@ class MainActivity : ComponentActivity() {
                         profileUiState = viewModel.profileData,
                         userAuthenticated = viewModel.userAuthenticated,
                         productUiState = viewModel.products,
+                        selectedProduct=viewModel.selectedProduct,
                         brandsUiState = viewModel.brands,
                         categoriesUiState = viewModel.categories,
                         filterState = viewModel.filterState,
+                        cartItems=viewModel.cartItem,
                         signOut = {
                             viewModel.signOut()
                         },
                         onApply = {
                             viewModel.quarry(it)
+                        },
+                        onSelectProduct = { product ->
+                            viewModel.selectedProduct = product
                         }
                     )
                 }

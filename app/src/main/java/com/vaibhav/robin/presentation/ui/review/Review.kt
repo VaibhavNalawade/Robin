@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
+import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreview
@@ -34,21 +35,20 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
-fun Review(navController: NavController, viewModel: ReviewViewModel) {
+fun Review(
+    navController: NavController,
+    viewModel: ReviewViewModel,
+    selectProduct:Product
+) {
     val exe = Exception(NullPointerException())
     val arg = remember {
         navController.currentBackStackEntry?.arguments ?: throw exe
     }
-    viewModel.productID = remember { arg.getString("Id") ?: throw exe }
+
     viewModel.stars = remember { arg.getInt("star") }
 
     val response = viewModel.response
-    val productName = remember {
-        arg.getString("name") ?: throw Exception(NullPointerException())
-    }
-    val productImage = remember {
-        arg.getString("image") ?: throw Exception(NullPointerException())
-    }
+
     LaunchedEffect(key1 = true, block = {
         if (!viewModel.getAuthState()) {
             navController.navigate(RobinDestinations.LOGIN_ROUTE) {
@@ -93,13 +93,13 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
                             .size(48.dp)
                             .clip(shapes.small),
                         contentDescription = null,
-                        model = productImage,
+                        model = selectProduct.media[selectProduct.variantIndex[0]]?.get(0) ?:"",
                         contentScale = ContentScale.Crop
                     )
                     SpacerHorizontalOne()
                     Column {
                         Text(
-                            text = productName,
+                            text = selectProduct.name,
                             style = typography.titleMedium.copy(colorScheme.onSurfaceVariant)
                         )
                         Text(
@@ -111,7 +111,7 @@ fun Review(navController: NavController, viewModel: ReviewViewModel) {
                 TextButton(
                     modifier = Modifier
                         .align(alignment = Alignment.CenterEnd),
-                    onClick = { viewModel.createReview() },
+                    onClick = { viewModel.createReview(selectProduct) },
                     content = {
                         Text(text = stringResource(R.string.post))
                     })
@@ -208,6 +208,10 @@ private fun InitUI(viewModel: ReviewViewModel) {
 @Composable
 fun ReviewPreview() {
     RobinAppPreview {
-        Review(navController = NavController(LocalContext.current), viewModel = hiltViewModel())
+        Review(
+            navController = NavController(LocalContext.current),
+            viewModel = hiltViewModel(),
+            selectProduct = Product()
+        )
     }
 }

@@ -10,6 +10,8 @@ data class Product(
     val description: String = "",
     val minPrice: Double = 0.0,
     val maxPrice: Double = 0.0,
+    val ratingStars:Float?=null,
+    val ratingCount:Int=0,
     val name: String = "",
     val id: String = "",
     val details: List<Map<String, String>> = emptyList(),
@@ -17,5 +19,5 @@ data class Product(
     val media: Map<String, List<String>> = emptyMap(),
     val sizes: Map<String, List<Map<String, Any>>> = emptyMap(),
     val status: String = "",
-    val variant: List<String> = emptyList()
+    val variantIndex: List<String> = emptyList()
 )

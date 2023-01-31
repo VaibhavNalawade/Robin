@@ -6,13 +6,11 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -32,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
@@ -43,7 +40,6 @@ import com.vaibhav.robin.presentation.RobinNavigationType
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.*
-import com.vaibhav.robin.presentation.ui.theme.Values
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
@@ -58,6 +54,7 @@ fun Home(
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
     filter: MutableState<Boolean>,
+    onSelectProduct: (Product) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
     var items by remember {
@@ -112,6 +109,7 @@ fun Home(
                             ) {
                                 items(items = productUiState.data) { product ->
                                     GridItem(product = product) { id ->
+                                        onSelectProduct(product)
                                         navController.navigate(
                                             RobinDestinations.product(id).also { Log.e("nav", it) })
                                     }
@@ -250,14 +248,16 @@ fun CollapsingAppBar(
                         onClick = { messageBarState.addError("Not Implemented") }
                     ) {
                         if (profileData?.image == null)
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                painter = painterResource(
-                                    id = R.drawable.profile_placeholder
-                                ),
-                                contentDescription = "",
-                                tint = colorScheme.onSurfaceVariant
-                            )
+                            if (profileData?.name == null)
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(
+                                        id = R.drawable.profile_placeholder
+                                    ),
+                                    contentDescription = "",
+                                    tint = colorScheme.onSurfaceVariant
+                                )
+                            else ProfileInitial(profileName = profileData.name)
                         else
                             CircularImage(
                                 modifier = Modifier.size(size = 32.dp),
@@ -426,6 +426,7 @@ fun GridItem(
                         minHeight = 220.dp,
                         minWidth = 164.dp
                     )
+                    .aspectRatio(0.6f)
                     .fillMaxWidth(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,

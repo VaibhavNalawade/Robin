@@ -15,12 +15,14 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
+import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.Product
@@ -49,7 +51,10 @@ fun RobinApp(
     categoriesUiState: Response<List<MainCategory>>,
     brandsUiState: Response<List<MainBrand>>,
     onApply: (QueryProduct) -> Unit,
-    filterState: FilterState
+    filterState: FilterState,
+    selectedProduct: Product?,
+    onSelectProduct: (Product) -> Unit,
+    cartItems: Response<List<CartItem>>
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -82,12 +87,14 @@ fun RobinApp(
         categoriesUiState = categoriesUiState,
         brandsUiState = brandsUiState,
         onApply = onApply,
-        filterState = filterState
+        filterState = filterState,
+        onSelectProduct = onSelectProduct,
+        selectedProduct = selectedProduct,
+        cartItems = cartItems
     )
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RobinNavigationWrapper(
     navigationType: RobinNavigationType,
@@ -99,7 +106,10 @@ fun RobinNavigationWrapper(
     categoriesUiState: Response<List<MainCategory>>,
     brandsUiState: Response<List<MainBrand>>,
     onApply: (QueryProduct) -> Unit,
-    filterState: FilterState
+    filterState: FilterState,
+    selectedProduct: Product?,
+    cartItems: Response<List<CartItem>>,
+    onSelectProduct: (Product) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -172,7 +182,10 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            filter = filter,
+                            onSelectProduct = onSelectProduct,
+                            selectedProduct = selectedProduct,
+                            cartItems = cartItems,
+                            filter = filter
                         )
                     }
                 )
@@ -193,7 +206,7 @@ fun RobinNavigationWrapper(
                             showNavContent = filter,
                             navigationType = navigationType,
                             onApply = onApply,
-                            filterState = filterState
+                            filterState = filterState,
                         )
                     }
                 },
@@ -218,7 +231,10 @@ fun RobinNavigationWrapper(
                                     messageBarState = state,
                                     navigationType = navigationType,
                                     appBarType = appBarType,
-                                    filter = filter
+                                    onSelectProduct = onSelectProduct,
+                                    selectedProduct = selectedProduct,
+                                    cartItems = cartItems,
+                                   filter = filter
                                 )
                             }
                         )
@@ -258,7 +274,10 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            filter = filter
+                            onSelectProduct = onSelectProduct,
+                            selectedProduct = selectedProduct,
+                            cartItems = cartItems,
+                           filter = filter
                         )
                     }
                 )

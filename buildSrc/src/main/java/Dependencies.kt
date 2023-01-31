@@ -1,15 +1,15 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.7.21"
-    const val COMPOSE_VERSION = "1.4.0-alpha04"
-    const val COMPOSE_COMPILER_VERSION = "1.4.0-alpha02"
-    private const val MDC3_VERSION = "1.1.0-alpha04"
+    const val KOTLIN_VERSION = "1.8.0"
+    const val COMPOSE_VERSION = "1.4.0-alpha05"
+    const val COMPOSE_COMPILER_VERSION = "1.4.0"
+    private const val MDC3_VERSION = "1.1.0-alpha05"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.29.0-alpha"
     private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha11"
+    private const val AGP_VERSION = "8.1.0-alpha02"
     private const val DAGGERHILT_VERSION="2.44"
 
     /**
@@ -28,9 +28,6 @@ object Dependencies {
 
     object Google {
         object Accompanist {
-            const val pager = "com.google.accompanist:accompanist-pager:$ACCOMPANIST_VERSION"
-            const val pagerIndicator =
-                "com.google.accompanist:accompanist-pager-indicators:$ACCOMPANIST_VERSION"
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
             const val adaptive="com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"

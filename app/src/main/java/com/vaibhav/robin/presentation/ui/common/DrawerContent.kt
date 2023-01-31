@@ -54,7 +54,6 @@ import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import com.vaibhav.robin.presentation.ui.theme.Values.Shapes
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawer(
     userAuthenticated: Boolean,
@@ -182,7 +181,7 @@ private fun NonAnimatedContent(
     onApply: (QueryProduct) -> Unit,
     filterState: FilterState
 ) {
-    if (!showNavContent.value)
+    if (showNavContent.value)
         NavigationItems(
             navController = navController,
             closeDrawer = closeDrawer,

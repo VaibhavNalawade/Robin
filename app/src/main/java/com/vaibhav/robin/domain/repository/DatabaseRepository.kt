@@ -22,7 +22,7 @@ interface DatabaseRepository {
 
     suspend fun getUserReview(productId: String):Flow<Response<Review>>
 
-    suspend fun setFavorite(productId: String,favourite: Favourite):Flow<Response<Boolean>>
+    suspend fun setFavorite(favourite: Favourite):Flow<Response<Boolean>>
 
     suspend fun removeFavorite(productId: String):Flow<Response<Boolean>>
 

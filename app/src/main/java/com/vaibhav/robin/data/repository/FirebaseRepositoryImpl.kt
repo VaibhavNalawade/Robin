@@ -20,6 +20,7 @@ import com.vaibhav.robin.domain.repository.DatabaseRepository
 import com.vaibhav.robin.presentation.Order
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
@@ -86,10 +87,10 @@ class FirebaseRepositoryImpl @Inject constructor(
         flow { emit(Response.Error(e)) }
     }
 
-    override suspend fun setFavorite(productId: String, favourite: Favourite) = tryCatchScaffold {
+    override suspend fun setFavorite( favourite: Favourite) = tryCatchScaffold {
         source.writeToReference(
             firestore.collection("ProfileData").document(auth.getUserUid()!!)
-                .collection("Favourite").document(productId), favourite
+                .collection("Favourite").document(favourite.productID), favourite
         )
     }
 
@@ -137,7 +138,9 @@ class FirebaseRepositoryImpl @Inject constructor(
             firestore.collection("ProfileData")
                 .document(auth.getUserUid()!!)
                 .collection("Cart")
-        )
+        ).catch {
+            Log.e("T",it.message?:it.stackTraceToString())
+        }
             .collect {
                 trySend(Response.Success(it.toObjects(CartItem::class.java)))
             }

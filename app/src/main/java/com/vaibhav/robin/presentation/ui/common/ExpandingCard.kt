@@ -36,7 +36,7 @@ fun ExpandingCard(
                 .animateContentSize(
                     tweenSpec()
                 ),
-            painter = painterResource(id = R.drawable.cancel),
+            painter = painterResource(id = R.drawable.arrow_circle_down),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

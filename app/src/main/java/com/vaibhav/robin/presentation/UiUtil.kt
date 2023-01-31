@@ -8,8 +8,6 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -33,22 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Date
 
-object UiUtil {
-    @OptIn(ExperimentalPagerApi::class)
-    fun autoscroll(pagerState: PagerState, scope: CoroutineScope) {
-        scope.launch {
-            (1..Int.MAX_VALUE).forEach { _ ->
-                delay(5000)
-                if (pagerState.pageCount > 0) {
-                    when (pagerState.currentPage) {
-                        pagerState.pageCount - 1 -> pagerState.animateScrollToPage(0)
-                        else -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                }
-            }
-        }
-    }
-}
+
 
 sealed class UiText {
     data class DynamicString(val value: String) : UiText()

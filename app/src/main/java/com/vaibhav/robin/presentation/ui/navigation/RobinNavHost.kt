@@ -10,11 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
+import com.vaibhav.robin.presentation.models.state.FilterState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
@@ -36,6 +38,9 @@ fun RobinNavHost(
     messageBarState: MessageBarState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
+    cartItems: Response<List<CartItem>>,
+    selectedProduct: Product?,
+    onSelectProduct: (Product) -> Unit,
     filter: MutableState<Boolean>
 ) {
     NavHost(
@@ -50,7 +55,8 @@ fun RobinNavHost(
                 messageBarState =messageBarState,
                 navigationType =navigationType,
                 appBarType =appBarType,
-                filter=filter
+                filter=filter,
+                onSelectProduct=onSelectProduct,
             )
         }
 
@@ -58,30 +64,37 @@ fun RobinNavHost(
             RobinDestinations.searchQuery("{query}"),
             listOf(navArgument("query") { type = NavType.StringType })
         ) { SearchBar(navController) }
-        composable(RobinDestinations.CART) { Cart(hiltViewModel(), navController) }
+
+        composable(RobinDestinations.CART) {
+            Cart(
+                viewModel = hiltViewModel(),
+                navController = navController,
+                cartItems=cartItems
+            )
+        }
         composable(
             RobinDestinations.REVIEW_SIGNATURE,
-            listOf(
-                navArgument("Id") { type = NavType.StringType },
-                navArgument("name") { type = NavType.StringType },
-                navArgument("image") { type = NavType.StringType },
-                navArgument("star") { type = NavType.IntType }
-            )
+            listOf(navArgument("star") { type = NavType.IntType })
         ) {
             Review(
                 navController = navController,
-                viewModel = hiltViewModel()
+                viewModel = hiltViewModel(),
+                selectProduct=selectedProduct!!
             )
         }
         composable(
             RobinDestinations.product("{Id}"),
             listOf(navArgument("Id") { type = NavType.StringType })
         ) {
-            ProductDetails(
-                navController = navController,
-                viewModel = hiltViewModel(),
-                selectedProductUiState = Product()
-            )
+            if (selectedProduct != null) {
+                ProductDetails(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                    selectedProductUiState = selectedProduct,
+                    cartItems = cartItems,
+                    messageBarState =messageBarState,
+                )
+            }
         }
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
