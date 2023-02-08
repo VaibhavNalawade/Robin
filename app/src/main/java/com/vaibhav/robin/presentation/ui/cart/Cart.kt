@@ -60,7 +60,8 @@ fun Cart(
     Surface(color = colorScheme.surface) {
         Box(modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding(),contentAlignment = Alignment.TopStart) {
+            .statusBarsPadding()
+            .navigationBarsPadding(),contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -103,7 +104,10 @@ fun Cart(
                 modifier = Modifier.align(Alignment.BottomCenter)
                 ,subTotal = remember {
                 mutableStateOf(3000)
-            })
+            },
+                onCheckout = {
+                    navController.navigate(RobinDestinations.DELIVERY_ADDRESS)
+                })
             CartAppBar(
                 items = (cartItems as? Response.Success)?.data?.size ?: 0,
                 onBackButton = { navController.popBackStack() }
@@ -116,7 +120,8 @@ fun Cart(
 @Composable
 fun FrontLayout(
     modifier: Modifier=Modifier,
-    subTotal: MutableState<Int>
+    subTotal: MutableState<Int>,
+    onCheckout:()->Unit
 ) {
     Surface(
         modifier = modifier,
@@ -193,9 +198,7 @@ fun FrontLayout(
             Button(modifier = Modifier
                 .fillMaxWidth(.8f)
                 .align(Alignment.CenterHorizontally),
-                onClick = {
-/*TODO*/
-                }) {
+                onClick = onCheckout) {
                 Icon(
                     painter = painterResource(id = R.drawable.shopping_cart_checkout),
                     contentDescription = ""

@@ -16,15 +16,16 @@ import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
-import com.vaibhav.robin.presentation.models.state.FilterState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
-import com.vaibhav.robin.presentation.ui.account.AddressAndPhoneDetails
+import com.vaibhav.robin.presentation.ui.delivery.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
 import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.PersonalDetails
 import com.vaibhav.robin.presentation.ui.account.SignUp
 import com.vaibhav.robin.presentation.ui.cart.Cart
+import com.vaibhav.robin.presentation.ui.delivery.PlaceOrder
 import com.vaibhav.robin.presentation.ui.home.Home
+import com.vaibhav.robin.presentation.ui.payment.Payment
 import com.vaibhav.robin.presentation.ui.product.ProductDetails
 import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
@@ -72,6 +73,13 @@ fun RobinNavHost(
                 cartItems=cartItems
             )
         }
+
+        composable(RobinDestinations.DELIVERY_ADDRESS){
+            PlaceOrder(viewModel = hiltViewModel(),navController=navController)
+        }
+        composable(RobinDestinations.PAYMENT){
+            Payment(navController = navController, viewModel = hiltViewModel())
+        }
         composable(
             RobinDestinations.REVIEW_SIGNATURE,
             listOf(navArgument("star") { type = NavType.IntType })
@@ -95,6 +103,12 @@ fun RobinNavHost(
                     messageBarState =messageBarState,
                 )
             }
+        }
+        composable(RobinDestinations.ADDRESS_AND_PHONE) {
+
+            AddressAndPhoneDetails(
+                navController = navController, viewModel = hiltViewModel()
+            )
         }
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
@@ -129,12 +143,7 @@ fun RobinNavHost(
                     navController = navController, viewModel = hiltViewModel()
                 )
             }
-            composable(RobinDestinations.ADDRESS_AND_PHONE) {
 
-                AddressAndPhoneDetails(
-                    navController = navController, viewModel = hiltViewModel()
-                )
-            }
         }
     }
 }

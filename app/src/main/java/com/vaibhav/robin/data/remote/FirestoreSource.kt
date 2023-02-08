@@ -59,6 +59,17 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
                 emit(Error(e))
             }
         }
+    suspend fun  fetchFromReference(document: CollectionReference): Flow<Response<List<Map<String, Any>>>> =
+        flow {
+            try {
+                emit(Response.Loading)
+                document.get().await().apply {
+                    emit(Success(documents.map { it.data!! }))
+                }
+            } catch (e: Exception) {
+                emit(Error(e))
+            }
+        }
 
 
     suspend fun writeToReference(

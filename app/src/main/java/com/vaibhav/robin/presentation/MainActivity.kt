@@ -1,6 +1,7 @@
 package com.vaibhav.robin.presentation
 
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -17,6 +18,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.google.android.gms.common.internal.Constants
+import com.google.android.gms.wallet.PaymentsClient
+import com.google.android.gms.wallet.Wallet
+import com.google.android.gms.wallet.WalletConstants
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 
@@ -44,6 +49,14 @@ class MainActivity : ComponentActivity() {
         if (viewModel.products !is Response.Success)
             viewModel.fetchUiState()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        fun createPaymentsClient(activity: Activity): PaymentsClient {
+            val walletOptions = Wallet.WalletOptions.Builder()
+                .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
+                .build()
+
+            return Wallet.getPaymentsClient(activity, walletOptions)
+        }
+
         setContent {
             val windowSize = calculateWindowSizeClass(this)
             val displayFeatures = calculateDisplayFeatures(this)

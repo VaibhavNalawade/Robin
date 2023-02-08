@@ -28,13 +28,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-
-        debug{
-
-        }
-        create("Admin"){
-
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -74,7 +67,6 @@ dependencies {
 
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
     implementation(Dependencies.Google.Accompanist.adaptive)
-    implementation(Dependencies.Google.Accompanist.flowLayout)
 
 
     implementation(platform(Dependencies.Firebase.BOM))
@@ -103,6 +95,7 @@ dependencies {
 
 
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
+    implementation("com.google.android.gms:play-services-wallet:19.1.0")
     kapt(Dependencies.Google.DaggerHilt.kapt)
     implementation (Dependencies.Google.DaggerHilt.composeNavigationSupport)
 

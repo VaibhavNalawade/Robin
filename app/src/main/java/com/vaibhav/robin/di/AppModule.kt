@@ -76,6 +76,8 @@ class AppModule {
             removeCartItems = RemoveCartItems(repo),
             getCategory = GetCategory(repo),
             getBrands = GetBrands(repo),
-            filterProducts = FilterProducts(repo)
+            filterProducts = FilterProducts(repo),
+            addAddress = AddAddress(repo),
+            getAddress = GetAddress(repo)
         )
 }

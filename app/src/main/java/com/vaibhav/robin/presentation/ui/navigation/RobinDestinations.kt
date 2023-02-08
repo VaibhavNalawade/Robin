@@ -22,4 +22,6 @@ object RobinDestinations {
 
     fun product(Id: String) = "$PRODUCT/$Id"
     fun searchQuery(query: String) = "$SEARCH/$query"
+    const val DELIVERY_ADDRESS="DELIVERY_ADDRESS"
+    const val PAYMENT="PAYMENT"
 }

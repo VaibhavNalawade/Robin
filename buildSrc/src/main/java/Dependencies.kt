@@ -6,7 +6,6 @@ object Dependencies {
     private const val MDC3_VERSION = "1.1.0-alpha05"
     private const val GSM_VERSION = "4.3.13"
     private const val ACCOMPANIST_VERSION = "0.29.0-alpha"
-    private const val KTOR_VERSION = "2.1.0"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
     private const val AGP_VERSION = "8.1.0-alpha02"
@@ -31,7 +30,6 @@ object Dependencies {
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
             const val adaptive="com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
-            const val flowLayout="com.google.accompanist:accompanist-flowlayout:$ACCOMPANIST_VERSION"
         }
         object DaggerHilt{
             const val daggerHilt="com.google.dagger:hilt-android:$DAGGERHILT_VERSION"
@@ -53,7 +51,6 @@ object Dependencies {
             const val android = "com.android.application"
             const val kotlinAndroid = "org.jetbrains.kotlin.android"
             const val googleService = "com.google.gms.google-services"
-            const val pluginSerialization = "plugin.serialization"
             const val daggerHilt="dagger.hilt.android.plugin"
             const val kapt="kapt"
         }

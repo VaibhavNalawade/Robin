@@ -2,7 +2,6 @@ package com.vaibhav.robin.data.repository
 
 
 import android.util.Log
-import com.google.firebase.firestore.AggregateQuery
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -87,7 +86,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         flow { emit(Response.Error(e)) }
     }
 
-    override suspend fun setFavorite( favourite: Favourite) = tryCatchScaffold {
+    override suspend fun setFavorite(favourite: Favourite) = tryCatchScaffold {
         source.writeToReference(
             firestore.collection("ProfileData").document(auth.getUserUid()!!)
                 .collection("Favourite").document(favourite.productID), favourite
@@ -139,7 +138,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                 .document(auth.getUserUid()!!)
                 .collection("Cart")
         ).catch {
-            Log.e("T",it.message?:it.stackTraceToString())
+            Log.e("T", it.message ?: it.stackTraceToString())
         }
             .collect {
                 trySend(Response.Success(it.toObjects(CartItem::class.java)))
@@ -165,7 +164,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun queryProduct(queryProduct: QueryProduct): Flow<Response<List<Product>>> {
         val order: Query.Direction?
 
-        order = if (queryProduct.order==null)
+        order = if (queryProduct.order == null)
             null
         else if (queryProduct.order == Order.ASCENDING) {
             Query.Direction.ASCENDING
@@ -178,6 +177,15 @@ class FirebaseRepositoryImpl @Inject constructor(
         order?.let { query = query.orderBy("maxPrice", order) }
         return source.fetchFromReferenceToObject(query)
     }
+
+    override suspend fun addAddress(address: Map<String, Any>): Flow<Response<Boolean>> = source.writeToReference(
+            firestore.collection("ProfileData").document(auth.getUserUid()!!)
+                .collection("addresses").document(), address
+        )
+
+    override suspend fun getAddress(): Flow<Response<List<Map<String, Any>>>> =
+        source.fetchFromReference( firestore.collection("ProfileData").document(auth.getUserUid()!!)
+            .collection("addresses"))
 
 
     private suspend fun <T> tryCatchScaffold(tryBlock: suspend () -> Flow<Response<T>>): Flow<Response<T>> =

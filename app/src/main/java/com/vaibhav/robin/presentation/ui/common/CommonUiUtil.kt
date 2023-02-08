@@ -30,7 +30,7 @@ import com.vaibhav.robin.presentation.ui.theme.Values
 @Composable
 fun SpaceBetweenContainer(
     modifier: Modifier = Modifier,
-    verticalAlignment: Alignment.Vertical = Alignment.Bottom,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.HorizontalOrVertical = Arrangement.SpaceBetween,
     content: @Composable () -> Unit
 ) {

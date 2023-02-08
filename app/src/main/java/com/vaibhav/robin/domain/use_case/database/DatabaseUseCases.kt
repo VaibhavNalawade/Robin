@@ -19,4 +19,6 @@ data class DatabaseUseCases (
     val getCategory: GetCategory,
     val getBrands: GetBrands,
     val filterProducts:FilterProducts,
+    val addAddress: AddAddress,
+    val getAddress: GetAddress,
 )

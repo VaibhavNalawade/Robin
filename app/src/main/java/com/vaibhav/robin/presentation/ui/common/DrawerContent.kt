@@ -2,7 +2,9 @@ package com.vaibhav.robin.presentation.ui.common
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,7 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.flowlayout.FlowRow
+import androidx.compose.foundation.layout.FlowRow
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
@@ -258,7 +260,6 @@ private fun AnimatedContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationItems(
     navController: NavHostController,
@@ -435,7 +436,6 @@ fun NavigationItems(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthUserNavigationItem(
     userAuthenticated: Boolean,
@@ -474,7 +474,7 @@ fun AuthUserNavigationItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SortUi(
     categoriesUiState: Response<List<MainCategory>>,
@@ -503,7 +503,7 @@ fun SortUi(
                 style = typography.titleSmall
             )
             SpacerVerticalOne()
-            FlowRow(mainAxisSpacing = Dimens.gird_one) {
+            FlowRow(horizontalArrangement =Arrangement.spacedBy(Dimens.gird_one)) {
                 brandsUiState.data.forEachIndexed { i, state ->
                     FilterChip(
                         selected = brandSelectedIndex == i,
@@ -536,7 +536,7 @@ fun SortUi(
             SpacerVerticalOne()
             Text(text = stringResource(R.string.category), style = typography.titleSmall)
             SpacerVerticalOne()
-            FlowRow(mainAxisSpacing = Dimens.gird_one) {
+            FlowRow(horizontalArrangement =Arrangement.spacedBy(Dimens.gird_one)) {
                 categoriesUiState.data.forEachIndexed { index, filterChipState ->
                     FilterChip(
                         selected = categorySelectedIndex == index,

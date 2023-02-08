@@ -87,4 +87,6 @@
     <string name="full_name">Full Name</string>
     <string name="sign_up">Sign Up</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="add_address">Add address</string>
+    <string name="add_payment_card">Add Payment Card</string>
 </resources>
