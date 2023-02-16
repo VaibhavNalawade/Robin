@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.vaibhav.robin.presentation.RobinAppPreview
-import com.vaibhav.robin.presentation.ui.theme.Values
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
 fun SpaceBetweenContainer(
@@ -69,28 +69,6 @@ fun CircularImage(
     )
 }
 
-@Composable
-fun Circle(
-    modifier: Modifier = Modifier,
-    borderStroke: BorderStroke = BorderStroke(
-        color = MaterialTheme.colorScheme.onSurface,
-        width = 1.dp
-    ),
-    color: Color
-) {
-    Box(modifier = Modifier.padding(1.dp)) {
-        Surface(
-            modifier = modifier
-                .defaultMinSize(16.dp, 16.dp)
-                .padding(),
-            shape = CircleShape,
-            color = color,
-            border = borderStroke,
-            content = {}
-        )
-    }
-}
-
 fun Modifier.placeholder(
     visible: Boolean,
     color: Color = Color.Unspecified,
@@ -108,123 +86,42 @@ fun Modifier.placeholder(
         contentFadeTransitionSpec = contentFadeTransitionSpec,
     )
 }
-@Composable
-fun SpacerHorizontalHalf() {
-    Spacer(
-        modifier = Modifier
-            .width(
-                Values.Dimens.gird_half
-            )
-    )
-}
-@Composable
-fun SpacerHorizontalOne() {
-    Spacer(
-        modifier = Modifier
-            .width(
-                Values.Dimens.gird_one
-            )
-    )
-}
 
 @Composable
-fun SpacerHorizontalTwo() {
-    Spacer(
-        modifier = Modifier
-            .width(
-                Values.Dimens.gird_two
-            )
-    )
-}
+fun SpacerHorizontalHalf(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_half))
 
 @Composable
-fun SpacerHorizontalThree() {
-    Spacer(
-        modifier = Modifier
-            .width(
-                Values.Dimens.gird_three
-            )
-    )
-}
+fun SpacerHorizontalOne(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_one))
 
 @Composable
-fun SpacerHorizontalFour() {
-    Spacer(
-        modifier = Modifier
-            .width(
-                Values.Dimens.gird_four
-            )
-    )
-}
+fun SpacerHorizontalTwo(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_two))
 
 @Composable
-fun SpacerVerticalOne() {
-    Spacer(
-        modifier = Modifier
-            .height(
-                Values.Dimens.gird_one
-            )
-    )
-}
+fun SpacerHorizontalThree(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_three))
 
 @Composable
-fun SpacerVerticalTwo() {
-    Spacer(
-        modifier = Modifier
-            .height(
-                Values.Dimens.gird_two
-            )
-    )
-}
+fun SpacerHorizontalFour(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_four))
 
 @Composable
-fun SpacerVerticalThree() {
-    Spacer(
-        modifier = Modifier
-            .height(
-                Values.Dimens.gird_three
-            )
-    )
-}
+fun SpacerVerticalOne(): Unit = Spacer(modifier = Modifier.height(Dimens.gird_one))
 
 @Composable
-fun SpacerVerticalFour() {
-    Spacer(
-        modifier = Modifier
-            .height(
-                Values.Dimens.gird_four
-            )
-    )
-}
+fun SpacerVerticalTwo(): Unit = Spacer(modifier = Modifier.height(Dimens.gird_two))
 
 @Composable
-fun DividerHorizontal(modifier: Modifier = Modifier) {
+fun SpacerVerticalThree(): Unit = Spacer(modifier = Modifier.height(Dimens.gird_three))
+
+@Composable
+fun SpacerVerticalFour(): Unit = Spacer(modifier = Modifier.height(Dimens.gird_four))
+
+@Composable
+fun DividerHorizontal(modifier: Modifier = Modifier): Unit =
     Divider(
         modifier = modifier
-            .height(1.dp), color = MaterialTheme.colorScheme.outline.copy(.3f)
+            .height(1.dp),
+        color = MaterialTheme.colorScheme.outline.copy(.3f)
     )
-}
-
-@Composable
-fun ChipDummy() {
-    Surface(
-        modifier = Modifier
-            .height(32.dp)
-            .width(((64..128).random()).dp), shape = MaterialTheme.shapes.small
-    ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .clip(MaterialTheme.shapes.small)
-            .placeholder(true)) {
-        }
-    }
-}
 
 
-@Preview
-@Composable
-fun PreviewUi() {
-    RobinAppPreview {
-        ChipDummy()
-    }
-}
+
+

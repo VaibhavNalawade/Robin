@@ -117,6 +117,7 @@ fun RobinTextField(
 @Composable
 fun PaymentCardTextField(
     state: MutableState<TextFieldState>,
+    onValueChange: (String) -> Unit ={ state.value = state.value.copy(text = it.take(16)) },
     label: @Composable () -> Unit = { Text(text = "Card Number") },
     keyboardActions: KeyboardActions = KeyboardActions(),
     supportingText: String? = null
@@ -124,7 +125,7 @@ fun PaymentCardTextField(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = state.value.text,
-        onValueChange = { state.value = state.value.copy(text = it.take(16)) },
+        onValueChange = onValueChange,
         label = label,
         singleLine = true,
         isError = state.value.error,

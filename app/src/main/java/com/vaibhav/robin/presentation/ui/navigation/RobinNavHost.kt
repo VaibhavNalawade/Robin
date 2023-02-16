@@ -1,8 +1,11 @@
 package com.vaibhav.robin.presentation.ui.navigation
 
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -42,10 +45,14 @@ fun RobinNavHost(
     cartItems: Response<List<CartItem>>,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
-    filter: MutableState<Boolean>
+    showNavContent: MutableState<Boolean>
 ) {
     NavHost(
-        navController = navController, startDestination = RobinDestinations.HOME
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+        navController = navController,
+        startDestination = RobinDestinations.HOME
     ) {
         composable(RobinDestinations.HOME) {
             Home(
@@ -56,7 +63,7 @@ fun RobinNavHost(
                 messageBarState =messageBarState,
                 navigationType =navigationType,
                 appBarType =appBarType,
-                filter=filter,
+                showNavContent=showNavContent,
                 onSelectProduct=onSelectProduct,
             )
         }
@@ -77,7 +84,10 @@ fun RobinNavHost(
         composable(RobinDestinations.DELIVERY_ADDRESS){
             PlaceOrder(viewModel = hiltViewModel(),navController=navController)
         }
-        composable(RobinDestinations.PAYMENT){
+        composable(
+            RobinDestinations.PAYMENT_SIGNATURE,
+            RobinDestinations.PAYMENT_ARG_LIST
+        ){
             Payment(navController = navController, viewModel = hiltViewModel())
         }
         composable(
@@ -143,7 +153,6 @@ fun RobinNavHost(
                     navController = navController, viewModel = hiltViewModel()
                 )
             }
-
         }
     }
 }

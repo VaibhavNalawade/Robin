@@ -100,12 +100,8 @@ dependencies {
     implementation (Dependencies.Google.DaggerHilt.composeNavigationSupport)
 
     testImplementation(Dependencies.Test.junit)
-    testImplementation(Dependencies.Test.coroutines)
-    testImplementation(Dependencies.Test.mockito)
-    testImplementation(Dependencies.Test.robolectric)
     androidTestImplementation(Dependencies.Test.AndroidTest.core)
     androidTestImplementation(Dependencies.Test.AndroidTest.ext)
-    androidTestImplementation(Dependencies.Test.AndroidTest.espresso)
     androidTestImplementation(Dependencies.Test.AndroidTest.composeUITest)
     debugImplementation(Dependencies.Test.Debug.uiToolingDebug)
     debugImplementation(Dependencies.Test.Debug.uiTestManifest)

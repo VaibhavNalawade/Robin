@@ -31,8 +31,6 @@ fun ProfileInitial(
 ) {
     Box(
         modifier = modifier
-            .size(36.dp)
-            .padding(Dimens.gird_quarter)
             .clip(CircleShape)
             .background(colorScheme.tertiaryContainer),
         contentAlignment = Alignment.Center

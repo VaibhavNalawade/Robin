@@ -60,12 +60,10 @@ fun Cart(
     Surface(color = colorScheme.surface) {
         Box(modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),contentAlignment = Alignment.TopStart) {
+            ,contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding(),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(8.dp)
             ) {

@@ -53,5 +53,4 @@ class AddressPhoneViewModel @Inject constructor( private val databaseUseCases: D
     fun retry() {
         response=Success(false)
     }
-
 }

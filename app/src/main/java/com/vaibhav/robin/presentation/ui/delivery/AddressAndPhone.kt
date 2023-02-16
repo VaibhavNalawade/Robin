@@ -1,15 +1,28 @@
 package com.vaibhav.robin.presentation.ui.delivery
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -17,8 +30,13 @@ import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.ui.common.*
-import com.vaibhav.robin.presentation.ui.theme.Values
+import com.vaibhav.robin.presentation.ui.common.Loading
+import com.vaibhav.robin.presentation.ui.common.RobinTextField
+import com.vaibhav.robin.presentation.ui.common.ShowError
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalOne
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
 fun AddressAndPhoneDetails(navController: NavHostController, viewModel: AddressPhoneViewModel) {
@@ -53,79 +71,106 @@ fun AddressAndPhoneDetails(navController: NavHostController, viewModel: AddressP
 
 @Composable
 fun InitUi(viewModel: AddressPhoneViewModel) {
-    Column(modifier = Modifier.padding(horizontal = Values.Dimens.gird_two)) {
+
+    val text =
+        if (viewModel.isHome.value) stringResource(id = R.string.home)
+        else stringResource(id = R.string.commercial)
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = Dimens.gird_two)
+    ) {
         SpacerVerticalFour()
         Text(
-            text = "Personal Details",
+            text = stringResource(R.string.add_a_new_address),
             style = MaterialTheme.typography.headlineMedium
-        )
-        SpacerVerticalTwo()
-        Text(
-            text = "Enter your personal details such as your name phone number address. We don't share such details to third party and maintain your privacy",
-            style = MaterialTheme.typography.bodyMedium
         )
         SpacerVerticalFour()
         RobinTextField(
+            modifier=Modifier.fillMaxWidth(),
             state = viewModel.name,
-            label = { Text("Name") },
+            label = { Text(stringResource(R.string.name)) },
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.badge),
-                    contentDescription = ""
-                )
-            },
-        )
-
-        RobinTextField(
-            state = viewModel.apartmentSuitesBuilding,
-            label = { Text("Apartment Suites Building") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.apartment),
-                    contentDescription = ""
-                )
-            },
-        )
-
-        RobinTextField(
-            state = viewModel.streetAddressAndCity,
-            label = { Text("Street address and city") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.location_city),
-                    contentDescription = ""
-                )
-            },
-        )
-        RobinTextField(
-            state = viewModel.postcode,
-            label = { Text(" Postcode ") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.local_post_office),
-                    contentDescription = ""
-                )
-            },
-        )
-
-
-        RobinTextField(
-            state = viewModel.phone,
-            label = { Text("phone") },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.call),
-                    contentDescription = ""
+                    contentDescription = null
                 )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
+            )
+        )
+        RobinTextField(
+            modifier=Modifier.fillMaxWidth(),
+            state = viewModel.apartmentSuitesBuilding,
+            label = {
+                Text(stringResource(R.string.apartment_suites_building))
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.apartment),
+                    contentDescription = null
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
+        )
+        RobinTextField(
+            modifier=Modifier.fillMaxWidth(),
+            state = viewModel.streetAddressAndCity,
+            label = { Text(stringResource(R.string.street_address_and_city)) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.location_city),
+                    contentDescription = null
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
+        )
+        RobinTextField(
+            modifier=Modifier.fillMaxWidth(),
+            state = viewModel.postcode,
+            label = { Text(stringResource(R.string.postcode)) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.local_post_office),
+                    contentDescription = null
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
+        )
+        RobinTextField(
+            modifier=Modifier.fillMaxWidth(),
+            state = viewModel.phone,
+            label = { Text(stringResource(R.string.phone)) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.call),
+                    contentDescription = null
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    viewModel.updateAddressAndPhone()
+                }
+            )
         )
         SpacerVerticalOne()
-        Row( verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Address Type")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(R.string.address_type))
             SpacerHorizontalOne()
             val painter = if (viewModel.isHome.value) painterResource(id = R.drawable.home)
             else painterResource(id = R.drawable.apartment)
@@ -134,7 +179,7 @@ fun InitUi(viewModel: AddressPhoneViewModel) {
                 thumbContent = {
                     Icon(
                         painter = painter,
-                        contentDescription = "",
+                        contentDescription = null,
                         modifier = Modifier.size(SwitchDefaults.IconSize),
                     )
                 },
@@ -143,15 +188,20 @@ fun InitUi(viewModel: AddressPhoneViewModel) {
                 }
             )
             SpacerHorizontalOne()
-            Text(text = if (viewModel.isHome.value)"Home" else "Workplace")
+            Text(
+                text = text
+            )
         }
-
-
         SpacerVerticalFour()
-        Button(modifier = Modifier.align(Alignment.End),
-            onClick = { viewModel.updateAddressAndPhone() }) {
-            Text(text = "Done")
-        }
+        Button(
+            modifier = Modifier.align(Alignment.End),
+            onClick = {
+                viewModel.updateAddressAndPhone()
+            },
+            content = {
+                Text(text = stringResource(R.string.add_address))
+            }
+        )
     }
 }
 

@@ -8,18 +8,25 @@ import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaceOrderViewModel @Inject constructor(private val useCases: DatabaseUseCases) :
     ViewModel() {
-var respose by mutableStateOf<Response<List<Map<String,Any>>>>(Response.Loading)
+    var respose by mutableStateOf<Response<List<Map<String, Any>>>>(Response.Loading)
     var selectedAddressId by mutableStateOf<String?>(null)
 
-    fun getAddresses() = viewModelScope.launch {
+    fun getAddresses() = viewModelScope.launch(Dispatchers.IO) {
         useCases.getAddress().collect {
-            respose=it
+            respose = it
+        }
+    }
+
+    fun removeAddress(id: String) = viewModelScope.launch(Dispatchers.IO) {
+        useCases.removeAddress(id).collect {
+            if (it is Response.Success) getAddresses()
         }
     }
 }

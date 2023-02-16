@@ -192,4 +192,12 @@ class ValidatorsUnitTest {
             assert(error)
         }
     }
+    @Test
+    fun checkluhnAlgorithum(){
+       assert( Validators.luhnValid("4007826399000028"))
+    }
+    @Test
+    fun CheckPan(){
+        assert(!Validators.checkPan(TextFieldState(text = "4007826399000028")).error)
+    }
 }

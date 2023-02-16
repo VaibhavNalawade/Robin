@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
+import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
@@ -53,7 +54,7 @@ fun Home(
     messageBarState: MessageBarState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
-    filter: MutableState<Boolean>,
+    showNavContent: MutableState<Boolean>,
     onSelectProduct: (Product) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
@@ -70,7 +71,7 @@ fun Home(
                 scrollState = lazyGridState,
                 navigationType = navigationType,
                 appBarType = appBarType,
-                toggleFilter = filter,
+                showNavContent = showNavContent,
                 productSize = items
             )
         },
@@ -89,7 +90,11 @@ fun Home(
         },
         content = { contentPadding ->
             Column(
-                modifier = Modifier.statusBarsPadding()
+                modifier = Modifier.padding(
+                    top = Dimens.gird_one,
+                    start = Dimens.gird_one,
+                    end = Dimens.gird_one,
+                )
             ) {
                 when (productUiState) {
                     is Response.Error -> ShowError(productUiState.message) {}
@@ -98,10 +103,7 @@ fun Home(
                         items = productUiState.data.size
                         if (items != 0)
                             LazyVerticalGrid(
-                                contentPadding = PaddingValues(
-                                    vertical = 110.dp,
-                                    horizontal = Dimens.gird_one
-                                ),
+                                contentPadding = contentPadding,
                                 horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
                                 verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
                                 columns = GridCells.Adaptive(minSize = 164.dp),
@@ -132,44 +134,52 @@ fun RobinAppBar(
     scrollState: LazyGridState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
-    toggleFilter: MutableState<Boolean>,
+    showNavContent: MutableState<Boolean>,
     productSize: Int
 ) {
     when (navigationType) {
         RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
-                PermanentAppBar(toggleFilter, productSize = productSize)
+                PermanentAppBar(
+                    showNavContent = showNavContent,
+                    productSize = productSize,
+                    profileData = profileData,
+                )
             else CollapsingAppBar(
                 profileData = profileData,
                 messageBarState = messageBarState,
                 toggleDrawer = toggleDrawer,
                 scrollState = scrollState,
-                toggleFilter = toggleFilter,
+                showNavContent = showNavContent,
                 productSize = productSize
             )
         }
 
         RobinNavigationType.NAVIGATION_DRAWER -> {
             CollapsingAppBar(
-                messageBarState,
-                profileData,
-                toggleDrawer,
-                scrollState,
-                toggleFilter,
-                productSize
+                profileData = profileData,
+                messageBarState = messageBarState,
+                toggleDrawer = toggleDrawer,
+                scrollState = scrollState,
+                showNavContent = showNavContent,
+                productSize = productSize
             )
         }
 
         RobinNavigationType.NAVIGATION_RAILS -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
-                PermanentAppBar(toggleFilter, productSize = productSize)
+                PermanentAppBar(
+                    showNavContent = showNavContent,
+                    productSize = productSize,
+                    profileData = profileData
+                )
             else CollapsingAppBar(
-                messageBarState,
-                profileData,
-                toggleDrawer,
-                scrollState,
-                toggleFilter,
-                productSize
+                profileData = profileData,
+                messageBarState = messageBarState,
+                toggleDrawer = toggleDrawer,
+                scrollState = scrollState,
+                showNavContent = showNavContent,
+                productSize = productSize
             )
         }
     }
@@ -182,7 +192,7 @@ fun CollapsingAppBar(
     profileData: ProfileData?,
     toggleDrawer: () -> Unit,
     scrollState: LazyGridState,
-    toggleFilter: MutableState<Boolean>,
+    showNavContent: MutableState<Boolean>,
     productSize: Int
 ) {
     var oldPosition by remember { mutableStateOf(0) }
@@ -215,7 +225,6 @@ fun CollapsingAppBar(
                     .fillMaxWidth()
                     .align(alignment = Alignment.CenterHorizontally)
                     .padding(horizontal = Dimens.gird_three)
-                    .statusBarsPadding()
                     .height(height = 48.dp),
                 tonalElevation = Dimens.surface_elevation_5,
                 shape = RoundedCornerShape(percent = 100)
@@ -225,7 +234,10 @@ fun CollapsingAppBar(
                 ) {
                     IconButton(
                         modifier = Modifier.align(alignment = Alignment.CenterStart),
-                        onClick = toggleDrawer,
+                        onClick = {
+                            showNavContent.value = true
+                            toggleDrawer()
+                        },
                         content = {
                             Icon(
                                 modifier = Modifier,
@@ -247,6 +259,7 @@ fun CollapsingAppBar(
                     IconButton(modifier = Modifier.align(alignment = Alignment.CenterEnd),
                         onClick = { messageBarState.addError("Not Implemented") }
                     ) {
+                        //test this code move to auth revise
                         if (profileData?.image == null)
                             if (profileData?.name == null)
                                 Icon(
@@ -257,7 +270,7 @@ fun CollapsingAppBar(
                                     contentDescription = "",
                                     tint = colorScheme.onSurfaceVariant
                                 )
-                            else ProfileInitial(profileName = profileData.name)
+                            else ProfileInitial(modifier = Modifier.size(36.dp),profileName = profileData.name)
                         else
                             CircularImage(
                                 modifier = Modifier.size(size = 32.dp),
@@ -280,9 +293,9 @@ fun CollapsingAppBar(
                 SpacerHorizontalFour()
                 SpacerHorizontalOne()
                 FilterChip(
-                    selected = toggleFilter.value,
+                    selected = !showNavContent.value,
                     onClick = {
-                        toggleFilter.value = true
+                        showNavContent.value = false
                         toggleDrawer()
                     },
                     label = { Text(text = stringResource(R.string.filter)) },
@@ -301,8 +314,12 @@ fun CollapsingAppBar(
 }
 
 @Composable
-fun PermanentAppBar(toggleFilter: MutableState<Boolean>, productSize: Int) {
-    Surface {
+fun PermanentAppBar(
+    showNavContent: MutableState<Boolean>,
+    productSize: Int,
+    profileData: ProfileData?
+) {
+    Surface(tonalElevation = Dimens.surface_elevation_1) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -349,8 +366,8 @@ fun PermanentAppBar(toggleFilter: MutableState<Boolean>, productSize: Int) {
                     }
                 }
                 FilledIconToggleButton(
-                    checked = toggleFilter.value,
-                    onCheckedChange = { toggleFilter.value = it },
+                    checked = !showNavContent.value,
+                    onCheckedChange = { showNavContent.value = !showNavContent.value },
                     content = {
                         Icon(
                             painter = painterResource(id = R.drawable.filter_alt),
@@ -358,6 +375,30 @@ fun PermanentAppBar(toggleFilter: MutableState<Boolean>, productSize: Int) {
                         )
                     }
                 )
+                IconButton(modifier = Modifier,
+                    onClick = { }
+                ) {
+                    if (profileData?.image == null)
+                        if (profileData?.name == null)
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(
+                                    id = R.drawable.profile_placeholder
+                                ),
+                                contentDescription = "",
+                                tint = colorScheme.onSurfaceVariant
+                            )
+                        else ProfileInitial(
+                            modifier = Modifier.size(48.dp),
+                            profileName = profileData.name
+                        )
+                    else
+                        CircularImage(
+                            modifier = Modifier.size(size = 48.dp),
+                            contentDescription = "",
+                            image = profileData.image
+                        )
+                }
             }
             SpacerVerticalTwo()
             Text(
@@ -402,8 +443,8 @@ fun SearchEditText() {
                 }
                 innerTextField()
             }
-
-        })
+        }
+    )
 }
 
 
@@ -513,22 +554,15 @@ fun EmptyProduct() {
     }
 }
 
-/*
 
 @Preview(group = "Grid", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun GirdPreviewDark() {
     RobinAppPreview {
         GridItem(
-            Product(
-                name = "Lora ipsum", variant = listOf(
-                    Variant(
-                        media = Media(listOf("")),
-                        size = listOf(Size(price = Price(retail = 1299.00)))
-                    )
-                )
-            )
-        ) {}
+            product = PreviewMocks.product,
+            onclick = {}
+        )
     }
 }
 
@@ -537,18 +571,11 @@ private fun GirdPreviewDark() {
 private fun GirdPreviewLight() {
     RobinAppPreview {
         GridItem(
-            Product(
-                name = "Lora ipsum", variant = listOf(
-                    Variant(
-                        media = Media(listOf("")),
-                        size = listOf(Size(price = Price(retail = 1299.00)))
-                    )
-                )
-            )
-        ) {}
+            product = PreviewMocks.product,
+            onclick = {}
+        )
     }
 }
-*/
 
 @Preview(group = "AppBar", widthDp = 840)
 @Composable

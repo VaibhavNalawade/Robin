@@ -57,6 +57,7 @@ class ProductViewModel @Inject constructor(
 
 
     fun checkFavorite(productId: String) = viewModelScope.launch(Dispatchers.IO) {
+        if(authUseCases.isUserAuthenticated())
         databaseUseCases.checkFavourite(productId).collect {
             when (it) {
                 is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())

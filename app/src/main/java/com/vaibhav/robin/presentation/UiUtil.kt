@@ -49,6 +49,7 @@ sealed class UiText {
     }
 }
 
+//TODO Need To add all Exception error message and Icons
 class ExceptionHandler(val exception: Exception) {
      var title: UiText=UiText.StringResource(R.string.unknown_error)
         private set

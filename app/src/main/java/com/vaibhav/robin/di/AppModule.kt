@@ -78,6 +78,10 @@ class AppModule {
             getBrands = GetBrands(repo),
             filterProducts = FilterProducts(repo),
             addAddress = AddAddress(repo),
-            getAddress = GetAddress(repo)
+            getAddress = GetAddress(repo),
+            addPayment = AddPayment(repo),
+            getPayments = GetPayments(repo),
+            removeAddress = RemoveAddress(repo),
+            removePayment = RemovePayment(repo)
         )
 }

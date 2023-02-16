@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.DrawerDefaults
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
@@ -67,11 +68,12 @@ fun NavigationDrawer(
     showNavContent: MutableState<Boolean>,
     onApply: (QueryProduct) -> Unit,
     navigationType: RobinNavigationType,
-    filterState: FilterState
+    filterState: FilterState,
+    cartItemsSize: Int
 ) {
     if (navigationType == RobinNavigationType.PERMANENT_NAVIGATION_DRAWER)
         PermanentDrawerSheet(
-            drawerTonalElevation = Dimens.surface_elevation_1
+            drawerTonalElevation = DrawerDefaults.ModalDrawerElevation
         ) {
             DrawerContent(
                 userAuthenticated = userAuthenticated,
@@ -83,7 +85,8 @@ fun NavigationDrawer(
                 showNavContent = showNavContent,
                 onApply = onApply,
                 navigationType = navigationType,
-                filterState = filterState
+                filterState = filterState,
+                cartItemsSize=cartItemsSize
             )
         }
     else ModalDrawerSheet {
@@ -97,7 +100,8 @@ fun NavigationDrawer(
             showNavContent = showNavContent,
             onApply = onApply,
             navigationType = navigationType,
-            filterState = filterState
+            filterState = filterState,
+            cartItemsSize = cartItemsSize
         )
     }
 }
@@ -113,7 +117,8 @@ fun DrawerContent(
     showNavContent: MutableState<Boolean>,
     onApply: (QueryProduct) -> Unit,
     navigationType: RobinNavigationType,
-    filterState: FilterState
+    filterState: FilterState,
+    cartItemsSize: Int
 ) {
     Column(
         modifier = Modifier
@@ -155,7 +160,8 @@ fun DrawerContent(
                 brandsUiState = brandsUiState,
                 categoriesUiState = categoriesUiState,
                 onApply = onApply,
-                filterState = filterState
+                filterState = filterState,
+                cartItemsSize=cartItemsSize
             )
         else NonAnimatedContent(
             showNavContent = showNavContent,
@@ -166,7 +172,8 @@ fun DrawerContent(
             brandsUiState = brandsUiState,
             categoriesUiState = categoriesUiState,
             onApply = onApply,
-            filterState = filterState
+            filterState = filterState,
+            cartItemsSize=cartItemsSize
         )
     }
 }
@@ -181,14 +188,16 @@ private fun NonAnimatedContent(
     brandsUiState: Response<List<MainBrand>>,
     categoriesUiState: Response<List<MainCategory>>,
     onApply: (QueryProduct) -> Unit,
-    filterState: FilterState
+    filterState: FilterState,
+    cartItemsSize: Int
 ) {
     if (showNavContent.value)
         NavigationItems(
             navController = navController,
             closeDrawer = closeDrawer,
             userAuthenticated = userAuthenticated,
-            signOut = signOut
+            signOut = signOut,
+            cartItemsSize=cartItemsSize
         )
     else if (navController.currentBackStackEntryAsState().value?.destination?.route == RobinDestinations.HOME)
         Column(
@@ -217,9 +226,10 @@ private fun AnimatedContent(
     brandsUiState: Response<List<MainBrand>>,
     categoriesUiState: Response<List<MainCategory>>,
     onApply: (QueryProduct) -> Unit,
-    filterState: FilterState
+    filterState: FilterState,
+    cartItemsSize: Int
 ) {
-    if (!showNavContent.value) {
+    if (showNavContent.value) {
         var visablity by remember { mutableStateOf(false) }
         LaunchedEffect(
             key1 = true,
@@ -231,7 +241,8 @@ private fun AnimatedContent(
                 navController = navController,
                 closeDrawer = closeDrawer,
                 userAuthenticated = userAuthenticated,
-                signOut = signOut
+                signOut = signOut,
+                cartItemsSize = cartItemsSize
             )
         }
     } else if (navController.currentBackStackEntryAsState().value?.destination?.route == RobinDestinations.HOME) {
@@ -265,7 +276,8 @@ fun NavigationItems(
     navController: NavHostController,
     closeDrawer: () -> Unit,
     userAuthenticated: Boolean,
-    signOut: () -> Unit
+    signOut: () -> Unit,
+    cartItemsSize: Int
 ) {
     val route = navController.currentBackStackEntryAsState().value?.destination?.route
     val ctx = LocalContext.current
@@ -338,6 +350,9 @@ fun NavigationItems(
             onClick = {
                 if (route != RobinDestinations.CART) navController.navigate(RobinDestinations.CART)
                 closeDrawer()
+            },
+            badge = {
+                Text(text = "$cartItemsSize")
             }
         )
 

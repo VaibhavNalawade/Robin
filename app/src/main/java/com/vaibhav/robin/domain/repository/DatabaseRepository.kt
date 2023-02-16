@@ -4,6 +4,7 @@ import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.Favourite
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
+import com.vaibhav.robin.data.models.PaymentData
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.data.models.Review
@@ -30,4 +31,8 @@ interface DatabaseRepository {
     suspend fun queryProduct(queryProduct: QueryProduct):Flow<Response<List<Product>>>
     suspend fun addAddress(address:Map<String,Any>):Flow<Response<Boolean>>
     suspend fun getAddress():Flow<Response<List<Map<String, Any>>>>
+    suspend fun addPayment(payment:PaymentData):Flow<Response<Boolean>>
+    suspend fun getPayments():Flow<Response<List<PaymentData>>>
+    suspend fun removePayments(id:String):Flow<Response<Boolean>>
+    suspend fun removeAddress(id: String):Flow<Response<Boolean>>
 }

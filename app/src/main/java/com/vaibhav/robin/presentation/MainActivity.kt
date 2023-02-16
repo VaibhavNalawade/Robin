@@ -10,9 +10,12 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -28,7 +31,6 @@ import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -61,18 +63,20 @@ class MainActivity : ComponentActivity() {
             val windowSize = calculateWindowSizeClass(this)
             val displayFeatures = calculateDisplayFeatures(this)
             RobinTheme {
-                Surface {
+                Surface(
+
+                ) {
                     RobinApp(
                         windowSize = windowSize,
                         displayFeatures = displayFeatures,
                         profileUiState = viewModel.profileData,
                         userAuthenticated = viewModel.userAuthenticated,
                         productUiState = viewModel.products,
-                        selectedProduct=viewModel.selectedProduct,
+                        selectedProduct = viewModel.selectedProduct,
                         brandsUiState = viewModel.brands,
                         categoriesUiState = viewModel.categories,
                         filterState = viewModel.filterState,
-                        cartItems=viewModel.cartItem,
+                        cartItems = viewModel.cartItem,
                         signOut = {
                             viewModel.signOut()
                         },
@@ -90,13 +94,10 @@ class MainActivity : ComponentActivity() {
         content.viewTreeObserver.addOnPreDrawListener(
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
-                    // Check if the initial data is ready.
                     return if (viewModel.products !is Response.Loading) {
-                        // The content is ready; start drawing.
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true
                     } else false
-
                 }
             }
         )

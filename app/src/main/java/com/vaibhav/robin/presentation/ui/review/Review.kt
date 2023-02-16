@@ -63,7 +63,6 @@ fun Review(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
         Surface(
             tonalElevation = Dimens.surface_elevation_5

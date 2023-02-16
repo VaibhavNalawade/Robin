@@ -53,6 +53,10 @@
     <string name="unknown_error">Something went wrong. try again after sometime letter</string>
     <string name="email_already">This email is already in use</string>
     <string name="email_already_message">This email is already connected to an account. Log in or try another email.</string>
+    <string name="card_number_is_invalid">Card number is invalid. check the card Number again or try another number</string>
+    <string name="card_number_is_empty">please enter a valid card Number</string>
+    <string name="expiry_date_is_empty">Please enter a valid date MM/YY</string>
+    <string name="card_is_expired">Card is Expired try another card</string>
     <!-- Timestamp-->
     <string name="now">Now.</string>
     <string name="minutes">minutes ago.</string>
@@ -89,4 +93,17 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="add_address">Add address</string>
     <string name="add_payment_card">Add Payment Card</string>
+    <string name="add_card_details">Add Card Details</string>
+    <string name="make_payment">Make Payment</string>
+    <string name="commercial">Commercial</string>
+    <string name="address">Address</string>
+    <string name="done">Done</string>
+    <string name="add_a_new_address">Add a new address</string>
+    <string name="name">Name</string>
+    <string name="apartment_suites_building">Apartment Suites Building</string>
+    <string name="street_address_and_city">Street address and city</string>
+    <string name="postcode">Postcode</string>
+    <string name="phone">phone</string>
+    <string name="address_type">Address Type</string>
+    <string name="payment">Payment</string>
 </resources>

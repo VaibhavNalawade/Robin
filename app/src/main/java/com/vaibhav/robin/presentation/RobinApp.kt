@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationRail
@@ -15,11 +14,9 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import com.vaibhav.robin.data.models.CartItem
@@ -149,9 +146,10 @@ fun RobinNavigationWrapper(
             )
         }
     }
-    val filter = remember {
-        mutableStateOf(false)
+    val showNavContent = remember {
+        mutableStateOf(true)
     }
+    val cartItemSize=(cartItems as? Response.Success)?.data?.size?:0
 
     when (navigationType) {
         RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawer(
@@ -163,10 +161,11 @@ fun RobinNavigationWrapper(
                     closeDrawer = closeDrawer,
                     brandsUiState = brandsUiState,
                     categoriesUiState = categoriesUiState,
-                    showNavContent = filter,
+                    showNavContent = showNavContent,
                     onApply = onApply,
                     navigationType = navigationType,
-                    filterState = filterState
+                    filterState = filterState,
+                    cartItemsSize= cartItemSize
                 )
             },
             content = {
@@ -185,7 +184,7 @@ fun RobinNavigationWrapper(
                             onSelectProduct = onSelectProduct,
                             selectedProduct = selectedProduct,
                             cartItems = cartItems,
-                            filter = filter
+                            showNavContent = showNavContent
                         )
                     }
                 )
@@ -203,10 +202,11 @@ fun RobinNavigationWrapper(
                             closeDrawer = closeDrawer,
                             brandsUiState = brandsUiState,
                             categoriesUiState = categoriesUiState,
-                            showNavContent = filter,
-                            navigationType = navigationType,
+                            showNavContent = showNavContent,
                             onApply = onApply,
+                            navigationType = navigationType,
                             filterState = filterState,
+                            cartItemsSize = cartItemSize,
                         )
                     }
                 },
@@ -234,7 +234,7 @@ fun RobinNavigationWrapper(
                                     onSelectProduct = onSelectProduct,
                                     selectedProduct = selectedProduct,
                                     cartItems = cartItems,
-                                   filter = filter
+                                    showNavContent = showNavContent
                                 )
                             }
                         )
@@ -254,10 +254,11 @@ fun RobinNavigationWrapper(
                         closeDrawer = closeDrawer,
                         brandsUiState = brandsUiState,
                         categoriesUiState = categoriesUiState,
-                        showNavContent = filter,
-                        navigationType = navigationType,
+                        showNavContent = showNavContent,
                         onApply = onApply,
-                        filterState = filterState
+                        navigationType = navigationType,
+                        filterState = filterState,
+                        cartItemsSize = cartItemSize
                     )
                 }
             },
@@ -277,7 +278,7 @@ fun RobinNavigationWrapper(
                             onSelectProduct = onSelectProduct,
                             selectedProduct = selectedProduct,
                             cartItems = cartItems,
-                           filter = filter
+                            showNavContent = showNavContent
                         )
                     }
                 )
@@ -295,10 +296,9 @@ fun MessageBarWrapper(
 ) {
     ContentWithMessageBar(
         messageBarState = state,
-        position = position
-    ) {
-        content()
-    }
+        position = position,
+        content = content
+    )
 }
 
 @Composable

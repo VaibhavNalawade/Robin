@@ -32,9 +32,13 @@ class MainViewModel @Inject constructor(
     var profileData by mutableStateOf(authUseCases.getProfileData())
         private set
     var categories by mutableStateOf<Response<List<MainCategory>>>(Response.Loading)
+    private set
     var brands by mutableStateOf<Response<List<MainBrand>>>(Response.Loading)
+        private set
     var cartItem by mutableStateOf<Response<List<CartItem>>>(Response.Loading)
+        private set
     val filterState by mutableStateOf(FilterState())
+
     var selectedProduct by mutableStateOf<Product?>(null)
 
     fun signOut() = viewModelScope.launch {
@@ -89,7 +93,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun subscribeCartItems() = viewModelScope.launch {
+    private fun subscribeCartItems() = viewModelScope.launch {
         // if (userAuthenticated)
         databaseUseCases.listenForCartItems()
             .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }

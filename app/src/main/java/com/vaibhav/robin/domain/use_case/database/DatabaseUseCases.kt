@@ -21,4 +21,8 @@ data class DatabaseUseCases (
     val filterProducts:FilterProducts,
     val addAddress: AddAddress,
     val getAddress: GetAddress,
+    val addPayment:AddPayment,
+    val getPayments:GetPayments,
+    val removeAddress:RemoveAddress,
+    val removePayment:RemovePayment
 )

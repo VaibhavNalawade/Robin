@@ -109,6 +109,17 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
             emit(Error(e))
         }
     }
+    suspend fun deleteDocument(query: Query): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Response.Loading)
+            query.get().await().documents.forEach{
+                it.reference.delete()
+            }
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
 
     suspend fun checkExits(document: DocumentReference): Flow<Response<Boolean>> = flow {
         try {

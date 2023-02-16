@@ -33,7 +33,7 @@ class AddAddress @Inject constructor(private val repository: DatabaseRepository)
             !phone.value.error
         ) {
             val data = mapOf(
-                "Id" to UUID.randomUUID().toString(),
+                "id" to UUID.randomUUID().toString(),
                 "name" to name.value.text,
                 "address" to apartmentSuitesBuilding.value.text + streetAddressAndCity.value.text +"\n"+ postcode.value.text,
                 "phone" to phone.value.text,
