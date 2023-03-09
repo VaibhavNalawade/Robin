@@ -1,115 +1,257 @@
 package com.vaibhav.robin.presentation.ui.account
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Error
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.vaibhav.robin.domain.exceptions.ValidationFailedException
+import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
+import com.vaibhav.robin.presentation.RobinNavigationType
+import com.vaibhav.robin.presentation.models.state.MessageBarState
+import com.vaibhav.robin.presentation.models.state.TextFieldState
 import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
-fun SignUp(navController: NavHostController, viewModel: SignUpViewModel) {
-    val response = viewModel.signUpResponse.value
-
-    when (response) {
-        is Success -> {
-            if (response.data){
-                LaunchedEffect(key1 = true, block ={
-                    navController.navigate(RobinDestinations.PERSONAL_DETAILS)
-                } )
-            }else  InitUi(viewModel, navController)
-        }
-        is Error -> {
-            if (response.message !is ValidationFailedException)
-            ShowError(response.message){viewModel.retry();Log.e("click","dfuycyfuylgyuy")}
-            else InitUi(viewModel, navController)
-        }
-        is Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Loading(modifier=Modifier.fillMaxSize())
+fun SignUp(
+    navController: NavHostController,
+    viewModel: SignUpViewModel,
+    messageBarState: MessageBarState,
+    navigationType: RobinNavigationType
+) {
+    when (navigationType) {
+        else -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                SignUpContent(
+                    emailState = viewModel.signUpEmail,
+                    passwordState = viewModel.signUpPassword,
+                    confirmPassword = viewModel.signUpConfirmPassword,
+                    signUpResponse = viewModel.signUpResponse,
+                    nameState = viewModel.signUpName,
+                    messageBarState = messageBarState,
+                    signUp = {
+                        viewModel.signUp()
+                    },
+                    navigateToSignIn = {
+                        navController.popBackStack()
+                    },
+                    onSignUpSuccess  = {
+                        navController.popBackStack(route = RobinDestinations.LOGIN_ROUTE, inclusive = true)
+                    }
+                )
             }
+        }
+
+    }
+}
+
+
+@Composable
+private fun SignUpContent(
+    emailState: MutableState<TextFieldState>,
+    passwordState: MutableState<TextFieldState>,
+    confirmPassword:MutableState<TextFieldState>,
+    nameState: MutableState<TextFieldState>,
+    messageBarState: MessageBarState,
+    signUpResponse: Response<Boolean>,
+    signUp: () -> Unit,
+    navigateToSignIn: () -> Unit,
+    onSignUpSuccess: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Values.Dimens.gird_two)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier.width(360.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SpacerVerticalFour()
+            Icon(
+                modifier = Modifier.size(96.dp),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "",
+                tint = Color.Unspecified
+            )
+            Text(
+                text = stringResource(R.string.hi_welcome),
+                style = MaterialTheme.typography.titleLarge
+            )
+            SpacerVerticalTwo()
+            Text(
+                text = stringResource(R.string.agreement_short),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            SpacerVerticalFour()
+            RobinTextField(
+                state = nameState,
+                label = {
+                    Text(text = stringResource(R.string.full_name))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.badge),
+                        contentDescription = null
+                    )
+                },
+            )
+            SpacerVerticalTwo()
+            RobinTextField(
+                state = emailState,
+                label = {
+                    Text(text = stringResource(R.string.email))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.alternate_email),
+                        contentDescription = null
+                    )
+                },
+            )
+
+            SpacerVerticalTwo()
+
+            PasswordTextField(
+                state = passwordState,
+                label = {
+                    Text(stringResource(id = R.string.password))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                )
+            )
+            SpacerVerticalTwo()
+            PasswordTextField(
+                state = confirmPassword,
+                label = {
+                    Text(stringResource(R.string.confirm_password))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        signUp()
+                    }
+                )
+            )
+            SpacerVerticalTwo()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = signUp,
+                content = {
+                    SignUpButton(
+                        response = signUpResponse,
+                        onSignUpSuccess = onSignUpSuccess,
+                        messageBarState = messageBarState
+                    )
+                }
+            )
+            SpacerVerticalFour()
+            TextButton(
+                onClick = navigateToSignIn,
+                content = {
+                    Text(text = stringResource(R.string.have_account_sign_in))
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun InitUi(viewModel: SignUpViewModel, navController: NavHostController) {
-    Column(modifier = Modifier.padding(horizontal = Values.Dimens.gird_two)) {
-        SpacerVerticalFour()
-        Text(
-            text = "Sign Up",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        SpacerVerticalTwo()
-        Text(
-            text = "By continuing, you agree to our User Agreement and Privacy Policy.",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        SpacerVerticalFour()
+fun SignUpButton(
+    response: Response<Boolean>,
+    onSignUpSuccess: () -> Unit,
+    messageBarState: MessageBarState
+) {
+    when (response) {
+        is Loading -> {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 5.dp
+            )
+        }
 
-        /**
-         * todo Validation need to be implemented when error message functionality added to M3
-         * todo currently waiting for TBD
-         */
+        is Success -> {
+            if (response.data) {
+                LaunchedEffect(key1 = true, block = {
+                    onSignUpSuccess()
+                })
+            } else DefaultButtonAppearance()
+        }
 
-        /**
-         * todo Validation need to be implemented when error message functionality added to M3
-         * todo currently waiting for TBD
-         */
-
-        RobinTextField(
-            state = viewModel.signUpEmail,
-            label = { Text("Email") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = "") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-        )
-        SpacerVerticalTwo()
-        PasswordTextField(
-            state = viewModel.signUpPassword,
-            keyboardActions = KeyboardActions(onDone = {}),
-        )
-        SpacerVerticalTwo()
-        PasswordTextField(
-            state = viewModel.signUpConfirmPassword,
-            label = { Text("Confirm Password") },
-            keyboardActions = KeyboardActions(onDone = {}),
-        )
-        SpacerVerticalFour()
-        Button(modifier = Modifier.fillMaxWidth(),
-            onClick = { viewModel.signUp()}) {
-            Text(text = "Sign up")
+        is Error -> {
+            DefaultButtonAppearance()
+            LaunchedEffect(key1 = true, block = {
+                messageBarState.addError(response.message.message ?: "")
+            })
         }
     }
 }
 
+@Composable
+private fun DefaultButtonAppearance() {
+    Icon(
+        painter = painterResource(id = R.drawable.signin),
+        contentDescription = "",
+        modifier = Modifier.size(ButtonDefaults.IconSize)
+    )
+
+    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+
+    Text(text = stringResource(R.string.sign_up))
+}
 
 @Preview
 @Composable
-fun SignupPreview() {
-    RobinAppPreviewScaffold {
-        SignUp(NavHostController(LocalContext.current), viewModel = viewModel())
+fun SignUpPreview() {
+    RobinAppPreview {
+        val dummy = remember { mutableStateOf(TextFieldState()) }
+        SignUpContent(
+            emailState = dummy,
+            passwordState = dummy,
+            confirmPassword = dummy,
+            messageBarState = rememberMessageBarState(),
+            nameState = dummy,
+            signUpResponse = Success(true),
+            signUp = {},
+            navigateToSignIn = {},
+            onSignUpSuccess = {}
+        )
     }
 }

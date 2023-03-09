@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.ExceptionHandler
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
@@ -92,7 +92,7 @@ fun ShowError(
 @Preview
 @Composable
 fun ErrorPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         ShowError(
            Exception()
         ){}

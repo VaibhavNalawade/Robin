@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
@@ -39,20 +40,20 @@ class ReviewViewModel @Inject constructor(
         viewModelScope.launch {
             auth.getAuthState().collect{
                 val profile=auth.getProfileData()
-                userName=profile?.Name?:"Error"
-                userPhoto=profile?.Image?: Uri.EMPTY
+                userName=profile?.name?:"Error"
+                userPhoto=profile?.image?: Uri.EMPTY
             }
         }
     }
 
-    fun createReview()=viewModelScope.launch(Dispatchers.IO) {
-        database.writeReview(userName,userPhoto,comment,stars,productID).collect{
+    fun createReview(product: Product)=viewModelScope.launch(Dispatchers.IO) {
+        database.writeReview(userName,userPhoto,comment,stars,product.id).collect{
             response=it
         }
     }
 
-    fun retry() {
-        createReview()
+    fun retry(product: Product) {
+        createReview(product)
     }
     fun getAuthState() =auth.isUserAuthenticated()
 

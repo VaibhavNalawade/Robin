@@ -5,7 +5,7 @@ import com.vaibhav.robin.domain.repository.DatabaseRepository
 import javax.inject.Inject
 
 class AddFavourite @Inject constructor(private val repo: DatabaseRepository) {
-    suspend operator fun invoke(productId: String, favourite: Favourite) =
-        repo.setFavorite(productId, favourite)
+    suspend operator fun invoke( favourite: Favourite) =
+        repo.setFavorite( favourite)
 
 }

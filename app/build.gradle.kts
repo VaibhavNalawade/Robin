@@ -28,13 +28,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-
-        debug{
-
-        }
-        create("Admin"){
-
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -72,9 +65,9 @@ dependencies {
     implementation(Dependencies.Kotlin.Coroutines.android)
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
 
-    implementation(Dependencies.Google.Accompanist.pager)
-    implementation(Dependencies.Google.Accompanist.pagerIndicator)
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
+    implementation(Dependencies.Google.Accompanist.adaptive)
+
 
     implementation(platform(Dependencies.Firebase.BOM))
     implementation(Dependencies.Firebase.firestore)
@@ -97,25 +90,19 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.NAVIGATION)
     implementation(Dependencies.AndroidX.Compose.ACTIVITY)
 
-    implementation(Dependencies.AndroidX.Material.material)
-    implementation(Dependencies.AndroidX.Material.materialIconExtended)
     implementation(Dependencies.AndroidX.Material.material3Compose)
     implementation(Dependencies.AndroidX.Material.material3ComposeWindowsSizeClass)
 
 
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
+    implementation("com.google.android.gms:play-services-wallet:19.1.0")
     kapt(Dependencies.Google.DaggerHilt.kapt)
     implementation (Dependencies.Google.DaggerHilt.composeNavigationSupport)
 
     testImplementation(Dependencies.Test.junit)
-    testImplementation(Dependencies.Test.coroutines)
-    testImplementation(Dependencies.Test.mockito)
-    testImplementation(Dependencies.Test.robolectric)
     androidTestImplementation(Dependencies.Test.AndroidTest.core)
     androidTestImplementation(Dependencies.Test.AndroidTest.ext)
-    androidTestImplementation(Dependencies.Test.AndroidTest.espresso)
     androidTestImplementation(Dependencies.Test.AndroidTest.composeUITest)
     debugImplementation(Dependencies.Test.Debug.uiToolingDebug)
     debugImplementation(Dependencies.Test.Debug.uiTestManifest)
-    implementation ("com.google.code.gson:gson:2.9.1")
 }

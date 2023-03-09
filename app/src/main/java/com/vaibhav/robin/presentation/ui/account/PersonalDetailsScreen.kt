@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values
 
@@ -68,7 +68,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
         RobinTextField(
             state = viewModel.firstName,
             label = { Text("First Name") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Badge, contentDescription = "") },
+            leadingIcon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = "") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -79,7 +79,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
         RobinTextField(
             state = viewModel.lastName,
             label = { Text("Last Name") },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Badge, contentDescription = "") },
+            leadingIcon = { Icon(imageVector = Icons.Filled.Warning, contentDescription = "") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -99,7 +99,7 @@ fun InitUi(viewModel: PersonalDetailsViewModel) {
 @Preview
 @Composable
 fun Preview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         PersonalDetails(NavHostController(LocalContext.current), viewModel = viewModel())
     }
 }

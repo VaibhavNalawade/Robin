@@ -2,6 +2,7 @@ package com.vaibhav.robin.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
@@ -42,11 +43,14 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     }
 
     override suspend fun signUpWithEmailPassword(
-        email: String, password: String
+        email: String,
+        password: String,
+        name:String
     ): Flow<Response<Boolean>> = flow {
         try {
             emit(Loading)
             auth.createUserWithEmailAndPassword(email, password).await()
+            UpdateProfile(name,null)
             emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e))
@@ -110,7 +114,6 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
                     email,
                     isEmailVerified,
                     phoneNumber,
-                    providerData
                 )
             }
         } catch (e: Exception) {

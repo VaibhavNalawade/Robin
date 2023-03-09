@@ -5,7 +5,7 @@ import androidx.compose.runtime.*
 class MessageBarState {
     var success by mutableStateOf<String?>(null)
         private set
-    var error by mutableStateOf<Exception?>(null)
+    var error by mutableStateOf<String?>(null)
         private set
     internal var updated by mutableStateOf(false)
         private set
@@ -16,9 +16,9 @@ class MessageBarState {
         updated = !updated
     }
 
-    fun addError(exception: Exception) {
+    fun addError(message: String) {
         success = null
-        error = exception
+        error = message
         updated = !updated
     }
 }

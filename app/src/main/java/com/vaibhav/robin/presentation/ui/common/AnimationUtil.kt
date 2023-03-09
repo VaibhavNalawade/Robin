@@ -28,6 +28,41 @@ fun SlideInTopVisibilityAnimation(
     }
 
 }
+@Composable
+fun SlideInLeftVisibilityAnimation(
+    visible: Boolean,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInHorizontally()+ fadeIn(
+            initialAlpha = 0.3f
+        ),
+        exit = slideOutHorizontally() + shrinkHorizontally () + fadeOut()) {
+        content()
+    }
+
+}
+@Composable
+fun SlideInRightVisibilityAnimation(
+    visible: Boolean,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInHorizontally {
+            with(density) { 360.dp.roundToPx() }
+        } + fadeIn(
+            initialAlpha = 0.3f
+        ),
+        exit = slideOutHorizontally() + shrinkHorizontally () + fadeOut()) {
+        content()
+    }
+
+}
+
 fun <T> tweenSpec()= tween<T>(
     durationMillis = 300,
     easing = LinearOutSlowInEasing

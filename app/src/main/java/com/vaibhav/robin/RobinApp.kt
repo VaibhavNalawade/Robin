@@ -10,26 +10,11 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class RobinApp : Application() {
-    companion object {
-        private var isEmulatorNotRunning = true
-    }
-
     override fun onCreate() {
         super.onCreate()
         Firebase.initialize(this)
         Firebase.firestore.firestoreSettings = firestoreSettings {
             isPersistenceEnabled = true
-
-            /*        val a = Firebase.firestore.batch()
-        val text = this.resources.openRawResource(R.raw.mock)
-            .bufferedReader().use { it.readText() }
-        val s= Gson().fromJson(text,Array<Review>::class.java).toList()
-        s.forEach {
-            val  d= Firebase.firestore.collection("Product").document("D3MjFbzN2Grpl0QRU9cv")
-                .collection("Review").document()
-            a.set(d,it)
-        }
-        a.commit()*/
         }
     }
 }

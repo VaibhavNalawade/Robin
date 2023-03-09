@@ -1,15 +1,14 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.7.20"
-    const val COMPOSE_VERSION = "1.4.0-alpha01"
-    const val COMPOSE_COMPILER_VERSION = "1.3.2"
-    private const val MDC3_VERSION = "1.1.0-alpha02"
+    const val KOTLIN_VERSION = "1.8.10"
+    const val COMPOSE_VERSION = "1.4.0-beta01"
+    const val COMPOSE_COMPILER_VERSION = "1.4.2"
+    private const val MDC3_VERSION = "1.1.0-alpha05"
     private const val GSM_VERSION = "4.3.13"
-    private const val ACCOMPANIST_VERSION = "0.26.1-alpha"
-    private const val KTOR_VERSION = "2.1.0"
+    private const val ACCOMPANIST_VERSION = "0.29.0-alpha"
     private const val LIFECYCLE_VERSION = "2.6.0-alpha01"
     private const val COROUTINES_VERSION="1.6.4"
-    private const val AGP_VERSION = "8.0.0-alpha09"
+    private const val AGP_VERSION = "8.1.0-alpha04"
     private const val DAGGERHILT_VERSION="2.44"
 
     /**
@@ -28,11 +27,9 @@ object Dependencies {
 
     object Google {
         object Accompanist {
-            const val pager = "com.google.accompanist:accompanist-pager:$ACCOMPANIST_VERSION"
-            const val pagerIndicator =
-                "com.google.accompanist:accompanist-pager-indicators:$ACCOMPANIST_VERSION"
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
+            const val adaptive="com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
         }
         object DaggerHilt{
             const val daggerHilt="com.google.dagger:hilt-android:$DAGGERHILT_VERSION"
@@ -54,7 +51,6 @@ object Dependencies {
             const val android = "com.android.application"
             const val kotlinAndroid = "org.jetbrains.kotlin.android"
             const val googleService = "com.google.gms.google-services"
-            const val pluginSerialization = "plugin.serialization"
             const val daggerHilt="dagger.hilt.android.plugin"
             const val kapt="kapt"
         }
@@ -82,8 +78,6 @@ object Dependencies {
             const val compose = "androidx.paging:paging-compose:1.0.0-alpha17"
         }
         object Material{
-            const val material="com.google.android.material:material:1.7.0-beta01"
-            const val materialIconExtended = "androidx.compose.material:material-icons-extended:1.3.0-alpha03"
             const val material3Compose = "androidx.compose.material3:material3:$MDC3_VERSION"
             const val material3ComposeWindowsSizeClass="androidx.compose.material3:material3-window-size-class:$MDC3_VERSION"
         }

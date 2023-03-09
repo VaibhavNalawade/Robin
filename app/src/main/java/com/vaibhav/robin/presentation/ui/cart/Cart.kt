@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Store
-import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -26,7 +23,7 @@ import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.BottomSheetHandle
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
@@ -40,10 +37,9 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Cart(
-    viewModel: CartViewModel, navController: NavController
+    viewModel: CartViewModel, navController: NavController, cartItems: Response<List<CartItem>>
 ) {
     val subTotal = remember { mutableStateOf(0) }
 
@@ -56,87 +52,77 @@ fun Cart(
                     inclusive = true
                 }
             }
-        viewModel.launch()
     })
-    val bottomSheetState = rememberBottomSheetScaffoldState()
-    LaunchedEffect(key1 = true, block = {
-        bottomSheetState.bottomSheetState.expand()
-    })
-    BottomSheetScaffold(
-        modifier = Modifier.statusBarsPadding(),
-        sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
-        sheetPeekHeight = 32.dp,
-        sheetContent = { FrontLayout(subTotal) },
-        scaffoldState = bottomSheetState,
-        topBar = {
-            CartAppBar(
-                items = (viewModel.cartItem as? Response.Success)?.data?.size ?: 0,
-                onBackButton = { navController.popBackStack() }
-            )
-        },
-        content = {
-            BackLayout(
-                viewModel.cartItem,
-                subTotal,
-                onErrorOccurred = { viewModel.launch() },
-                onRemoveButtonClick = { cartItemId ->
-                    viewModel.removeCartItem(cartItemId)
-                }
-            )
-        }
-    )
-}
 
-@Composable
-fun BackLayout(
-    cartItem: Response<List<CartItem>>,
-    subTotal: MutableState<Int>,
-    onRemoveButtonClick: (String) -> Unit,
-    onErrorOccurred: () -> Unit
-) {
+
+
+
     Surface(color = colorScheme.surface) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            when (val item = cartItem) {
-                is Response.Error -> item {
-                    ShowError(exception = item.message) {
-                        onErrorOccurred.invoke()
-                    }
-                }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            ,contentAlignment = Alignment.TopStart) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                item { Spacer(modifier = Modifier.height(Dimens.appbarSize)) }
+                when (cartItems) {
+                    is Response.Error -> item {
+                        ShowError(exception = cartItems.message) {
 
-                is Response.Loading -> item {
-                    Loading()
-                }
-
-                is Response.Success -> if (item.data.isNotEmpty())
-                    item.data.forEachIndexed { index, cartItem ->
-                        item {
-                            CartItem(
-                                product = cartItem,
-                                variantIndex = index,
-                                total = subTotal
-                            ) {
-                                onRemoveButtonClick(cartItem.cartId)
-                            }
                         }
                     }
-                else item {
-                    EmptyCart()
+
+                    is Response.Loading -> item {
+                        Loading()
+                    }
+
+                    is Response.Success -> if (cartItems.data.isNotEmpty())
+                        cartItems.data.forEachIndexed { index, cartItem ->
+                            item {
+                                CartItem(
+                                    product = cartItem,
+                                    variantIndex = index,
+                                    total = subTotal,
+                                    onRemoveButtonClick = {
+                                        viewModel.removeCartItem(cartItem.cartId)
+                                    }
+                                )
+                            }
+                        }
+                    else item {
+                        EmptyCart()
+                    }
                 }
+                item { Spacer(modifier = Modifier.height(250.dp)) }
             }
+            FrontLayout(
+                modifier = Modifier.align(Alignment.BottomCenter)
+                ,subTotal = remember {
+                mutableStateOf(3000)
+            },
+                onCheckout = {
+                    navController.navigate(RobinDestinations.DELIVERY_ADDRESS)
+                })
+            CartAppBar(
+                items = (cartItems as? Response.Success)?.data?.size ?: 0,
+                onBackButton = { navController.popBackStack() }
+            )
         }
     }
 }
 
+
 @Composable
-fun FrontLayout(subTotal: MutableState<Int>) {
+fun FrontLayout(
+    modifier: Modifier=Modifier,
+    subTotal: MutableState<Int>,
+    onCheckout:()->Unit
+) {
     Surface(
-        modifier = Modifier,
+        modifier = modifier,
         tonalElevation = Dimens.surface_elevation_1,
         shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
     ) {
@@ -210,14 +196,15 @@ fun FrontLayout(subTotal: MutableState<Int>) {
             Button(modifier = Modifier
                 .fillMaxWidth(.8f)
                 .align(Alignment.CenterHorizontally),
-                onClick = { /*TODO*/ }) {
+                onClick = onCheckout) {
                 Icon(
-                    painter = painterResource(id = R.drawable.shopping_cart_checkout_fill0_wght700_grad200_opsz24),
+                    painter = painterResource(id = R.drawable.shopping_cart_checkout),
                     contentDescription = ""
                 )
                 SpacerHorizontalOne()
                 Text(text = "Checkout")
             }
+            SpacerVerticalOne()
         }
     }
 }
@@ -236,7 +223,7 @@ fun CartAppBar(items: Int, onBackButton: () -> Unit) {
 
             IconButton(onClick = onBackButton) {
                 Icon(
-                    painter = painterResource(id = R.drawable.close_fill0_wght700_grad0_opsz24),
+                    painter = painterResource(id = R.drawable.close),
                     contentDescription = stringResource(id = R.string.close)
                 )
             }
@@ -279,12 +266,14 @@ fun CartItem(
                 contentScale = ContentScale.Crop,
                 model = product.productImage
             )
-            Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                product.productName?.let {
-                    Text(
-                        text = it, style = typography.titleMedium
-                    )
-                }
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = product.productName,
+                    style = typography.titleMedium
+                )
                 SpacerVerticalOne()
                 Surface(
                     tonalElevation = Dimens.surface_elevation_1, shape = MaterialTheme.shapes.medium
@@ -293,10 +282,13 @@ fun CartItem(
                         RobinAsyncImage(
                             modifier = Modifier.size(24.dp),
                             contentDescription = "",
-                            model = product.brand?.url
+                            model = product.brandLogo
                         )
                         SpacerHorizontalOne()
-                        product.brand?.name?.let { Text(text = it, style = typography.bodyMedium) }
+                        Text(
+                            text = product.brandName,
+                            style = typography.bodyMedium
+                        )
                         SpacerHorizontalTwo()
                         Text(
                             text = "₹ ${product.price}",
@@ -307,16 +299,20 @@ fun CartItem(
                 }
                 SpaceBetweenContainer(modifier = Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+
+                        }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.add_circle_fill0_wght200_grad200_opsz20),
+                                painter = painterResource(id = R.drawable.add_circle),
                                 contentDescription = ""
                             )
                         }
                         Text(text = "1", style = typography.labelLarge)
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+
+                        }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.do_not_disturb_on_fill0_wght200_grad200_opsz20),
+                                painter = painterResource(id = R.drawable.remove_circle),
                                 contentDescription = ""
                             )
                         }
@@ -326,13 +322,12 @@ fun CartItem(
 
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.delete_fill0_wght700_grad200_opsz24),
+                            painter = painterResource(id = R.drawable.delete),
                             contentDescription = "",
                             tint = colorScheme.onSurfaceVariant
                         )
                     }
                 }
-
             }
         }
     }
@@ -408,9 +403,11 @@ fun EmptyCart() {
         )
 
         SpacerVerticalFour()
-        Button(onClick = { /* Do something! */ }) {
+        Button(onClick = {
+
+        }) {
             Icon(
-                Icons.Filled.Store,
+                Icons.Filled.Warning,
                 contentDescription = "Localized description",
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
@@ -420,4 +417,5 @@ fun EmptyCart() {
         }
     }
 }
+
 

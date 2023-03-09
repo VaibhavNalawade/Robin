@@ -4,13 +4,10 @@ package com.vaibhav.robin.presentation
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SignalWifiConnectedNoInternet4
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -34,22 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Date
 
-object UiUtil {
-    @OptIn(ExperimentalPagerApi::class)
-    fun autoscroll(pagerState: PagerState, scope: CoroutineScope) {
-        scope.launch {
-            (1..Int.MAX_VALUE).forEach { _ ->
-                delay(5000)
-                if (pagerState.pageCount > 0) {
-                    when (pagerState.currentPage) {
-                        pagerState.pageCount - 1 -> pagerState.animateScrollToPage(0)
-                        else -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                }
-            }
-        }
-    }
-}
+
 
 sealed class UiText {
     data class DynamicString(val value: String) : UiText()
@@ -67,6 +49,7 @@ sealed class UiText {
     }
 }
 
+//TODO Need To add all Exception error message and Icons
 class ExceptionHandler(val exception: Exception) {
      var title: UiText=UiText.StringResource(R.string.unknown_error)
         private set
@@ -86,13 +69,13 @@ class ExceptionHandler(val exception: Exception) {
                         title = UiText.StringResource(R.string.network_error_title)
                         message = UiText.StringResource(R.string.network_error_message)
                         errorCode = null
-                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                       // icon= Icons.Default.SignalWifiConnectedNoInternet4
                     }
                     is FirebaseTooManyRequestsException -> {
                         title = UiText.StringResource(R.string.network_error_title)
                         message = UiText.StringResource(R.string.unknown_error)
                         errorCode = null
-                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                     }
                     is FirebaseAuthException -> {
                         when (exception) {
@@ -100,13 +83,13 @@ class ExceptionHandler(val exception: Exception) {
                                 title = UiText.StringResource(R.string.network_error_title)
                                 message = UiText.StringResource(R.string.unknown_error)
                                 errorCode = exception.errorCode
-                                icon= Icons.Default.SignalWifiConnectedNoInternet4
+                             //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                             }
                             is FirebaseAuthEmailException -> {
                                 title = UiText.StringResource(R.string.network_error_title)
                                 message = UiText.StringResource(R.string.unknown_error)
                                 errorCode = exception.errorCode
-                                icon= Icons.Default.SignalWifiConnectedNoInternet4
+                             //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                             }
                             is FirebaseAuthInvalidCredentialsException -> {
                                 if (exception is FirebaseAuthWeakPasswordException) {
@@ -115,7 +98,7 @@ class ExceptionHandler(val exception: Exception) {
                                     title = UiText.StringResource(R.string.network_error_title)
                                     message = UiText.StringResource(R.string.unknown_error)
                                     errorCode = exception.errorCode
-                                    icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                //    icon= Icons.Default.SignalWifiConnectedNoInternet4
                                 }
                             }
                             is FirebaseAuthInvalidUserException -> {
@@ -124,25 +107,25 @@ class ExceptionHandler(val exception: Exception) {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                    //    icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_USER_NOT_FOUND" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_USER_TOKEN_EXPIRED" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_INVALID_USER_TOKEN" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                      //  icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                 }
                             }
@@ -150,13 +133,13 @@ class ExceptionHandler(val exception: Exception) {
                                 title = UiText.StringResource(R.string.network_error_title)
                                 message = UiText.StringResource(R.string.unknown_error)
                                 errorCode = exception.errorCode
-                                icon= Icons.Default.SignalWifiConnectedNoInternet4
+                              //  icon= Icons.Default.SignalWifiConnectedNoInternet4
                             }
                             is FirebaseAuthRecentLoginRequiredException -> {
                                 title = UiText.StringResource(R.string.network_error_title)
                                 message = UiText.StringResource(R.string.unknown_error)
                                 errorCode = exception.errorCode
-                                icon= Icons.Default.SignalWifiConnectedNoInternet4
+                              //  icon= Icons.Default.SignalWifiConnectedNoInternet4
                             }
                             is FirebaseAuthUserCollisionException -> {
 
@@ -171,13 +154,13 @@ class ExceptionHandler(val exception: Exception) {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                    //    icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_CREDENTIAL_ALREADY_IN_USE" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                 }
                             }
@@ -187,25 +170,25 @@ class ExceptionHandler(val exception: Exception) {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_WEB_CONTEXT_CANCELED" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_WEB_STORAGE_UNSUPPORTED" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                     "ERROR_WEB_INTERNAL_ERROR" -> {
                                         title = UiText.StringResource(R.string.network_error_title)
                                         message = UiText.StringResource(R.string.unknown_error)
                                         errorCode = exception.errorCode
-                                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                                    //    icon= Icons.Default.SignalWifiConnectedNoInternet4
                                     }
                                 }
                             }
@@ -213,7 +196,7 @@ class ExceptionHandler(val exception: Exception) {
                                 title = UiText.StringResource(R.string.network_error_title)
                                 message = UiText.StringResource(R.string.unknown_error)
                                 errorCode = exception.errorCode
-                                icon= Icons.Default.SignalWifiConnectedNoInternet4
+                             //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                             }
                         }
                     }
@@ -221,7 +204,7 @@ class ExceptionHandler(val exception: Exception) {
                         title = UiText.StringResource(R.string.network_error_title)
                         message = UiText.StringResource(R.string.unknown_error)
                         errorCode = exception.code.value().toString()
-                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                     //   icon= Icons.Default.SignalWifiConnectedNoInternet4
                     }
                 }
 
@@ -232,7 +215,7 @@ class ExceptionHandler(val exception: Exception) {
                         title = UiText.StringResource(R.string.network_error_title)
                         message = UiText.StringResource(R.string.unknown_error)
                         errorCode = exception.errorCode.toString()
-                        icon= Icons.Default.SignalWifiConnectedNoInternet4
+                    //    icon= Icons.Default.SignalWifiConnectedNoInternet4
                     }
                 }
             }
@@ -240,7 +223,7 @@ class ExceptionHandler(val exception: Exception) {
                 title = UiText.StringResource(R.string.network_error_title)
                 message = UiText.StringResource(R.string.unknown_error)
                 errorCode = null
-                icon= Icons.Default.SignalWifiConnectedNoInternet4
+             //   icon= Icons.Default.SignalWifiConnectedNoInternet4
             }
         }
 /*        when ((exception as? FirebaseAuthException)?.errorCode) {
@@ -281,4 +264,14 @@ fun timeStampHandler(timestamp: Timestamp): String {
     else if ( months<12)
         "$months ${stringResource(id = R.string.months)}"
     else   "$years ${stringResource(id = R.string.years)}"
+}
+enum class RobinNavigationType {
+     PERMANENT_NAVIGATION_DRAWER,NAVIGATION_DRAWER,NAVIGATION_RAILS
+}
+enum class RobinAppBarType{
+    COLLAPSING_APPBAR,PERMANENT_APPBAR
+}
+enum class Order{
+    ASCENDING,
+    DESCENDING
 }

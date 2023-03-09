@@ -15,5 +15,14 @@ data class DatabaseUseCases (
     val getCartItem:GetCartItem,
     val getProducts:GetProducts,
     val listenForCartItems:ListenForCartItems,
-    val removeCartItems: RemoveCartItems
+    val removeCartItems: RemoveCartItems,
+    val getCategory: GetCategory,
+    val getBrands: GetBrands,
+    val filterProducts:FilterProducts,
+    val addAddress: AddAddress,
+    val getAddress: GetAddress,
+    val addPayment:AddPayment,
+    val getPayments:GetPayments,
+    val removeAddress:RemoveAddress,
+    val removePayment:RemovePayment
 )

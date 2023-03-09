@@ -1,5 +1,6 @@
 package com.vaibhav.robin.presentation.ui.product
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +15,7 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,89 +26,68 @@ class ProductViewModel @Inject constructor(
     private val databaseUseCases: DatabaseUseCases, private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
-    private var _productId by mutableStateOf(String())
-
-    var productResponse by mutableStateOf<Response<Product>>(Loading)
     var reviewsResponse by mutableStateOf<Response<List<Review>>>(Loading)
     var yourReviewResponse by mutableStateOf<Response<Review>>(Loading)
     var favouriteToggleButtonState by mutableStateOf(false)
     fun getAuthState() = authUseCases.isUserAuthenticated()
 
-    fun setProductId(str: String) {
-        if (_productId != str && (productResponse as? Success)?.data?.name.isNullOrBlank()) viewModelScope.launch(
-            Dispatchers.IO
-        ) {
-            _productId = str
-            databaseUseCases.getProduct(_productId).collect {
-                productResponse = it
-            }
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            if (authUseCases.isUserAuthenticated()) {
-                databaseUseCases.checkFavourite(str).collect {
-                    when (it) {
-                        is Error -> {}
-                        Loading -> {}
-                        is Success -> favouriteToggleButtonState = it.data
-                    }
-                }
-            }
-        }
-    }
-
-    fun loadCurrentUserReview() = viewModelScope.launch(Dispatchers.IO) {
+    fun loadCurrentUserReview(productId: String) = viewModelScope.launch(Dispatchers.IO) {
         if (authUseCases.isUserAuthenticated()) {
 
-            if (yourReviewResponse is Loading) databaseUseCases.getUserReview(_productId).collect {
+            if (yourReviewResponse is Loading) databaseUseCases.getUserReview(productId).collect {
                 yourReviewResponse = it
             }
         } else yourReviewResponse = Error(AuthenticationRequiredException())
     }
 
-    fun loadReview() = viewModelScope.launch(Dispatchers.IO) {
-        if (reviewsResponse is Loading) databaseUseCases.getReview.invoke(_productId).collect {
+    fun loadReview(productId: String) = viewModelScope.launch(Dispatchers.IO) {
+        if (reviewsResponse is Loading) databaseUseCases.getReview.invoke(productId).collect {
             reviewsResponse = it
         }
     }
 
-    private val _selectedVariant = mutableStateOf(0)
+    private val _selectedVariant = mutableStateOf<String?>(null)
     val selectedVariant = _selectedVariant
 
-    private val _selectedSize = mutableStateOf(0)
+    private val _selectedSize = mutableStateOf<Int?>(0)
     val selectedSize = _selectedSize
 
     private val _stars = mutableStateOf(0)
     val stars = _stars
 
-    fun addFavorite() = viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.addFavourite(
-            _productId, Favourite(_productId, selectedSize.value, selectedVariant.value)
-        ).collect {
+
+    fun checkFavorite(productId: String) = viewModelScope.launch(Dispatchers.IO) {
+        if(authUseCases.isUserAuthenticated())
+        databaseUseCases.checkFavourite(productId).collect {
             when (it) {
-                is Error -> {
-
-                }
-
-                Loading -> {
-
-                }
-
+                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                Loading -> {}
                 is Success -> favouriteToggleButtonState = it.data
             }
         }
     }
 
-    fun removeFavorite() = viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.removeFavourite(_productId).collect {
+    fun addFavorite(product: Product) = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.addFavourite(
+            Favourite(
+                product.id,
+                selectedSize.value ?: 0,
+                selectedVariant.value ?: product.variantIndex[0]
+            )
+        ).collect {
             when (it) {
-                is Error -> {
+                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                Loading -> {}
+                is Success -> favouriteToggleButtonState = it.data
+            }
+        }
+    }
 
-                }
-
-                Loading -> {
-
-                }
-
+    fun removeFavorite(productId: String) = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.removeFavourite(productId = productId).collect {
+            when (it) {
+                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                Loading -> {}
                 is Success -> favouriteToggleButtonState = !it.data
             }
         }
@@ -116,25 +96,30 @@ class ProductViewModel @Inject constructor(
     var cartAdd by mutableStateOf<Response<Boolean>>(Success(false))
         private set
 
-    fun addCartItem() =
+    fun addCartItem(product: Product) =
         viewModelScope.launch(Dispatchers.IO) {
-            val item=productResponse as? Success
-            if (item != null) {
-                databaseUseCases.addCartItem(
-                    CartItem(
-                        productId= _productId,
-                        productName = item.data.name,
-                        productVariant = selectedVariant.value,
-                        productSize = selectedSize.value,
-                        productImage = item.data.variant[selectedVariant.value].media.images[0],
-                        brand = item.data.brand,
-                        price = item.data.variant[selectedVariant.value].size[selectedSize.value].price.retail
-                    )
-                ).collect {
-                    cartAdd = it
-                }
+            databaseUseCases.addCartItem(
+                CartItem(
+                    productId = product.id,
+                    productName = product.name,
+                    productVariant = selectedVariant.value ?: product.variantIndex[0],
+                    productSize = selectedSize.value ?: 0,
+                    productImage = product.media[selectedVariant.value
+                        ?: product.variantIndex[0]]?.get(0),
+                    price = product.sizes[selectedVariant.value ?: product.variantIndex[0]]?.get(
+                        selectedSize.value ?: 0
+                    )?.get("price") as Double,
+                    brandLogo = product.brandLogo,
+                    brandName = product.brandName
+                )
+            ).collect {
+                cartAdd = it
             }
         }
+
+    companion object {
+        private const val TAG = "PRODUCT_VIEW_MODEL"
+    }
 }
 
 

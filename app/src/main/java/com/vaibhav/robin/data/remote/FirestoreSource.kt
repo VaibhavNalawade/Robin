@@ -3,9 +3,11 @@ package com.vaibhav.robin.data.remote
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
+import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Success
@@ -57,6 +59,17 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
                 emit(Error(e))
             }
         }
+    suspend fun  fetchFromReference(document: CollectionReference): Flow<Response<List<Map<String, Any>>>> =
+        flow {
+            try {
+                emit(Response.Loading)
+                document.get().await().apply {
+                    emit(Success(documents.map { it.data!! }))
+                }
+            } catch (e: Exception) {
+                emit(Error(e))
+            }
+        }
 
 
     suspend fun writeToReference(
@@ -96,6 +109,17 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
             emit(Error(e))
         }
     }
+    suspend fun deleteDocument(query: Query): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Response.Loading)
+            query.get().await().documents.forEach{
+                it.reference.delete()
+            }
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
 
     suspend fun checkExits(document: DocumentReference): Flow<Response<Boolean>> = flow {
         try {
@@ -105,5 +129,16 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
             emit(Error(e))
         }
     }
-    fun listenDocumentChanges(collectionReference: CollectionReference)=collectionReference.snapshots()
+
+    fun listenDocumentChanges(collectionReference: CollectionReference) =
+        collectionReference.snapshots()
+
+    suspend inline fun <reified T> fetchFromReferenceToObject(query: Query) = flow {
+        try {
+            emit(Response.Loading)
+            emit(Success(query.get().await().toObjects(T::class.java)))
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
 }

@@ -73,6 +73,15 @@ class AppModule {
             getCartItem = GetCartItem(repo),
             getProducts = GetProducts(repo),
             listenForCartItems = ListenForCartItems(repo),
-            removeCartItems = RemoveCartItems(repo)
+            removeCartItems = RemoveCartItems(repo),
+            getCategory = GetCategory(repo),
+            getBrands = GetBrands(repo),
+            filterProducts = FilterProducts(repo),
+            addAddress = AddAddress(repo),
+            getAddress = GetAddress(repo),
+            addPayment = AddPayment(repo),
+            getPayments = GetPayments(repo),
+            removeAddress = RemoveAddress(repo),
+            removePayment = RemovePayment(repo)
         )
 }

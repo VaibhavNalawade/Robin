@@ -7,9 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Boy
-import androidx.compose.material.icons.filled.Girl
-import androidx.compose.material.icons.twotone.CalendarMonth
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -27,8 +26,8 @@ import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.models.common.DropdownOption
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import java.text.SimpleDateFormat
@@ -55,7 +54,7 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
                 Loading(
                     Modifier
                         .height(68.dp)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(colorScheme.surface)
                 )
             }
         }
@@ -89,16 +88,8 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
         var showPicker by remember { mutableStateOf(value = false) }
 
-        if (showPicker)
-            DatePicker(
-                onDateSelected = { selectedDate ->
-                    val formatDate = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-                    date.value = date.value.copy(text = formatDate.format(selectedDate))
-                },
-                onDismissRequest = {
-                    showPicker = false
-                }
-            )
+        //if (showPicker)
+
 
         Box(
             modifier = Modifier
@@ -122,7 +113,7 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = Icons.TwoTone.CalendarMonth,
+                   imageVector = Icons.TwoTone.Warning,
                     contentDescription = stringResource(id = R.string.calender)
                 )
 
@@ -148,8 +139,8 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 
         val list = listOf(
             DropdownOption(array[0]),
-            DropdownOption(array[1], Icons.Filled.Boy),
-            DropdownOption(array[2], Icons.Filled.Girl)
+            DropdownOption(array[1], Icons.Filled.Warning),
+            DropdownOption(array[2], Icons.Filled.Warning)
         )
 
         RobinDropdownMenuBox(
@@ -181,7 +172,7 @@ fun InitUi(viewModel: DateAndGenderViewModel) {
 @Preview
 @Composable
 fun DateAndGenderSelectLightPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         DateAndGenderSelect(
             NavHostController(LocalContext.current),
             viewModel = viewModel()
@@ -192,7 +183,7 @@ fun DateAndGenderSelectLightPreview() {
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun DateAndGenderSelectDarkPreview() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         DateAndGenderSelect(
             NavHostController(LocalContext.current),
             viewModel = viewModel()

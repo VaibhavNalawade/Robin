@@ -4,7 +4,7 @@ object RobinConfig {
     const val minsdk=21
     const val targetSdk=33
     const val versionCode=1
-    const val versionName="Inital0.1"
+    const val versionName="alpha-0.50"
     const val jvm="11"
     const val testRunner="androidx.test.runner.AndroidJUnitRunner"
 

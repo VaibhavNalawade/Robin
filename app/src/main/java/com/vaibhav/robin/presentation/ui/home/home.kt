@@ -4,299 +4,309 @@ package com.vaibhav.robin.presentation.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.models.Media
-import com.vaibhav.robin.data.models.Price
+import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.Product
-import com.vaibhav.robin.data.models.Size
-import com.vaibhav.robin.data.models.Variant
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.presentation.RobinAppPreviewScaffold
-import com.vaibhav.robin.presentation.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.RobinAppBarType
+import com.vaibhav.robin.presentation.RobinAppPreview
+import com.vaibhav.robin.presentation.RobinNavigationType
+import com.vaibhav.robin.presentation.models.state.MessageBarState
+import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
     navController: NavHostController,
-    viewModel: HomeViewModel
+    profileUiState: ProfileData?,
+    toggleDrawer: () -> Unit,
+    productUiState: Response<List<Product>>,
+    messageBarState: MessageBarState,
+    navigationType: RobinNavigationType,
+    appBarType: RobinAppBarType,
+    showNavContent: MutableState<Boolean>,
+    onSelectProduct: (Product) -> Unit,
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val snackbarHostState = remember { SnackbarHostState() }
-    val errorMessage = stringResource(id = R.string.error_occurred)
-    val signInSuccessMessage = stringResource(id = R.string.signing_out_success)
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                DrawerContent(
-                    profile = viewModel.profileData,
-                    userAuthenticated = viewModel.userAuthenticated,
-                    navController = navController,
-                    snackbarHostState = snackbarHostState
-                ) {
-                    if (viewModel.userAuthenticated)
-                        viewModel.viewModelScope.launch {
-                            viewModel.signOut().collect { response ->
-                                when (response) {
-                                    is Response.Error -> showMessage(
-                                        state = snackbarHostState,
-                                        message = errorMessage
-                                    )
-
-                                    is Response.Loading -> {
-                                        /*Do Nothing*/
-                                    }
-
-                                    is Response.Success -> showMessage(
-                                        state = snackbarHostState,
-                                        message = signInSuccessMessage
-                                    )
-                                }
-                            }
-                        }
-                    else navController.navigate(RobinDestinations.LOGIN_ROUTE)
-                }
-            }
-        }
-    ) {
-        Scaffold(
-            modifier = Modifier,
-            topBar = {
-                RobinAppBar(viewModel.profileData, drawerState, snackbarHostState)
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate(RobinDestinations.CART)
-                    },
-                ) {
+    val lazyGridState = rememberLazyGridState()
+    var items by remember {
+        mutableStateOf(0)
+    }
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            RobinAppBar(
+                profileData = profileUiState,
+                toggleDrawer = toggleDrawer,
+                messageBarState = messageBarState,
+                scrollState = lazyGridState,
+                navigationType = navigationType,
+                appBarType = appBarType,
+                showNavContent = showNavContent,
+                productSize = items
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(RobinDestinations.CART)
+                },
+                content = {
                     Icon(
-                        painterResource(id = R.drawable.shopping_cart_fill0_wght700_grad0_opsz24),
+                        painterResource(id = R.drawable.shopping_cart),
                         contentDescription = "Localized description"
                     )
                 }
-            },
-        ) { contentPadding ->
+            )
+        },
+        content = { contentPadding ->
             Column(
-                modifier = Modifier
-                    .padding(contentPadding)
+                modifier = Modifier.padding(
+                    top = Dimens.gird_one,
+                    start = Dimens.gird_one,
+                    end = Dimens.gird_one,
+                )
             ) {
-                when (val response = viewModel.products) {
-                    is Response.Error -> ShowError(response.message) {}
+                when (productUiState) {
+                    is Response.Error -> ShowError(productUiState.message) {}
                     is Response.Loading -> Loading()
                     is Response.Success -> {
-                        LazyVerticalGrid(
-                            horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
-                            verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
-                            contentPadding = PaddingValues(Dimens.gird_one),
-                            columns = GridCells.Adaptive(minSize = 164.dp)
-                        ) {
-                            items(items = response.data) { product ->
-                                GridItem(product = product) { id ->
-                                    navController.navigate(RobinDestinations.product(id).also { Log.e("nav",it) })
+                        items = productUiState.data.size
+                        if (items != 0)
+                            LazyVerticalGrid(
+                                contentPadding = contentPadding,
+                                horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one),
+                                verticalArrangement = Arrangement.spacedBy(Dimens.gird_one),
+                                columns = GridCells.Adaptive(minSize = 164.dp),
+                                state = lazyGridState
+                            ) {
+                                items(items = productUiState.data) { product ->
+                                    GridItem(product = product) { id ->
+                                        onSelectProduct(product)
+                                        navController.navigate(
+                                            RobinDestinations.product(id).also { Log.e("nav", it) })
+                                    }
                                 }
                             }
-                        }
+                        else EmptyProduct()
                     }
                 }
             }
+        }
+    )
+}
+
+
+@Composable
+fun RobinAppBar(
+    profileData: ProfileData?,
+    messageBarState: MessageBarState,
+    toggleDrawer: () -> Unit,
+    scrollState: LazyGridState,
+    navigationType: RobinNavigationType,
+    appBarType: RobinAppBarType,
+    showNavContent: MutableState<Boolean>,
+    productSize: Int
+) {
+    when (navigationType) {
+        RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
+            if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
+                PermanentAppBar(
+                    showNavContent = showNavContent,
+                    productSize = productSize,
+                    profileData = profileData,
+                )
+            else CollapsingAppBar(
+                profileData = profileData,
+                messageBarState = messageBarState,
+                toggleDrawer = toggleDrawer,
+                scrollState = scrollState,
+                showNavContent = showNavContent,
+                productSize = productSize
+            )
+        }
+
+        RobinNavigationType.NAVIGATION_DRAWER -> {
+            CollapsingAppBar(
+                profileData = profileData,
+                messageBarState = messageBarState,
+                toggleDrawer = toggleDrawer,
+                scrollState = scrollState,
+                showNavContent = showNavContent,
+                productSize = productSize
+            )
+        }
+
+        RobinNavigationType.NAVIGATION_RAILS -> {
+            if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
+                PermanentAppBar(
+                    showNavContent = showNavContent,
+                    productSize = productSize,
+                    profileData = profileData
+                )
+            else CollapsingAppBar(
+                profileData = profileData,
+                messageBarState = messageBarState,
+                toggleDrawer = toggleDrawer,
+                scrollState = scrollState,
+                showNavContent = showNavContent,
+                productSize = productSize
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RobinAppBar(
+fun CollapsingAppBar(
+    messageBarState: MessageBarState,
     profileData: ProfileData?,
-    drawerState: DrawerState,
-    state: SnackbarHostState
+    toggleDrawer: () -> Unit,
+    scrollState: LazyGridState,
+    showNavContent: MutableState<Boolean>,
+    productSize: Int
 ) {
+    var oldPosition by remember { mutableStateOf(0) }
+    val scrollUp = remember { mutableStateOf(false) }
+
+    LaunchedEffect(scrollState) {
+        snapshotFlow { scrollState.firstVisibleItemIndex }
+            .collect {
+                if (oldPosition < it) {
+                    oldPosition = it
+                    scrollUp.value = true
+                } else {
+                    scrollUp.value = false
+                    oldPosition = it
+                }
+            }
+    }
+    val position by animateFloatAsState(
+        if (scrollUp.value) {
+            -450f
+        } else 0f
+    )
     Surface(
-        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_2),
-        shadowElevation = 1.dp
+        modifier = Modifier
+            .graphicsLayer { translationY = position },
     ) {
         Column {
-            SpacerVerticalOne()
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(alignment = Alignment.CenterHorizontally)
                     .padding(horizontal = Dimens.gird_three)
-                    .statusBarsPadding()
                     .height(height = 48.dp),
                 tonalElevation = Dimens.surface_elevation_5,
-                shadowElevation = 1.dp,
                 shape = RoundedCornerShape(percent = 100)
             ) {
                 Box(
-                    modifier = Modifier
-                        .padding(horizontal = Dimens.gird_one)
+                    modifier = Modifier.padding(horizontal = Dimens.gird_one)
                 ) {
-                    val scope = rememberCoroutineScope()
                     IconButton(
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterStart),
+                        modifier = Modifier.align(alignment = Alignment.CenterStart),
                         onClick = {
-                            scope.launch {
-                                if (drawerState.isClosed) drawerState.open()
-                                else drawerState.close()
-                            }
+                            showNavContent.value = true
+                            toggleDrawer()
+                        },
+                        content = {
+                            Icon(
+                                modifier = Modifier,
+                                painter = painterResource(
+                                    id = R.drawable.menu
+                                ),
+                                contentDescription = "",
+                                tint = colorScheme.onSurfaceVariant
+                            )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier,
-                            painter = painterResource(
-                                id = R.drawable.menu_fill0_wght700_grad0_opsz24
-                            ),
-                            contentDescription = "",
-                            tint = colorScheme.onSurfaceVariant
-                        )
-                    }
+                    )
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.Center),
+                        modifier = Modifier.align(Alignment.Center),
                         text = stringResource(id = R.string.app_name),
                         style = typography.titleLarge.copy(
                             colorScheme.onSurfaceVariant
                         )
                     )
-                    IconButton(modifier = Modifier
-                        .align(alignment = Alignment.CenterEnd),
-                        onClick = {
-                            //TODO Profile Button Click Implementation
-                            scope.launch {
-                                //TODO
-                                notImplemented(state)
-                            }
-                        }
+                    IconButton(modifier = Modifier.align(alignment = Alignment.CenterEnd),
+                        onClick = { messageBarState.addError("Not Implemented") }
                     ) {
-                        if (profileData?.Image == null)
-                            Icon(
-                                painter = painterResource(
-                                    id = R.drawable.account_circle_fill0_wght600_grad0_opsz24
-                                ),
-                                contentDescription = "",
-                                tint = colorScheme.onSurfaceVariant
-                            )
+                        //test this code move to auth revise
+                        if (profileData?.image == null)
+                            if (profileData?.name == null)
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(
+                                        id = R.drawable.profile_placeholder
+                                    ),
+                                    contentDescription = "",
+                                    tint = colorScheme.onSurfaceVariant
+                                )
+                            else ProfileInitial(modifier = Modifier.size(36.dp),profileName = profileData.name)
                         else
                             CircularImage(
                                 modifier = Modifier.size(size = 32.dp),
                                 contentDescription = "",
-                                image = profileData.Image
+                                image = profileData.image
                             )
                     }
                 }
             }
-            Row(
+            SpaceBetweenContainer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.gird_two),
+                    .padding(horizontal = Dimens.gird_four),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
             ) {
-                var filterSelected by remember {
-                    mutableStateOf(false)
-                }
-
-                /**
-                 * ToDo: Need to add chips when filter Selected
-                 * */
-                val scope = rememberCoroutineScope()
-                LazyRow(
-                    modifier = Modifier,
-                    content = {
-                        item {
-                            FilterChip(
-                                true,
-                                onClick = {
-                                    scope.launch {
-                                        //TODO
-                                        notImplemented(state)
-                                    }
-                                },
-                                label = { Text(text = "#Trending") }
-                            )
-                        }
-                        item {
-                            SpacerHorizontalOne()
-                        }
-                        item {
-                            FilterChip(
-                                true,
-                                onClick = {
-                                    scope.launch {
-                                        //TODO
-                                        notImplemented(state)
-                                    }
-                                },
-                                label = {
-                                    Text(text = "#2022")
-                                }
-                            )
-                        }
-                    })
-                SpacerHorizontalFour()
-                Divider(
-                    modifier = Modifier
-                        .height(FilterChipDefaults.Height)
-                        .width(1.dp)
-                        .padding(vertical = Dimens.gird_quarter),
-                    thickness = 1.dp
+                Text(
+                    text = "$productSize Products",
+                    style = typography.titleSmall
                 )
+                SpacerHorizontalFour()
                 SpacerHorizontalOne()
-                ElevatedFilterChip(selected = filterSelected,
+                FilterChip(
+                    selected = !showNavContent.value,
                     onClick = {
-                        filterSelected = !filterSelected
-                        scope.launch {
-                            //TODO
-                            notImplemented(state)
-                        }
+                        showNavContent.value = false
+                        toggleDrawer()
                     },
                     label = { Text(text = stringResource(R.string.filter)) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(
-                                id = R.drawable.filter_alt_fill0_wght500_grad0_opsz24
+                                id = R.drawable.filter_alt
                             ),
                             contentDescription = null
                         )
                     },
-                    trailingIcon = {
-                        Icon(
-                            painter = painterResource(
-                                id = R.drawable.expand_more_fill0_wght400_grad0_opsz24
-                            ),
-                            contentDescription = null
-                        )
-                    }
                 )
             }
         }
@@ -304,197 +314,139 @@ fun RobinAppBar(
 }
 
 @Composable
-fun DrawerContent(
-    profile: ProfileData?,
-    userAuthenticated: Boolean,
-    navController: NavHostController,
-    snackbarHostState: SnackbarHostState,
-    signOut: () -> Unit
+fun PermanentAppBar(
+    showNavContent: MutableState<Boolean>,
+    productSize: Int,
+    profileData: ProfileData?
 ) {
-    val scope = rememberCoroutineScope()
-    Column(
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxWidth(.85f)
-    ) {
+    Surface(tonalElevation = Dimens.surface_elevation_1) {
         Column(
             modifier = Modifier
-                .padding(horizontal = Dimens.gird_two)
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.gird_four, vertical = Dimens.gird_two),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SpacerVerticalTwo()
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
             ) {
-                CircularImage(
-                    modifier = Modifier.size(64.dp),
-                    contentDescription = null,
-                    image = profile?.Image ?: R.drawable.profile_placeholder
-                )
-                SpacerHorizontalOne()
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    Arrangement.Center
+                Surface(
+                    tonalElevation = Dimens.surface_elevation_5,
+                    shape = RoundedCornerShape(100)
                 ) {
-                    Text(
-                        text = profile?.Name ?: "Guest User",
-                        style = typography.titleMedium.copy(
-                            fontWeight = FontWeight(weight = 600)
-                        )
-                    )
-                    profile?.email?.let { email ->
-                        Text(
-                            text = email,
-                            style = typography.bodySmall
-                        )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .padding(horizontal = Dimens.gird_one)
+                            .height(48.dp),
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = Dimens.gird_one)
+                                .align(Alignment.CenterStart),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = ""
+                            )
+                            SpacerHorizontalTwo()
+                            SearchEditText()
+                        }
+                        Button(
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = ""
+                            )
+                            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(text = "Search")
+                        }
                     }
                 }
+                FilledIconToggleButton(
+                    checked = !showNavContent.value,
+                    onCheckedChange = { showNavContent.value = !showNavContent.value },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.filter_alt),
+                            contentDescription = ""
+                        )
+                    }
+                )
+                IconButton(modifier = Modifier,
+                    onClick = { }
+                ) {
+                    if (profileData?.image == null)
+                        if (profileData?.name == null)
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(
+                                    id = R.drawable.profile_placeholder
+                                ),
+                                contentDescription = "",
+                                tint = colorScheme.onSurfaceVariant
+                            )
+                        else ProfileInitial(
+                            modifier = Modifier.size(48.dp),
+                            profileName = profileData.name
+                        )
+                    else
+                        CircularImage(
+                            modifier = Modifier.size(size = 48.dp),
+                            contentDescription = "",
+                            image = profileData.image
+                        )
+                }
             }
+            SpacerVerticalTwo()
+            Text(
+                text = "$productSize Products",
+                modifier = Modifier.align(Alignment.Start)
+            )
         }
-        SpacerVerticalTwo()
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.home_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Home") },
-            selected = true,
-            onClick = {
-                //TODO
-                scope.launch { notImplemented(snackbarHostState) }
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.shopping_bag_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Your Orders") },
-            selected = false,
-            onClick = {
-                //TODO
-                scope.launch { notImplemented(snackbarHostState) }
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.shopping_cart_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Cart") },
-            selected = false,
-            onClick = {
-                navController.navigate(RobinDestinations.CART)
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.supervised_user_circle_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Profile") },
-            selected = false,
-            onClick = {    //TODO
-                scope.launch { notImplemented(snackbarHostState) }
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.settings_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Settings") },
-            selected = false,
-            onClick = {    //TODO
-                scope.launch { notImplemented(snackbarHostState) }
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    painterResource(
-                        id = R.drawable.support_fill0_wght700_grad0_opsz24
-                    ),
-                    contentDescription = null
-                )
-            },
-            label = { Text("Help") },
-            selected = false,
-            onClick = {
-                //TODO
-                scope.launch { notImplemented(snackbarHostState) }
-            },
-            modifier = Modifier
-                .padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
-        SpacerVerticalTwo()
-        AuthUserNavigationItem(
-            userAuthenticated,
-            signOut = signOut
-        )
     }
 }
 
 @Composable
-fun AuthUserNavigationItem(
-    userAuthenticated: Boolean,
-    signOut: () -> Unit
-) {
-    val user = if (userAuthenticated) stringResource(id = R.string.sign_out)
-    else stringResource(id = R.string.sign_in)
-    NavigationDrawerItem(
-        modifier = Modifier
-            .padding(NavigationDrawerItemDefaults.ItemPadding),
-        icon = {
-            Icon(
-                painterResource(
-                    id = R.drawable.logout_fill0_wght700_grad0_opsz24
-                ),
-                contentDescription = null
-            )
-        },
-        label = { Text(user) },
-        selected = false,
-        onClick = { signOut() },
+fun SearchEditText() {
+    var textState by remember {
+        mutableStateOf("")
+    }
+    val style = typography.labelLarge.copy(colorScheme.onSurfaceVariant)
+    BasicTextField(
+        modifier = Modifier,
+        value = textState,
+        onValueChange = { textState = it },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                // TODO:
+            }
+        ),
+        singleLine = true,
+        textStyle = style,
+        decorationBox = { innerTextField ->
+
+            Box(
+                Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (textState.isEmpty()) {
+                    Text(
+                        "Search in Robin Store",
+                        style = style
+                    )
+                }
+                innerTextField()
+            }
+        }
     )
 }
+
 
 @Composable
 fun GridItem(
@@ -515,10 +467,11 @@ fun GridItem(
                         minHeight = 220.dp,
                         minWidth = 164.dp
                     )
+                    .aspectRatio(0.6f)
                     .fillMaxWidth(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                model = product.variant[0].media.images[0]
+                model = product.media["variant_0"]?.get(0)
             )
             SpacerVerticalOne()
             Column(
@@ -527,12 +480,19 @@ fun GridItem(
             ) {
                 Text(
                     text = product.name,
-                    style = typography.bodyLarge,
+                    style = typography.titleSmall,
                     color = colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
+                val price = remember {
+                    if (product.minPrice != product.maxPrice)
+                        "₹ ${product.minPrice.toInt()} - ${product.maxPrice.toInt()}"
+                    else
+                        "₹ ${product.minPrice.toInt()}"
+                }
+
                 Text(
-                    text = "₹ ${product.variant[0].size[0].price.retail}",
+                    text = price,
                     style = typography.bodyMedium,
                     color = colorScheme.primary,
                     maxLines = 1
@@ -543,45 +503,92 @@ fun GridItem(
     }
 }
 
-suspend fun notImplemented(state: SnackbarHostState) {
-    state.showSnackbar("This function not constructed \uD83C\uDFD7️")
-}
+@Composable
+fun EmptyProduct() {
+    Box {
+        Text(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(
+                    horizontal = Dimens.gird_two,
+                    vertical = Dimens.gird_four
+                ),
+            text = stringResource(id = R.string.app_name),
+            style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
+        )
 
-suspend fun showMessage(state: SnackbarHostState, message: String) {
-    state.showSnackbar(message)
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(Dimens.gird_four),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            RobinAsyncImage(
+                modifier = Modifier,
+                model = R.drawable.empty_products,
+                contentDescription = null,
+            )
+
+            SpacerVerticalTwo()
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.nothing_to_see_here),
+                textAlign = TextAlign.Center,
+                style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
+            )
+            SpacerVerticalOne()
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Please clear the filters and try again",
+                textAlign = TextAlign.Center,
+                style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant)
+            )
+            SpacerVerticalTwo()
+            Button(onClick = {
+
+            }) {
+                Text(text = stringResource(R.string.try_again))
+            }
+        }
+    }
 }
 
 
 @Preview(group = "Grid", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun GirdPreviewDark() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         GridItem(
-            Product(
-                name = "Lora ipsum", variant = listOf(
-                    Variant(
-                        media = Media(listOf("")),
-                        size = listOf(Size(price = Price(retail = 1299.00)))
-                    )
-                )
-            )
-        ) {}
+            product = PreviewMocks.product,
+            onclick = {}
+        )
     }
 }
 
 @Preview(group = "Grid")
 @Composable
 private fun GirdPreviewLight() {
-    RobinAppPreviewScaffold {
+    RobinAppPreview {
         GridItem(
-            Product(
-                name = "Lora ipsum", variant = listOf(
-                    Variant(
-                        media = Media(listOf("")),
-                        size = listOf(Size(price = Price(retail = 1299.00)))
-                    )
-                )
-            )
-        ) {}
+            product = PreviewMocks.product,
+            onclick = {}
+        )
+    }
+}
+
+@Preview(group = "AppBar", widthDp = 840)
+@Composable
+private fun PermanentAppbarPreviewLight() {
+    RobinAppPreview {
+        // PermanentAppBar(true)
+    }
+}
+
+@Preview(group = "AppBar", uiMode = UI_MODE_NIGHT_YES, widthDp = 840)
+@Composable
+private fun PermanentAppbarPreviewDark() {
+    RobinAppPreview {
+        // PermanentAppBar(true)
     }
 }
