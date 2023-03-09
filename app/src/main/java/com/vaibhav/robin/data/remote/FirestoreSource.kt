@@ -35,11 +35,24 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
 
     suspend inline fun <reified T> fetchFromReferenceToObject(
         document: CollectionReference,
-        limitValue: Long = Long.MAX_VALUE
+        limitValue: Long
     ): Flow<Response<List<T>>> = flow {
         try {
             emit(Response.Loading)
             document.limit(limitValue).get().await().apply {
+
+                emit(Success(toObjects(T::class.java)))
+            }
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
+    suspend inline fun <reified T> fetchFromReferenceToObject(
+        document: CollectionReference,
+    ): Flow<Response<List<T>>> = flow {
+        try {
+            emit(Response.Loading)
+            document.get().await().apply {
 
                 emit(Success(toObjects(T::class.java)))
             }

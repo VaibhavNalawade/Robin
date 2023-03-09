@@ -1,7 +1,6 @@
 package com.vaibhav.robin.presentation
 
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -10,23 +9,16 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import dagger.hilt.android.AndroidEntryPoint
 import com.google.accompanist.adaptive.calculateDisplayFeatures
-import com.google.android.gms.common.internal.Constants
-import com.google.android.gms.wallet.PaymentsClient
-import com.google.android.gms.wallet.Wallet
-import com.google.android.gms.wallet.WalletConstants
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,13 +43,6 @@ class MainActivity : ComponentActivity() {
         if (viewModel.products !is Response.Success)
             viewModel.fetchUiState()
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        fun createPaymentsClient(activity: Activity): PaymentsClient {
-            val walletOptions = Wallet.WalletOptions.Builder()
-                .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
-                .build()
-
-            return Wallet.getPaymentsClient(activity, walletOptions)
-        }
 
         setContent {
             val windowSize = calculateWindowSizeClass(this)

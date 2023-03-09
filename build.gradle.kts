@@ -1,14 +1,13 @@
 buildscript {
-
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath(Dependencies.Gradle.androidGradlePlugin)
-        classpath(Dependencies.Gradle.kotlinGradlePlugin)
-        classpath(Dependencies.Gradle.googleService)
-        classpath (Dependencies.Gradle.daaggerHilt)
+        classpath(Dependencies.androidGradle)
+        classpath(Dependencies.Kotlin.kotlinGradle)
+        classpath(Dependencies.Google.googleServiceGradle)
+        classpath (Dependencies.Google.DaggerHilt.daggerHiltGradle)
     }
 }
 allprojects {

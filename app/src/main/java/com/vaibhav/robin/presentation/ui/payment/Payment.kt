@@ -59,10 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import com.google.android.gms.wallet.PaymentCardRecognitionIntentRequest
-import com.google.android.gms.wallet.PaymentCardRecognitionResult
-import com.google.android.gms.wallet.Wallet
-import com.google.android.gms.wallet.WalletConstants
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.PaymentData
 import com.vaibhav.robin.domain.model.Response
@@ -304,39 +300,13 @@ fun AddCardItemDialog(
                 )
                 val ctx = LocalContext.current
                 var int: PendingIntent? = null
-                LaunchedEffect(key1 = true, block = {
-                    val walletOptions = Wallet.WalletOptions.Builder()
-                        .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-                        .build()
 
-                    Wallet.getPaymentsClient(ctx.getActivity()!!, walletOptions)
-                        .getPaymentCardRecognitionIntent(PaymentCardRecognitionIntentRequest.getDefaultInstance())
-                        .addOnSuccessListener {
-                            int = it.paymentCardRecognitionPendingIntent
-                        }
-                        .addOnFailureListener {
-                            int = null
-                            Log.e("TAG", it.stackTraceToString(), )
-                        }
 
-                })
-                val r = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.StartIntentSenderForResult(),
-                    onResult = {
-
-                        val c = PaymentCardRecognitionResult.getFromIntent(it.data!!)
-                        if (c != null) {
-                            pan.value = pan.value.copy(text = c.pan)
-                            expiryDate.value =
-                                expiryDate.value.copy(text = "${c.creditCardExpirationDate?.month}/${c.creditCardExpirationDate?.year}")
-                        }
-                    }
-                )
                 SpaceBetweenContainer(modifier = Modifier.fillMaxWidth()) {
                     Button(
                         enabled = int!=null
                         ,
-                        onClick = { r.launch(IntentSenderRequest.Builder(int!!).build()) }) {
+                        onClick = { }) {
                         Text(text = "Scan card")
                     }
                     Button(onClick = onSaveCard) {
