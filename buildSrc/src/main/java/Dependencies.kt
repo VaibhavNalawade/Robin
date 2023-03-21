@@ -9,19 +9,20 @@ object Dependencies {
     private const val ACCOMPANIST_VERSION = "0.29.1-alpha"
     private const val LIFECYCLE_VERSION = "2.6.0"
     private const val COROUTINES_VERSION = "1.6.4"
-    private const val AGP_VERSION = "8.1.0-alpha08"
+    private const val AGP_VERSION = "8.1.0-alpha09"
     private const val DAGGERHILT_VERSION = "2.44"
 
     const val androidPlugin = "com.android.application"
     const val androidGradle = "com.android.tools.build:gradle:$AGP_VERSION"
     const val coil = "io.coil-kt:coil-compose:2.2.2"
+    const val junit="junit:junit:4.13.2"
 
 
 
 
     object Kotlin {
         const val androidPlugin = "org.jetbrains.kotlin.android"
-        const val kapt = "kapt"
+        const val kapt = "kotlin-kapt"
         const val kotlinGradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
         object Coroutines {
             const val android =

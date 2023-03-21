@@ -5,7 +5,7 @@ plugins {
     id(Dependencies.Kotlin.androidPlugin)
     id(Dependencies.Google.googleServicePlugin)
     id(Dependencies.Google.DaggerHilt.daggerHiltPlugin)
-    kotlin(Dependencies.Kotlin.kapt)
+    id(Dependencies.Kotlin.kapt)
 }
 
 android {
@@ -77,8 +77,12 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.ui)
     implementation(Dependencies.AndroidX.Compose.foundation)
     implementation(Dependencies.AndroidX.Compose.uiPrview)
+    debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
     implementation(Dependencies.AndroidX.navigation)
     implementation(Dependencies.AndroidX.activity)
     implementation(Dependencies.AndroidX.Compose.Material3.main)
     implementation(Dependencies.AndroidX.Compose.Material3.windowsSizeClass)
+    implementation ("com.google.code.gson:gson:2.10.1")
+
+    testImplementation(Dependencies.junit)
 }

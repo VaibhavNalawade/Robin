@@ -70,7 +70,7 @@ fun Cart(
                 item { Spacer(modifier = Modifier.height(Dimens.appbarSize)) }
                 when (cartItems) {
                     is Response.Error -> item {
-                        ShowError(exception = cartItems.message) {
+                        ShowError(exception = cartItems.exception) {
 
                         }
                     }
@@ -104,7 +104,7 @@ fun Cart(
                 mutableStateOf(3000)
             },
                 onCheckout = {
-                    navController.navigate(RobinDestinations.DELIVERY_ADDRESS)
+                    navController.navigate(RobinDestinations.CHECKOUT)
                 })
             CartAppBar(
                 items = (cartItems as? Response.Success)?.data?.size ?: 0,
@@ -122,7 +122,7 @@ fun FrontLayout(
     onCheckout:()->Unit
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.navigationBarsPadding(),
         tonalElevation = Dimens.surface_elevation_1,
         shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
     ) {

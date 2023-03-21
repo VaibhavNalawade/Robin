@@ -1,8 +1,6 @@
 package com.vaibhav.robin.presentation.ui.navigation
 
 
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -14,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.vaibhav.robin.data.models.CartItem
+import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
@@ -24,11 +23,13 @@ import com.vaibhav.robin.presentation.ui.delivery.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
 import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.PersonalDetails
+import com.vaibhav.robin.presentation.ui.account.ResetPassword
 import com.vaibhav.robin.presentation.ui.account.SignUp
 import com.vaibhav.robin.presentation.ui.cart.Cart
-import com.vaibhav.robin.presentation.ui.delivery.PlaceOrder
+import com.vaibhav.robin.presentation.ui.checkout.Checkout
+import com.vaibhav.robin.presentation.ui.checkout.CheckoutDone
 import com.vaibhav.robin.presentation.ui.home.Home
-import com.vaibhav.robin.presentation.ui.payment.Payment
+import com.vaibhav.robin.presentation.ui.orders.ManageOrders
 import com.vaibhav.robin.presentation.ui.product.ProductDetails
 import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
@@ -45,12 +46,11 @@ fun RobinNavHost(
     cartItems: Response<List<CartItem>>,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
-    showNavContent: MutableState<Boolean>
+    showNavContent: MutableState<Boolean>,
+    orders: Response<List<OrderItem>>
 ) {
     NavHost(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier,
         navController = navController,
         startDestination = RobinDestinations.HOME
     ) {
@@ -81,14 +81,16 @@ fun RobinNavHost(
             )
         }
 
-        composable(RobinDestinations.DELIVERY_ADDRESS){
-            PlaceOrder(viewModel = hiltViewModel(),navController=navController)
+        composable(RobinDestinations.CHECKOUT){
+            Checkout(
+                viewModel = hiltViewModel(),
+                navController=navController,
+                cartItem = cartItems,
+                messageBarState=messageBarState
+            )
         }
-        composable(
-            RobinDestinations.PAYMENT_SIGNATURE,
-            RobinDestinations.PAYMENT_ARG_LIST
-        ){
-            Payment(navController = navController, viewModel = hiltViewModel())
+        composable(RobinDestinations.CHECKOUT_DONE){
+           CheckoutDone(navController = navController)
         }
         composable(
             RobinDestinations.REVIEW_SIGNATURE,
@@ -120,6 +122,9 @@ fun RobinNavHost(
                 navController = navController, viewModel = hiltViewModel()
             )
         }
+        composable(RobinDestinations.MANAGE_ORDERS){
+            ManageOrders( navController = navController )
+        }
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
         ) {
@@ -128,8 +133,7 @@ fun RobinNavHost(
                 SignIn(
                     navController = navController,
                     viewModel = hiltViewModel(),
-                    messageBarState=messageBarState,
-                    navigationType=navigationType
+                    messageBarState=messageBarState
                 )
             }
             composable(RobinDestinations.SIGN_UP) {
@@ -137,8 +141,14 @@ fun RobinNavHost(
                 SignUp(
                     navController = navController,
                     viewModel = hiltViewModel(),
-                    messageBarState=messageBarState,
-                    navigationType=navigationType
+                    messageBarState=messageBarState
+                )
+            }
+            composable(RobinDestinations.RESET_PASSWORD){
+                ResetPassword(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                    messageBarState = messageBarState
                 )
             }
             composable(RobinDestinations.PERSONAL_DETAILS) {
@@ -148,7 +158,6 @@ fun RobinNavHost(
                 )
             }
             composable(RobinDestinations.DATE_AND_GENDER) {
-
                 DateAndGenderSelect(
                     navController = navController, viewModel = hiltViewModel()
                 )

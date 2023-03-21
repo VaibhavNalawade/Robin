@@ -35,7 +35,7 @@ fun SpaceBetweenContainer(
     content: @Composable () -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment
     ) {

@@ -1,12 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Robin</string>
-    <string name="promotional_banner">"promotional banner"</string>
     <string name="close">Close</string>
     <string name="cart">Cart</string>
-    <string name="complete_the_payment">Complete the Payment</string>
-    <string name="error_occurred">Error Occurred</string>
-    <string name="loading">Loading…</string>
-
     <string name="password">Password</string>
     <string name="email_is_empty">Please enter a Email</string>
     <string name="email_is_invalid">Email is invalid. Please enter a valid email address</string>
@@ -26,9 +21,7 @@
     <string name="personal_details">Personal Details</string>
     <string name="signup_message">Enter your personal details such as your name phone number address. We don\'t share such details to third party and maintain your privacy</string>
     <string name="calender">Calender Icon</string>
-    <string name="select_date">Select date</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
     <string name="postcode_Invalid">Postcode is Wrong</string>
     <string name="agreement_short">By continuing, you agree to our User Agreement and Privacy Policy.</string>
     <string name="email">Email</string>
@@ -43,8 +36,6 @@
     <string name="rating_and_reviews">Rating and review</string>
     <string name="details">Details</string>
     <string name="review_explain">Tell other what you think</string>
-    <string name="added_to_cart">Added to cart</string>
-    <string name="add_to_cart">Add to cart</string>
     <string name="nothing_to_see_here">Nothing to see here</string>
     <string name="encourage_write_review">Please consider to write a Review</string>
     <!--Error-->
@@ -56,7 +47,6 @@
     <string name="card_number_is_invalid">Card number is invalid. check the card Number again or try another number</string>
     <string name="card_number_is_empty">please enter a valid card Number</string>
     <string name="expiry_date_is_empty">Please enter a valid date MM/YY</string>
-    <string name="card_is_expired">Card is Expired try another card</string>
     <!-- Timestamp-->
     <string name="now">Now.</string>
     <string name="minutes">minutes ago.</string>
@@ -68,7 +58,7 @@
     <!--Account-->
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
-    <string name="signing_out_success">Signing Out Successful</string>
+
     <!--Testing-->
     <string name="lorem_ipsum">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ultrices magna est, at elementum nisi dictum ac. Aliquam eleifend d"</string>
     <string name="profile_photo_test" translatable="false" tools:ignore="TypographyDashes">https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&amp;token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda</string>
@@ -91,14 +81,13 @@
     <string name="full_name">Full Name</string>
     <string name="sign_up">Sign Up</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="add_address">Add address</string>
     <string name="add_payment_card">Add Payment Card</string>
     <string name="add_card_details">Add Card Details</string>
     <string name="make_payment">Make Payment</string>
     <string name="commercial">Commercial</string>
     <string name="address">Address</string>
-    <string name="done">Done</string>
-    <string name="add_a_new_address">Add a new address</string>
+
+
     <string name="name">Name</string>
     <string name="apartment_suites_building">Apartment Suites Building</string>
     <string name="street_address_and_city">Street address and city</string>
@@ -106,4 +95,28 @@
     <string name="phone">phone</string>
     <string name="address_type">Address Type</string>
     <string name="payment">Payment</string>
+    <string name="my_order">My Order</string>
+    <!--Navigation-->
+    <string name="navigation_back">Go Back</string>
+    <!--Checkout-->
+    <string name="checkout">Checkout</string>
+    <string name="add_a_new_address">Add a new address</string>
+    <string name="shipping_address">Shipping address</string>
+    <string name="select_a_delivery_address">Select a delivery address</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="select_a_payment_method">Select a payment method</string>
+    <string name="add_a_new_payment_method">Add a new payment method</string>
+    <string name="checkout_final_message">Choose a payment method to continue checking out.
+ You\'ll still have a chance to review your order before it\'s final.</string>
+    <string name="shipping">shipping</string>
+    <string name="tax">tax</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="pay">Pay ₹ %1$s</string>
+    <string name="total">TOTAL</string>
+    <string name="local_price">₹ %1$s</string>
+    <string name="your_order_has_been_received">Your order has been received</string>
+    <string name="checkout_sucess_mesg">Thank you for your order. We will began processing right away. You will receive a order confirmation email shortly</string>
+    <string name="continue_shopping">Continue shopping</string>
+    <string name="passwprd_recovry_sucess">Password recovery instruction sent to your email. check your emails</string>
 </resources>

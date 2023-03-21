@@ -51,8 +51,8 @@ fun AddressAndPhoneDetails(navController: NavHostController, viewModel: AddressP
         }
 
         is Response.Error -> {
-            if (response.message !is ValidationFailedException)
-                ShowError(response.message) {
+            if (response.exception !is ValidationFailedException)
+                ShowError(response.exception) {
                     viewModel.retry()
                 }
         }
@@ -199,7 +199,7 @@ fun InitUi(viewModel: AddressPhoneViewModel) {
                 viewModel.updateAddressAndPhone()
             },
             content = {
-                Text(text = stringResource(R.string.add_address))
+                Text(text = stringResource(R.string.add_a_new_address))
             }
         )
     }

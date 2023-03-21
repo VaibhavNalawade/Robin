@@ -1,24 +1,27 @@
 package com.vaibhav.robin.presentation.ui.account
 
-import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,45 +30,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.RobinAppPreview
-import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
+import com.vaibhav.robin.domain.model.Response.Error
+import com.vaibhav.robin.domain.model.Response.Loading
+import com.vaibhav.robin.domain.model.Response.Success
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.models.state.TextFieldState
-import com.vaibhav.robin.presentation.ui.common.*
+import com.vaibhav.robin.presentation.ui.common.RobinTextField
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.gird_two
 
 @Composable
-fun SignIn(
+fun ResetPassword(
     navController: NavController,
-    viewModel: SignInViewModel,
+    viewModel: ResetPasswordViewModel,
     messageBarState: MessageBarState
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        SignInContent(
+        ResetPasswordContent(
             emailState = viewModel.email,
-            passwordState = viewModel.password,
-            signInResponse = viewModel.signInResponse,
+            response = viewModel.response,
             messageBarState = messageBarState,
-            signIn = {
-                viewModel.signWithEmailPassword()
+            resetPassword = {
+                viewModel.sendPasswordResetMail()
             },
-            navigateToSignup = {
-                navController.navigate(RobinDestinations.SIGN_UP)
-            },
-            onSignInSuccess = {
+            onSuccess = {
+
                 navController.popBackStack()
-            },
-            onResetPassword = {
-                navController.navigate(RobinDestinations.RESET_PASSWORD)
             }
         )
     }
@@ -73,15 +71,12 @@ fun SignIn(
 
 
 @Composable
-private fun SignInContent(
+private fun ResetPasswordContent(
     emailState: MutableState<TextFieldState>,
-    passwordState: MutableState<TextFieldState>,
     messageBarState: MessageBarState,
-    signInResponse: Response<Boolean>,
-    signIn: () -> Unit,
-    navigateToSignup: () -> Unit,
-    onSignInSuccess: () -> Unit,
-    onResetPassword:()->Unit,
+    response: Response<Boolean>,
+    resetPassword: () -> Unit,
+    onSuccess: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -90,7 +85,6 @@ private fun SignInContent(
             .statusBarsPadding()
             .padding(gird_two)
             .verticalScroll(rememberScrollState()),
-
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
@@ -133,62 +127,15 @@ private fun SignInContent(
                     )
                 },
             )
-
-            SpacerVerticalTwo()
-
-            PasswordTextField(
-                state = passwordState,
-                label = {
-                    Text(stringResource(id = R.string.password))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        signIn()
-                    }
-                )
-            )
-            TextButton(modifier = Modifier.align(Alignment.End),
-                onClick = onResetPassword) {
-                Text(
-
-                    text = stringResource(R.string.forgot_password),
-                    style = typography.bodySmall,
-                )
-            }
-
-
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = signIn,
+                onClick = resetPassword,
                 content = {
-                    SignInButton(
-                        response = signInResponse,
-                        onSignInSuccess = onSignInSuccess,
+                    RecoverPasswordButton(
+                        response = response,
+                        onSignInSuccess = onSuccess,
                         messageBarState = messageBarState
                     )
-                }
-            )
-            SpacerVerticalOne()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                    tint = Color.Unspecified
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = stringResource(R.string.sign_in_with_google))
-            }
-            SpacerVerticalFour()
-            TextButton(
-                onClick = navigateToSignup,
-                content = {
-                    Text(text = stringResource(R.string.don_t_have_account_sign_up))
                 }
             )
         }
@@ -196,7 +143,7 @@ private fun SignInContent(
 }
 
 @Composable
-fun SignInButton(
+private fun RecoverPasswordButton(
     response: Response<Boolean>,
     onSignInSuccess: () -> Unit,
     messageBarState: MessageBarState
@@ -212,7 +159,9 @@ fun SignInButton(
 
         is Success -> {
             if (response.data) {
+                val message= stringResource(R.string.passwprd_recovry_sucess)
                 LaunchedEffect(key1 = true, block = {
+                    messageBarState.addSuccess(message)
                     onSignInSuccess()
                 })
             } else DefaultButtonAppearance()
@@ -229,31 +178,6 @@ fun SignInButton(
 
 @Composable
 private fun DefaultButtonAppearance() {
-    Icon(
-        painter = painterResource(id = R.drawable.signin),
-        contentDescription = "",
-        modifier = Modifier.size(ButtonDefaults.IconSize)
-    )
-
-    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-
-    Text(text = stringResource(id = R.string.sign_in))
+    Text(text = stringResource(id = R.string.forgot_password))
 }
 
-@Preview
-@Composable
-fun SignInPreview() {
-    RobinAppPreview {
-        val dummy = remember { mutableStateOf(TextFieldState()) }
-        SignInContent(
-            emailState = dummy,
-            passwordState = dummy,
-            messageBarState = rememberMessageBarState(),
-            signInResponse = Success(true),
-            signIn = {},
-            navigateToSignup = {},
-            onSignInSuccess = {},
-            {}
-        )
-    }
-}

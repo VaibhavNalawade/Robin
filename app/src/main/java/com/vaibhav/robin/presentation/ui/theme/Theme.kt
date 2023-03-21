@@ -1,13 +1,16 @@
 package com.vaibhav.robin.presentation.ui.theme
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-
+import androidx.core.graphics.ColorUtils
 private val LightThemeColors = lightColorScheme(
 
     primary = md_theme_light_primary,
@@ -98,4 +101,20 @@ fun RobinTheme(
         shapes = shapes,
         content = content
     )
+}
+@Composable
+fun ColorScheme.harmonizeWithPrimary(primaryColor: Color): Color {
+    val primaryHsl = FloatArray(3)
+
+    ColorUtils.colorToHSL(primaryColor.toArgb(), primaryHsl)
+    val harmonizedHsl = floatArrayOf(
+        primaryHsl[0], // Same hue as primary color
+        primaryHsl[1], // Same saturation as primary color
+        if (isSystemInDarkTheme())
+        0.7f // Midpoint lightness value
+        else 0.3f
+    )
+
+    val harmonizedColorInt = ColorUtils.HSLToColor(harmonizedHsl)
+    return Color(harmonizedColorInt)
 }

@@ -48,9 +48,7 @@ class MainActivity : ComponentActivity() {
             val windowSize = calculateWindowSizeClass(this)
             val displayFeatures = calculateDisplayFeatures(this)
             RobinTheme {
-                Surface(
-
-                ) {
+                Surface {
                     RobinApp(
                         windowSize = windowSize,
                         displayFeatures = displayFeatures,
@@ -62,6 +60,7 @@ class MainActivity : ComponentActivity() {
                         categoriesUiState = viewModel.categories,
                         filterState = viewModel.filterState,
                         cartItems = viewModel.cartItem,
+                        orders = viewModel.orders,
                         signOut = {
                             viewModel.signOut()
                         },

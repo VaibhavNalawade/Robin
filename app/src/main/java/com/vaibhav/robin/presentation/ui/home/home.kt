@@ -97,7 +97,7 @@ fun Home(
                 )
             ) {
                 when (productUiState) {
-                    is Response.Error -> ShowError(productUiState.message) {}
+                    is Response.Error -> ShowError(productUiState.exception) {}
                     is Response.Loading -> Loading()
                     is Response.Success -> {
                         items = productUiState.data.size

@@ -17,11 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
+import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.ProfileData
@@ -51,7 +53,8 @@ fun RobinApp(
     filterState: FilterState,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
-    cartItems: Response<List<CartItem>>
+    cartItems: Response<List<CartItem>>,
+    orders: Response<List<OrderItem>>
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -63,7 +66,7 @@ fun RobinApp(
         }
 
         WindowWidthSizeClass.Expanded -> {
-            RobinNavigationType.PERMANENT_NAVIGATION_DRAWER
+            RobinNavigationType.NAVIGATION_RAILS
         }
 
         else -> {
@@ -87,7 +90,8 @@ fun RobinApp(
         filterState = filterState,
         onSelectProduct = onSelectProduct,
         selectedProduct = selectedProduct,
-        cartItems = cartItems
+        cartItems = cartItems,
+        orders=orders
     )
 }
 
@@ -106,7 +110,8 @@ fun RobinNavigationWrapper(
     filterState: FilterState,
     selectedProduct: Product?,
     cartItems: Response<List<CartItem>>,
-    onSelectProduct: (Product) -> Unit
+    onSelectProduct: (Product) -> Unit,
+    orders: Response<List<OrderItem>>
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -184,6 +189,7 @@ fun RobinNavigationWrapper(
                             onSelectProduct = onSelectProduct,
                             selectedProduct = selectedProduct,
                             cartItems = cartItems,
+                            orders=orders,
                             showNavContent = showNavContent
                         )
                     }
@@ -231,10 +237,11 @@ fun RobinNavigationWrapper(
                                     messageBarState = state,
                                     navigationType = navigationType,
                                     appBarType = appBarType,
-                                    onSelectProduct = onSelectProduct,
-                                    selectedProduct = selectedProduct,
                                     cartItems = cartItems,
-                                    showNavContent = showNavContent
+                                    selectedProduct = selectedProduct,
+                                    onSelectProduct = onSelectProduct,
+                                    showNavContent = showNavContent,
+                                    orders = orders
                                 )
                             }
                         )
@@ -275,10 +282,11 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            onSelectProduct = onSelectProduct,
-                            selectedProduct = selectedProduct,
                             cartItems = cartItems,
-                            showNavContent = showNavContent
+                            selectedProduct = selectedProduct,
+                            onSelectProduct = onSelectProduct,
+                            showNavContent = showNavContent,
+                            orders = orders
                         )
                     }
                 )
@@ -295,6 +303,7 @@ fun MessageBarWrapper(
     position: MessageBarPosition
 ) {
     ContentWithMessageBar(
+        modifier = Modifier,
         messageBarState = state,
         position = position,
         content = content

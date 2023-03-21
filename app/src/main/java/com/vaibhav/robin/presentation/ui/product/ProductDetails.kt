@@ -215,7 +215,7 @@ fun ProductDetails(
                 )
                 SpacerVerticalOne()
                 when (val reviewResponse = viewModel.reviewsResponse) {
-                    is Error -> ShowError(exception = reviewResponse.message) {}
+                    is Error -> ShowError(exception = reviewResponse.exception) {}
 
                     Loading -> Loading()
                     is Success -> {

@@ -36,7 +36,7 @@ fun PersonalDetails(navController: NavHostController, viewModel: PersonalDetails
         }
         is Response.Error -> {
 
-           com.vaibhav.robin.presentation.ui.common.ShowError(response.message){}
+           com.vaibhav.robin.presentation.ui.common.ShowError(response.exception){}
         }
         is Response.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

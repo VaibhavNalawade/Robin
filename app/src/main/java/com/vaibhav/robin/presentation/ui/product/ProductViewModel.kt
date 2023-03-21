@@ -15,10 +15,10 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
-import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,7 +60,7 @@ class ProductViewModel @Inject constructor(
         if(authUseCases.isUserAuthenticated())
         databaseUseCases.checkFavourite(productId).collect {
             when (it) {
-                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                is Error -> Log.e(TAG, it.exception.message ?: it.exception.stackTraceToString())
                 Loading -> {}
                 is Success -> favouriteToggleButtonState = it.data
             }
@@ -76,7 +76,7 @@ class ProductViewModel @Inject constructor(
             )
         ).collect {
             when (it) {
-                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                is Error -> Log.e(TAG, it.exception.message ?: it.exception.stackTraceToString())
                 Loading -> {}
                 is Success -> favouriteToggleButtonState = it.data
             }
@@ -86,7 +86,7 @@ class ProductViewModel @Inject constructor(
     fun removeFavorite(productId: String) = viewModelScope.launch(Dispatchers.IO) {
         databaseUseCases.removeFavourite(productId = productId).collect {
             when (it) {
-                is Error -> Log.e(TAG, it.message.message ?: it.message.stackTraceToString())
+                is Error -> Log.e(TAG, it.exception.message ?: it.exception.stackTraceToString())
                 Loading -> {}
                 is Success -> favouriteToggleButtonState = !it.data
             }
@@ -100,6 +100,7 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             databaseUseCases.addCartItem(
                 CartItem(
+                    cartId = UUID.randomUUID().toString(),
                     productId = product.id,
                     productName = product.name,
                     productVariant = selectedVariant.value ?: product.variantIndex[0],
@@ -113,7 +114,13 @@ class ProductViewModel @Inject constructor(
                     brandName = product.brandName
                 )
             ).collect {
+                Log.e(TAG,"Wtf")
                 cartAdd = it
+                when(it){
+                    is Error ->  Log.e(TAG,it.exception.message?:it.exception.stackTraceToString())
+                    Loading ->  Log.e(TAG,"Load")
+                    is Success ->  Log.e(TAG,"Wtf")
+                }
             }
         }
 

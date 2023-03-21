@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
+import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.Response
@@ -40,6 +41,7 @@ class MainViewModel @Inject constructor(
     val filterState by mutableStateOf(FilterState())
 
     var selectedProduct by mutableStateOf<Product?>(null)
+    var orders by mutableStateOf<Response<List<OrderItem>>>(Response.Loading)
 
     fun signOut() = viewModelScope.launch {
         authUseCases.signOut().collect {
@@ -100,6 +102,12 @@ class MainViewModel @Inject constructor(
             .collect {
                 cartItem = it
             }
+    }
+
+    private fun getOrders()=viewModelScope.launch {
+        databaseUseCases.listenOrder().collect{
+            orders=it
+        }
     }
 
 }

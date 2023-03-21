@@ -22,7 +22,6 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.RobinAppPreview
-import com.vaibhav.robin.presentation.RobinNavigationType
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.models.state.TextFieldState
 import com.vaibhav.robin.presentation.ui.common.*
@@ -33,44 +32,39 @@ import com.vaibhav.robin.presentation.ui.theme.Values
 fun SignUp(
     navController: NavHostController,
     viewModel: SignUpViewModel,
-    messageBarState: MessageBarState,
-    navigationType: RobinNavigationType
+    messageBarState: MessageBarState
 ) {
-    when (navigationType) {
-        else -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                SignUpContent(
-                    emailState = viewModel.signUpEmail,
-                    passwordState = viewModel.signUpPassword,
-                    confirmPassword = viewModel.signUpConfirmPassword,
-                    signUpResponse = viewModel.signUpResponse,
-                    nameState = viewModel.signUpName,
-                    messageBarState = messageBarState,
-                    signUp = {
-                        viewModel.signUp()
-                    },
-                    navigateToSignIn = {
-                        navController.popBackStack()
-                    },
-                    onSignUpSuccess  = {
-                        navController.popBackStack(route = RobinDestinations.LOGIN_ROUTE, inclusive = true)
-                    }
-                )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        SignUpContent(
+            emailState = viewModel.signUpEmail,
+            passwordState = viewModel.signUpPassword,
+            confirmPassword = viewModel.signUpConfirmPassword,
+            signUpResponse = viewModel.signUpResponse,
+            nameState = viewModel.signUpName,
+            messageBarState = messageBarState,
+            signUp = {
+                viewModel.signUp()
+            },
+            navigateToSignIn = {
+                navController.popBackStack()
+            },
+            onSignUpSuccess = {
+                navController.popBackStack(route = RobinDestinations.LOGIN_ROUTE, inclusive = true)
             }
-        }
-
+        )
     }
 }
+
 
 
 @Composable
 private fun SignUpContent(
     emailState: MutableState<TextFieldState>,
     passwordState: MutableState<TextFieldState>,
-    confirmPassword:MutableState<TextFieldState>,
+    confirmPassword: MutableState<TextFieldState>,
     nameState: MutableState<TextFieldState>,
     messageBarState: MessageBarState,
     signUpResponse: Response<Boolean>,
@@ -81,6 +75,8 @@ private fun SignUpContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .padding(Values.Dimens.gird_two)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -108,6 +104,7 @@ private fun SignUpContent(
             )
             SpacerVerticalFour()
             RobinTextField(
+                modifier = Modifier.fillMaxSize(),
                 state = nameState,
                 label = {
                     Text(text = stringResource(R.string.full_name))
@@ -125,6 +122,7 @@ private fun SignUpContent(
             )
             SpacerVerticalTwo()
             RobinTextField(
+                modifier = Modifier.fillMaxSize(),
                 state = emailState,
                 label = {
                     Text(text = stringResource(R.string.email))
@@ -218,7 +216,7 @@ fun SignUpButton(
         is Error -> {
             DefaultButtonAppearance()
             LaunchedEffect(key1 = true, block = {
-                messageBarState.addError(response.message.message ?: "")
+                messageBarState.addError(response.exception.message ?: "")
             })
         }
     }
