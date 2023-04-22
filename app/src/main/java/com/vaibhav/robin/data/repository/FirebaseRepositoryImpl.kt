@@ -173,7 +173,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun addAddress(address: Map<String, Any>): Flow<Response<Boolean>> =
+    override suspend fun addAddress(address: Address): Flow<Response<Boolean>> =
         tryCatchScaffold {
             source.writeToReference(
                 firestore

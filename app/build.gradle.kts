@@ -6,6 +6,7 @@ plugins {
     id(Dependencies.Google.googleServicePlugin)
     id(Dependencies.Google.DaggerHilt.daggerHiltPlugin)
     id(Dependencies.Kotlin.kapt)
+    id(Dependencies.Google.Firebase.crashlyticsPlugin)
 }
 
 android {
@@ -27,6 +28,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isMinifyEnabled = true
+            isShrinkResources = true
+
         }
     }
     compileOptions {
@@ -64,6 +68,7 @@ dependencies {
     implementation(platform(Dependencies.Google.Firebase.BOM))
     implementation(Dependencies.Google.Firebase.firestore)
     implementation(Dependencies.Google.Firebase.auth)
+    implementation(Dependencies.Google.Firebase.crashlytics)
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
     kapt(Dependencies.Google.DaggerHilt.kapt)
     implementation(Dependencies.Google.DaggerHilt.composeNavigationSupport)
@@ -82,7 +87,6 @@ dependencies {
     implementation(Dependencies.AndroidX.activity)
     implementation(Dependencies.AndroidX.Compose.Material3.main)
     implementation(Dependencies.AndroidX.Compose.Material3.windowsSizeClass)
-    implementation ("com.google.code.gson:gson:2.10.1")
 
     testImplementation(Dependencies.junit)
 }

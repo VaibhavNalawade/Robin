@@ -44,7 +44,6 @@ import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
     navController: NavHostController,
@@ -62,7 +61,7 @@ fun Home(
         mutableStateOf(0)
     }
     Scaffold(
-        modifier = Modifier,
+        modifier = Modifier.statusBarsPadding().navigationBarsPadding(),
         topBar = {
             RobinAppBar(
                 profileData = profileUiState,
@@ -138,7 +137,7 @@ fun RobinAppBar(
     productSize: Int
 ) {
     when (navigationType) {
-        RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
+        RobinNavigationType.NAVIGATION_RAILS -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
                 PermanentAppBar(
                     showNavContent = showNavContent,
@@ -182,6 +181,7 @@ fun RobinAppBar(
                 productSize = productSize
             )
         }
+
     }
 }
 

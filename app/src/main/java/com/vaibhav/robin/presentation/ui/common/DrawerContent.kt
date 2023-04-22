@@ -71,7 +71,7 @@ fun NavigationDrawer(
     filterState: FilterState,
     cartItemsSize: Int
 ) {
-    if (navigationType == RobinNavigationType.PERMANENT_NAVIGATION_DRAWER)
+    if (navigationType == RobinNavigationType.NAVIGATION_RAILS)
         PermanentDrawerSheet(
             drawerTonalElevation = DrawerDefaults.ModalDrawerElevation
         ) {
@@ -86,7 +86,7 @@ fun NavigationDrawer(
                 onApply = onApply,
                 navigationType = navigationType,
                 filterState = filterState,
-                cartItemsSize=cartItemsSize
+                cartItemsSize = cartItemsSize
             )
         }
     else ModalDrawerSheet {
@@ -136,7 +136,7 @@ fun DrawerContent(
                 style = typography.titleLarge
             )
             AnimatedVisibility(
-                visible = navigationType != RobinNavigationType.PERMANENT_NAVIGATION_DRAWER
+                visible = navigationType != RobinNavigationType.NAVIGATION_RAILS
             ) {
                 IconButton(onClick = closeDrawer) {
                     Icon(
@@ -150,7 +150,7 @@ fun DrawerContent(
         SpacerVerticalOne()
         DividerHorizontal()
         SpacerVerticalOne()
-        if (navigationType == RobinNavigationType.PERMANENT_NAVIGATION_DRAWER)
+        if (navigationType == RobinNavigationType.NAVIGATION_RAILS)
             AnimatedContent(
                 showNavContent = showNavContent,
                 navController = navController,
@@ -161,7 +161,7 @@ fun DrawerContent(
                 categoriesUiState = categoriesUiState,
                 onApply = onApply,
                 filterState = filterState,
-                cartItemsSize=cartItemsSize
+                cartItemsSize = cartItemsSize
             )
         else NonAnimatedContent(
             showNavContent = showNavContent,
@@ -173,7 +173,7 @@ fun DrawerContent(
             categoriesUiState = categoriesUiState,
             onApply = onApply,
             filterState = filterState,
-            cartItemsSize=cartItemsSize
+            cartItemsSize = cartItemsSize
         )
     }
 }
@@ -197,7 +197,7 @@ private fun NonAnimatedContent(
             closeDrawer = closeDrawer,
             userAuthenticated = userAuthenticated,
             signOut = signOut,
-            cartItemsSize=cartItemsSize
+            cartItemsSize = cartItemsSize
         )
     else if (navController.currentBackStackEntryAsState().value?.destination?.route == RobinDestinations.HOME)
         Column(
@@ -316,7 +316,11 @@ fun NavigationItems(
             shape = Shapes.NavigationItemShape,
             modifier = Modifier.padding(end = Dimens.gird_two),
             selected = false,
-            onClick = closeDrawer,
+            onClick = {
+                if (route != RobinDestinations.MANAGE_ORDERS)
+                    navController.navigate(RobinDestinations.MANAGE_ORDERS)
+                closeDrawer()
+            },
             icon = {
                 Icon(
                     painterResource(id = R.drawable.shopping_bag),
@@ -518,7 +522,7 @@ fun SortUi(
                 style = typography.titleSmall
             )
             SpacerVerticalOne()
-            FlowRow(horizontalArrangement =Arrangement.spacedBy(Dimens.gird_one)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one)) {
                 brandsUiState.data.forEachIndexed { i, state ->
                     FilterChip(
                         selected = brandSelectedIndex == i,
@@ -551,7 +555,7 @@ fun SortUi(
             SpacerVerticalOne()
             Text(text = stringResource(R.string.category), style = typography.titleSmall)
             SpacerVerticalOne()
-            FlowRow(horizontalArrangement =Arrangement.spacedBy(Dimens.gird_one)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(Dimens.gird_one)) {
                 categoriesUiState.data.forEachIndexed { index, filterChipState ->
                     FilterChip(
                         selected = categorySelectedIndex == index,

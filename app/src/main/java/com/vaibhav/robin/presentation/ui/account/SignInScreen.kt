@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -81,7 +82,7 @@ private fun SignInContent(
     signIn: () -> Unit,
     navigateToSignup: () -> Unit,
     onSignInSuccess: () -> Unit,
-    onResetPassword:()->Unit,
+    onResetPassword: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -151,8 +152,10 @@ private fun SignInContent(
                     }
                 )
             )
-            TextButton(modifier = Modifier.align(Alignment.End),
-                onClick = onResetPassword) {
+            TextButton(
+                modifier = Modifier.align(Alignment.End),
+                onClick = onResetPassword
+            ) {
                 Text(
 
                     text = stringResource(R.string.forgot_password),
@@ -173,8 +176,14 @@ private fun SignInContent(
                 }
             )
             SpacerVerticalOne()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
+            val t = stringArrayResource(id = R.array.not_implemented).random()
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = {
+                    messageBarState.addError(t)
+                }
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.google),
                     contentDescription = null,

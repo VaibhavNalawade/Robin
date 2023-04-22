@@ -1,5 +1,9 @@
 package com.vaibhav.robin.data.models
 
+import androidx.annotation.Keep
+
+@Keep
+
 data class CartItem(
     val cartId: String = "",
     val productId: String = "",

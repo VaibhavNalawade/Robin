@@ -8,6 +8,7 @@ buildscript {
         classpath(Dependencies.Kotlin.kotlinGradle)
         classpath(Dependencies.Google.googleServiceGradle)
         classpath (Dependencies.Google.DaggerHilt.daggerHiltGradle)
+        classpath(Dependencies.Google.Firebase.crashlyticsGradle)
     }
 }
 allprojects {

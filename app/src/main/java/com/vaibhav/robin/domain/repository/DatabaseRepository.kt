@@ -31,7 +31,7 @@ interface DatabaseRepository {
     suspend fun getCategory():Flow<Response<List<MainCategory>>>
     suspend fun getBrand():Flow<Response<List<MainBrand>>>
     suspend fun queryProduct(queryProduct: QueryProduct):Flow<Response<List<Product>>>
-    suspend fun addAddress(address:Map<String,Any>):Flow<Response<Boolean>>
+    suspend fun addAddress(address:Address):Flow<Response<Boolean>>
     suspend fun getAddress():Flow<Response<List<Address>>>
     suspend fun removeAddress(id: String):Flow<Response<Boolean>>
     suspend fun addPayment(payment:PaymentData):Flow<Response<Boolean>>

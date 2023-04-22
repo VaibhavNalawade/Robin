@@ -24,9 +24,16 @@ object RobinDestinations {
     fun review(star: Int) =
         "$REVIEW/$star"
 
-    fun product(Id: String) = "$PRODUCT/$Id"
+    fun product(id: String) = "$PRODUCT/$id"
     fun searchQuery(query: String) = "$SEARCH/$query"
     const val CHECKOUT = "Checkout"
     const val CHECKOUT_DONE="CheckoutDone"
     const val MANAGE_ORDERS="ManageOrders"
+
+    private const val MANAGE_ORDERS_DETAILS="ManageOrdersDetails"
+    const val MANAGE_ORDERS_DETAILS_ARG="id"
+    const val MANAGE_ORDERS_DETAILS_SIGNATURE="$MANAGE_ORDERS/{$MANAGE_ORDERS_DETAILS_ARG}"
+    fun manageOrdersDetails(id:String)="$MANAGE_ORDERS/$id"
+
+
 }

@@ -159,7 +159,7 @@ private fun RecoverPasswordButton(
 
         is Success -> {
             if (response.data) {
-                val message= stringResource(R.string.passwprd_recovry_sucess)
+                val message= stringResource(R.string.password_recovery_success)
                 LaunchedEffect(key1 = true, block = {
                     messageBarState.addSuccess(message)
                     onSignInSuccess()

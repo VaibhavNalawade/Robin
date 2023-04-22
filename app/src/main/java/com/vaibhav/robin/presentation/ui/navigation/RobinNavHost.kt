@@ -19,7 +19,6 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
 import com.vaibhav.robin.presentation.models.state.MessageBarState
-import com.vaibhav.robin.presentation.ui.delivery.AddressAndPhoneDetails
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
 import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.PersonalDetails
@@ -30,6 +29,7 @@ import com.vaibhav.robin.presentation.ui.checkout.Checkout
 import com.vaibhav.robin.presentation.ui.checkout.CheckoutDone
 import com.vaibhav.robin.presentation.ui.home.Home
 import com.vaibhav.robin.presentation.ui.orders.ManageOrders
+import com.vaibhav.robin.presentation.ui.orders.OrderDetailsCompact
 import com.vaibhav.robin.presentation.ui.product.ProductDetails
 import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
@@ -58,13 +58,13 @@ fun RobinNavHost(
             Home(
                 navController = navController,
                 profileUiState = profileUiState,
-                toggleDrawer =toggleDrawer,
-                productUiState =productUiState,
-                messageBarState =messageBarState,
-                navigationType =navigationType,
-                appBarType =appBarType,
-                showNavContent=showNavContent,
-                onSelectProduct=onSelectProduct,
+                toggleDrawer = toggleDrawer,
+                productUiState = productUiState,
+                messageBarState = messageBarState,
+                navigationType = navigationType,
+                appBarType = appBarType,
+                showNavContent = showNavContent,
+                onSelectProduct = onSelectProduct,
             )
         }
 
@@ -77,20 +77,20 @@ fun RobinNavHost(
             Cart(
                 viewModel = hiltViewModel(),
                 navController = navController,
-                cartItems=cartItems
+                cartItems = cartItems
             )
         }
 
-        composable(RobinDestinations.CHECKOUT){
+        composable(RobinDestinations.CHECKOUT) {
             Checkout(
                 viewModel = hiltViewModel(),
-                navController=navController,
+                navController = navController,
                 cartItem = cartItems,
-                messageBarState=messageBarState
+                messageBarState = messageBarState
             )
         }
-        composable(RobinDestinations.CHECKOUT_DONE){
-           CheckoutDone(navController = navController)
+        composable(RobinDestinations.CHECKOUT_DONE) {
+            CheckoutDone(navController = navController)
         }
         composable(
             RobinDestinations.REVIEW_SIGNATURE,
@@ -99,7 +99,7 @@ fun RobinNavHost(
             Review(
                 navController = navController,
                 viewModel = hiltViewModel(),
-                selectProduct=selectedProduct!!
+                selectProduct = selectedProduct!!
             )
         }
         composable(
@@ -112,19 +112,31 @@ fun RobinNavHost(
                     viewModel = hiltViewModel(),
                     selectedProductUiState = selectedProduct,
                     cartItems = cartItems,
-                    messageBarState =messageBarState,
+                    messageBarState = messageBarState,
                 )
             }
         }
-        composable(RobinDestinations.ADDRESS_AND_PHONE) {
-
-            AddressAndPhoneDetails(
-                navController = navController, viewModel = hiltViewModel()
+        composable(RobinDestinations.MANAGE_ORDERS) {
+            ManageOrders(
+                navController = navController,
+                orderItems = orders,
+                hiltViewModel()
             )
         }
-        composable(RobinDestinations.MANAGE_ORDERS){
-            ManageOrders( navController = navController )
+        composable(
+            route = RobinDestinations.MANAGE_ORDERS_DETAILS_SIGNATURE,
+            arguments = listOf(
+                navArgument(RobinDestinations.MANAGE_ORDERS_DETAILS_ARG) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            OrderDetailsCompact(
+                navController = navController,
+                orders = (orders as? Response.Success)!!
+            )
         }
+
         navigation(
             startDestination = RobinDestinations.LOGIN, route = RobinDestinations.LOGIN_ROUTE
         ) {
@@ -133,7 +145,7 @@ fun RobinNavHost(
                 SignIn(
                     navController = navController,
                     viewModel = hiltViewModel(),
-                    messageBarState=messageBarState
+                    messageBarState = messageBarState
                 )
             }
             composable(RobinDestinations.SIGN_UP) {
@@ -141,10 +153,10 @@ fun RobinNavHost(
                 SignUp(
                     navController = navController,
                     viewModel = hiltViewModel(),
-                    messageBarState=messageBarState
+                    messageBarState = messageBarState
                 )
             }
-            composable(RobinDestinations.RESET_PASSWORD){
+            composable(RobinDestinations.RESET_PASSWORD) {
                 ResetPassword(
                     navController = navController,
                     viewModel = hiltViewModel(),

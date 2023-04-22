@@ -27,9 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.Address
 import com.vaibhav.robin.data.models.CartItem
+import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.domain.exceptions.RobinException
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
+import java.text.DecimalFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 
 sealed class UiText {
@@ -43,7 +47,7 @@ sealed class UiText {
     fun asString(): String {
         return when (this) {
             is DynamicString -> value
-            is StringResource -> stringResource(id, args)
+            is StringResource -> stringResource(id, *args)
         }
     }
 }
@@ -288,7 +292,7 @@ fun timeStampHandler(timestamp: Timestamp): String {
 }
 
 enum class RobinNavigationType {
-    PERMANENT_NAVIGATION_DRAWER, NAVIGATION_DRAWER, NAVIGATION_RAILS
+    NAVIGATION_DRAWER, NAVIGATION_RAILS
 }
 
 enum class RobinAppBarType {
@@ -307,22 +311,33 @@ enum class CardType(@DrawableRes val id: Int) {
     Other(R.drawable.credit_card)
 }
 
-fun getCardResourceByPrn(prn: String): Int =
-    if (prn.startsWith("4"))
+fun getCardResourceByPan(pan: String): Int =
+    if (pan.startsWith("4"))
         CardType.Visa.id
-    else if (prn.startsWith("2") || prn.startsWith("5"))
+    else if (pan.startsWith("2") || pan.startsWith("5"))
         CardType.MasterCard.id
-    else if (prn.startsWith("60") || prn.startsWith("65"))
+    else if (pan.startsWith("60") || pan.startsWith("65"))
         CardType.Rupee.id
     else CardType.Other.id
 
-fun calculateSummary(list: List<CartItem>):OrderSummary {
-    val s=OrderSummary()
+fun getCardTypeByPan(pan: String): CardType =
+    if (pan.startsWith("4"))
+        CardType.Visa
+    else if (pan.startsWith("2") || pan.startsWith("5"))
+        CardType.MasterCard
+    else if (pan.startsWith("60") || pan.startsWith("65"))
+        CardType.Rupee
+    else CardType.Other
+
+
+
+fun calculateSummary(list: List<CartItem>): OrderSummary {
+    val s = OrderSummary()
     list.forEach {
-        s.subTotal = s.subTotal +it.price
-        s.tax = s.tax  +(it.price * .18)
-        s.shippiing = s.shippiing +50.00
-        s.total=s.total+(it.price+(it.price * .18)+50.00)
+        s.subTotal = s.subTotal + it.price
+        s.tax = s.tax + (it.price * .18)
+        s.shippiing = s.shippiing + 50.00
+        s.total = s.total + (it.price + (it.price * .18) + 50.00)
     }
     return s
 }
@@ -331,11 +346,11 @@ data class OrderSummary(
     var subTotal: Double = 0.0,
     var tax: Double = 0.0,
     var shippiing: Double = 0.0,
-    var total:Double=0.0
+    var total: Double = 0.0
 )
 
-fun GenrateSingleLineAddress(address: Address):String{
-    val string =StringBuilder()
+fun generateSingleLineAddress(address: Address): String {
+    val string = StringBuilder()
     string.append(address.fullName)
     string.append("\n")
     string.append(address.apartmentAddress)
@@ -350,5 +365,33 @@ fun GenrateSingleLineAddress(address: Address):String{
     string.append("\n")
     string.append("Ph : ")
     string.append(address.phoneNumber)
-   return string.toString()
+    return string.toString()
 }
+
+val priceFormat = DecimalFormat("#,##0.00")
+const val DATE_DD_MMM = "dd MMM"
+const val DATE_TEXT_DAY_FORMAT = "EEEE dd/MM/yyyy"
+const val DATE_TEXT_MONTH = "dd MMM yyyy"
+fun generateDeliveryStatus(date: Date): UiText {
+    val difference = date.time - Calendar.getInstance().timeInMillis
+    val diffInDays = TimeUnit.MILLISECONDS.toDays(difference)
+    return if (diffInDays == 0L) UiText.StringResource(R.string.delivered)
+    else if (diffInDays >= 6L) UiText.StringResource(R.string.order_confirm)
+    else if (diffInDays == 5L) UiText.StringResource(R.string.preparing_for_dispatch)
+    else if (diffInDays >= 2L) UiText.StringResource(R.string.on_the_way)
+    else if (diffInDays == 1L) UiText.StringResource(R.string.out_for_delivery)
+    else UiText.StringResource(R.string.delivered)
+}
+
+fun generateOrderName(order: OrderItem) =
+    "${order.items.firstOrNull()?.productName} ${if (order.items.size > 1) (order.items.size - 1).toString() + "Items" else ""}"
+
+fun generateCardName(pan: String) = when (getCardTypeByPan(pan)) {
+    CardType.Visa -> UiText.StringResource(R.string.visa_ending, arrayOf(pan.takeLast(4)))
+    CardType.MasterCard -> UiText.StringResource(R.string.mastercard_ending, arrayOf(pan.takeLast(4)))
+    CardType.Rupee -> UiText.StringResource(R.string.rupee_ending, arrayOf(pan.takeLast(4)))
+    CardType.Other -> UiText.StringResource(R.string.card_ending, arrayOf(pan.takeLast(4)))
+}
+
+fun generateFakeCardPan() =
+    "${arrayOf(20, 40, 50, 60, 65).random()}${(10000000000000..99999999999999).random()}"

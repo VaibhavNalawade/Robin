@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -57,7 +58,8 @@ import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.OrderSummary
 import com.vaibhav.robin.presentation.calculateSummary
-import com.vaibhav.robin.presentation.getCardResourceByPrn
+import com.vaibhav.robin.presentation.generateCardName
+import com.vaibhav.robin.presentation.getCardResourceByPan
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.ProfileInitial
@@ -81,6 +83,8 @@ fun Checkout(
     cartItem: Response<List<CartItem>>,
     messageBarState: MessageBarState
 ) {
+    val addPaymentDialogState = rememberSaveable { mutableStateOf(false) }
+    val addAddressDialogState = rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(
         key1 = true,
         block = {
@@ -89,13 +93,33 @@ fun Checkout(
         }
     )
     val response = viewModel.orderResponse
-    LaunchedEffect(key1 = response, block ={
+    LaunchedEffect(key1 = response, block = {
         if (response is Success)
-          if (  response.data)
-              navController.navigate(RobinDestinations.CHECKOUT_DONE){
-                  popUpTo(RobinDestinations.HOME)
-              }
-    } )
+            if (response.data)
+                navController.navigate(RobinDestinations.CHECKOUT_DONE) {
+                    popUpTo(RobinDestinations.HOME)
+                }
+    })
+    LaunchedEffect(key1 = viewModel.addAddressResponse, block = {
+        when (val t = viewModel.addAddressResponse) {
+            is Error -> messageBarState.addError(t.exception.message ?: "Something Went Wrong")
+            Loading -> {}
+            is Success -> {
+                addAddressDialogState.value = false
+                viewModel.loadAddresses()
+            }
+        }
+    })
+    LaunchedEffect(key1 = viewModel.addPaymentResponse, block = {
+        when (val t = viewModel.addPaymentResponse) {
+            is Error -> messageBarState.addError(t.exception.message ?: "Something Went Wrong")
+            Loading -> {}
+            is Success -> {
+                addPaymentDialogState.value = false
+                viewModel.loadPayments()
+            }
+        }
+    })
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -130,6 +154,39 @@ fun Checkout(
                 } else
                     messageBarState.addError("Please Select Address and payment method")
             }
+
+            val fullScreen = rememberSaveable { mutableStateOf(true) }
+
+            if (addPaymentDialogState.value)
+                AddCardDialog(
+                    modifier = if (fullScreen.value) Modifier.fillMaxSize() else Modifier,
+                    fullScreen = fullScreen.value,
+                    pan = viewModel.pan,
+                    expiryDate = viewModel.expiryDate,
+                    cvv = viewModel.cvv,
+                    cardHolderName = viewModel.cardholderName,
+                    onAddCard = {
+                        viewModel.addPaymentMethod()
+                    },
+                    onCancel = {
+                        addPaymentDialogState.value = false
+                    }
+                )
+            if (addAddressDialogState.value)
+                AddAddressDialog(
+                    modifier = if (fullScreen.value) Modifier.fillMaxSize() else Modifier,
+                    fullScreen = fullScreen.value,
+                    addressFullName = viewModel.addressFullName,
+                    streetAddress = viewModel.streetAddress,
+                    city = viewModel.city,
+                    state = viewModel.state,
+                    pinCode = viewModel.pinCode,
+                    phoneNumber = viewModel.phoneNumber,
+                    apartmentAddress = viewModel.apartmentAddress,
+                    onAddAddress = { viewModel.addAddress() },
+                    onCancel = { addAddressDialogState.value = false }
+                )
+
             if (maxWidth < 600.dp)
                 CompactLayout(
                     addressResponse = viewModel.addressResponse,
@@ -140,8 +197,10 @@ fun Checkout(
                     refreshAddress = { viewModel.loadAddresses() },
                     refreshPayments = { viewModel.loadPayments() },
                     onPay = onPay,
-                    orderResponse = viewModel.orderResponse
-                )
+                    orderResponse = viewModel.orderResponse,
+                    addPaymentDialogState = addPaymentDialogState,
+                    addAddressDialogState = addAddressDialogState
+                ).also { fullScreen.value = true }
             else
                 ExpandedLayout(
                     addressResponse = viewModel.addressResponse,
@@ -152,14 +211,16 @@ fun Checkout(
                     refreshAddress = { viewModel.loadAddresses() },
                     refreshPayments = { viewModel.loadPayments() },
                     onPay = onPay,
-                    orderResponse = viewModel.orderResponse
-                )
+                    orderResponse = viewModel.orderResponse,
+                    addPaymentDialogState = addPaymentDialogState,
+                    addAddressDialogState = addAddressDialogState
+                ).also { fullScreen.value = false }
         }
     }
 }
 
 @Composable
-fun CompactLayout(
+private fun CompactLayout(
     addressResponse: Response<List<Address>>,
     paymentsResponse: Response<List<PaymentData>>,
     cartItem: Success<List<CartItem>>?,
@@ -168,7 +229,9 @@ fun CompactLayout(
     refreshAddress: () -> Unit,
     refreshPayments: () -> Unit,
     onPay: () -> Unit,
-    orderResponse: Response<Boolean>
+    orderResponse: Response<Boolean>,
+    addPaymentDialogState: MutableState<Boolean>,
+    addAddressDialogState: MutableState<Boolean>
 ) {
     Column(
         modifier = Modifier
@@ -179,19 +242,21 @@ fun CompactLayout(
         Shipping(
             addressResponse = addressResponse,
             currentAddress = currentSelectedAddressId,
-            refreshAddress = refreshAddress
+            refreshAddress = refreshAddress,
+            onAddAddressClick = { addAddressDialogState.value = true }
         )
         SpacerVerticalTwo()
         Payment(
             paymentResponse = paymentsResponse,
             currentPayment = currentSelectedPaymentID,
-            refreshPayments = refreshPayments
+            refreshPayments = refreshPayments,
+            onAddPaymentClick = { addPaymentDialogState.value = true }
         )
         SpacerVerticalTwo()
         Summary(
             cartItem = cartItem,
             onClick = onPay,
-            orderResponse=orderResponse
+            orderResponse = orderResponse
         )
         SpacerVerticalTwo()
     }
@@ -199,7 +264,7 @@ fun CompactLayout(
 
 
 @Composable
-fun ExpandedLayout(
+private fun ExpandedLayout(
     addressResponse: Response<List<Address>>,
     paymentsResponse: Response<List<PaymentData>>,
     cartItem: Success<List<CartItem>>?,
@@ -208,7 +273,9 @@ fun ExpandedLayout(
     refreshAddress: () -> Unit,
     refreshPayments: () -> Unit,
     onPay: () -> Unit,
-    orderResponse: Response<Boolean>
+    orderResponse: Response<Boolean>,
+    addPaymentDialogState: MutableState<Boolean>,
+    addAddressDialogState: MutableState<Boolean>
 ) {
     Row(
         modifier = Modifier
@@ -223,12 +290,14 @@ fun ExpandedLayout(
             Shipping(
                 addressResponse = addressResponse,
                 currentAddress = currentSelectedAddressId,
-                refreshAddress = refreshAddress
+                refreshAddress = refreshAddress,
+                onAddAddressClick = { addAddressDialogState.value = true }
             )
             Payment(
                 paymentResponse = paymentsResponse,
                 currentPayment = currentSelectedPaymentID,
-                refreshPayments = refreshPayments
+                refreshPayments = refreshPayments,
+                onAddPaymentClick = { addPaymentDialogState.value = true }
             )
         }
         Column(
@@ -241,17 +310,18 @@ fun ExpandedLayout(
             Summary(
                 cartItem = cartItem,
                 onClick = onPay,
-                orderResponse=orderResponse
+                orderResponse = orderResponse
             )
         }
     }
 }
 
 @Composable
-fun Shipping(
+private fun Shipping(
     addressResponse: Response<List<Address>>,
     currentAddress: MutableState<String?>,
-    refreshAddress: () -> Unit
+    refreshAddress: () -> Unit,
+    onAddAddressClick: () -> Unit
 ) {
     Text(
         text = stringResource(R.string.shipping_address),
@@ -277,7 +347,7 @@ fun Shipping(
                 address = item,
                 selected = currentAddress.value == item.id,
                 index = index,
-                onPaymentSelected = { currentAddress.value = it }
+                onAddressSelected = { currentAddress.value = it }
             )
         }
     }
@@ -285,7 +355,7 @@ fun Shipping(
     SpacerVerticalOne()
     TextButton(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { /*TODO*/ },
+        onClick = onAddAddressClick,
         content = {
             Icon(
                 painter = painterResource(id = R.drawable.add_location),
@@ -298,17 +368,18 @@ fun Shipping(
 }
 
 @Composable
-fun AddressListItem(
+private fun AddressListItem(
     address: Address,
     selected: Boolean,
-    onPaymentSelected: (String) -> Unit,
+    onAddressSelected: (String) -> Unit,
     index: Int
 ) {
     ListItem(
-        modifier = Modifier.clickable { onPaymentSelected(address.id) },
+        modifier = Modifier.clickable { onAddressSelected(address.id) },
         headlineContent = { Text(text = address.fullName) },
         supportingContent = {
             Text(
+                /*todo SOLID principle not gone like this. please separate function*/
                 text = "${address.apartmentAddress},${address.streetAddress}, ${address.pinCode}"
             )
         },
@@ -328,10 +399,11 @@ fun AddressListItem(
 }
 
 @Composable
-fun Payment(
+private fun Payment(
     paymentResponse: Response<List<PaymentData>>,
     currentPayment: MutableState<String?>,
-    refreshPayments: () -> Unit
+    refreshPayments: () -> Unit,
+    onAddPaymentClick: () -> Unit
 ) {
     Text(
         text = stringResource(R.string.payment_method),
@@ -364,7 +436,7 @@ fun Payment(
     SpacerVerticalOne()
     TextButton(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { /*TODO*/ },
+        onClick = onAddPaymentClick,
         content = {
             Icon(
                 painter = painterResource(id = R.drawable.add_card),
@@ -377,18 +449,18 @@ fun Payment(
 }
 
 @Composable
-fun PaymentListItem(
+private fun PaymentListItem(
     payment: PaymentData,
     selected: Boolean,
     onPaymentSelected: (String) -> Unit
 ) {
-    val resourceId = remember { getCardResourceByPrn(prn = payment.prn) }
+    val resourceId = remember { getCardResourceByPan(pan = payment.pan) }
     ListItem(
         modifier = Modifier.clickable { onPaymentSelected(payment.id) },
-        headlineContent = { Text(text = "Visa Card") },
+        headlineContent = { Text(text = generateCardName(payment.pan).asString()) },
         supportingContent = {
             Text(
-                text = "••••  ••••  ${payment.prn.takeLast(4)}"
+                text = stringResource(R.string.dot_card_digits, payment.pan.takeLast(4))
             )
         },
         trailingContent = {
@@ -408,10 +480,10 @@ fun PaymentListItem(
 }
 
 @Composable
-fun Summary(
+private fun Summary(
     cartItem: Success<List<CartItem>>?,
     onClick: () -> Unit,
-    orderResponse:Response<Boolean>
+    orderResponse: Response<Boolean>
 ) {
     val summary = remember { cartItem?.let { calculateSummary(it.data) } ?: OrderSummary() }
     val format = DecimalFormat("#,##0.00")
@@ -424,13 +496,19 @@ fun Summary(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onClick,
                 content = {
-                    when(orderResponse){
-                        Loading ->       CircularProgressIndicator(
+                    when (orderResponse) {
+                        Loading -> CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = colorScheme.onPrimary,
                             strokeWidth = 5.dp
                         )
-                       else-> Text(text = stringResource(R.string.pay, format.format(summary.total)))
+
+                        else -> Text(
+                            text = stringResource(
+                                R.string.pay,
+                                format.format(summary.total)
+                            )
+                        )
 
                     }
 
@@ -535,7 +613,7 @@ fun PaymentListItemPreview() {
             selected = true,
             index = 5,
             address = PreviewMocks.address,
-            onPaymentSelected = {}
+            onAddressSelected = {}
         )
     }
 }
@@ -564,7 +642,7 @@ fun ShippingPreview() {
                 Shipping(
                     Success(listOf(PreviewMocks.address, PreviewMocks.address)),
                     currentAddress = remember { mutableStateOf("4") },
-                    refreshAddress = {}
+                    refreshAddress = {}, {}
                 )
             }
         }
@@ -585,7 +663,7 @@ fun PaymentPreview() {
                         )
                     ),
                     refreshPayments = {},
-                    currentPayment = remember { mutableStateOf("4") }
+                    currentPayment = remember { mutableStateOf("4") }, onAddPaymentClick = {}
                 )
             }
         }
@@ -601,7 +679,7 @@ fun CompactPreview() {
                 Shipping(
                     Success(listOf(PreviewMocks.address, PreviewMocks.address)),
                     currentAddress = remember { mutableStateOf("4") },
-                    refreshAddress = {}
+                    refreshAddress = {}, {}
                 )
                 SpacerHorizontalThree()
                 Payment(
@@ -612,7 +690,7 @@ fun CompactPreview() {
                         )
                     ),
                     refreshPayments = {},
-                    currentPayment = remember { mutableStateOf("4") }
+                    currentPayment = remember { mutableStateOf("4") }, onAddPaymentClick = {}
                 )
                 SpacerHorizontalThree()
                 Summary(
@@ -656,7 +734,7 @@ fun ExpandedPreview() {
                                 Shipping(
                                     Success(listOf(PreviewMocks.address, PreviewMocks.address)),
                                     currentAddress = remember { mutableStateOf("4") },
-                                    refreshAddress = {}
+                                    refreshAddress = {}, {}
                                 )
                                 Payment(
                                     paymentResponse = Success(
@@ -666,7 +744,8 @@ fun ExpandedPreview() {
                                         )
                                     ),
                                     refreshPayments = {},
-                                    currentPayment = remember { mutableStateOf("4") }
+                                    currentPayment = remember { mutableStateOf("4") },
+                                    onAddPaymentClick = {}
                                 )
                             }
                             Column(

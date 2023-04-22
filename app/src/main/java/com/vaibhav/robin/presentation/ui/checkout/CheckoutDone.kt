@@ -111,7 +111,7 @@ private fun CheckoutDoneUI(onContinueShopping: () -> Unit) {
         )
         SpacerVerticalTwo()
         Text(
-            text = stringResource(R.string.checkout_sucess_mesg),
+            text = stringResource(R.string.checkout_success_msg),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )

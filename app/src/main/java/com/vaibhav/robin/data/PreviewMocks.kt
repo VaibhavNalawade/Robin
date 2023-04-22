@@ -7,7 +7,7 @@ import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.PaymentData
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
-import java.util.Date
+import com.vaibhav.robin.presentation.generateSingleLineAddress
 import java.util.UUID
 
 object PreviewMocks {
@@ -45,9 +45,7 @@ object PreviewMocks {
         brandName = product.brandName,
         brandLogo = product.brandLogo
     )
-    val orderItem=OrderItem(
-        items = listOf(cartItem, cartItem),
-    )
+
     val address=Address(
         fullName = "John Muir",
         streetAddress = "Harni Road, Opp Lbs School,",
@@ -59,10 +57,14 @@ object PreviewMocks {
     )
     val paymentData=PaymentData(
         id = product.id,
-        prn = "4111111111111111",
+        pan = "4111111111111111",
         cvv = 234,
         expiryDate = "23/Jan/2013",
         cardHolderName = "John Muir"
     )
-
+    val orderItem=OrderItem(
+        items = listOf(cartItem, cartItem),
+        shippingAddress = generateSingleLineAddress(address),
+       totalPrice =  4444.00
+    )
 }
