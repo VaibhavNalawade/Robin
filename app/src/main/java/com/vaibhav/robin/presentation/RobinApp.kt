@@ -6,11 +6,13 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -38,6 +40,7 @@ import com.vaibhav.robin.presentation.ui.common.MessageBarPosition
 import com.vaibhav.robin.presentation.ui.common.NavigationRailsContent
 import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -155,7 +158,6 @@ fun RobinNavigationWrapper(
     }
     val cartItemSize = (cartItems as? Response.Success)?.data?.size ?: 0
 
-
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet() {
@@ -176,15 +178,22 @@ fun RobinNavigationWrapper(
         },
         content = {
             Row {
-                AnimatedVisibility(visible =navigationType == RobinNavigationType.NAVIGATION_RAILS) {
-                    NavigationRail {
-                        NavigationRailsContent(
-                            userAuthenticated = userAuthenticated,
-                            navController = navController,
-                            signOut = signOut
+                AnimatedVisibility(
+                    visible = navigationType == RobinNavigationType.NAVIGATION_RAILS,
+                    content = {
+                        NavigationRail(
+                            containerColor = colorScheme
+                                .surfaceColorAtElevation(Dimens.surface_elevation_1),
+                            content = {
+                                NavigationRailsContent(
+                                    userAuthenticated = userAuthenticated,
+                                    navController = navController,
+                                    signOut = signOut
+                                )
+                            }
                         )
                     }
-                }
+                )
                 MessageBarWrapper(
                     state = state,
                     position = messageBarPosition,

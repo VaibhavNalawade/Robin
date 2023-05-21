@@ -1,8 +1,17 @@
 ﻿package com.vaibhav.robin.presentation.ui.cart
 
 
+import android.annotation.SuppressLint
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.LayerDrawable
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,8 +21,14 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,7 +36,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.navigation.NavController
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.domain.model.Response
@@ -37,6 +60,7 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
+import org.xmlpull.v1.XmlPullParser
 import java.text.DecimalFormat
 
 
@@ -387,6 +411,8 @@ private fun SummaryCart(
     }
 }
 
+@SuppressLint("RestrictedApi")
+@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun EmptyCart(onBrowse: () -> Unit) {
     Column(
@@ -395,11 +421,93 @@ fun EmptyCart(onBrowse: () -> Unit) {
             .padding(Dimens.gird_four),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.desert),
-            contentDescription = "",
-            contentScale = ContentScale.Crop
+
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.box_empty_animation))
+        val progress by animateLottieCompositionAsState(composition)
+        val pxValue = LocalDensity.current.run { 6.dp.toPx() }
+        LaunchedEffect(key1 = composition, block = {
+            composition?.layers?.forEach{
+                Log.e("Some",it.name)
+            }
+        })
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.STROKE_COLOR,
+                value = colorScheme.primary.toArgb(),
+                keyPath = arrayOf(
+                    "**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.STROKE_WIDTH,
+                value = pxValue,
+                keyPath = arrayOf(
+                    "**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "Layer 8/boxgirl2 Outlines","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "Body/boxgirl2 Outlines","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "Legs/boxgirl2 Outlines","**"
+                )
+            )
+            ,
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.primaryContainer.toArgb(),
+                keyPath = arrayOf(
+                    "BOX/boxgirl2 Outlines","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "arms/boxgirl2 Outlines","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "head/boxgirl2 Outlines","Group 8","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
+                keyPath = arrayOf(
+                    "head/boxgirl2 Outlines","Group 7","**"
+                )
+            ),
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR,
+                value = colorScheme.primary.toArgb(),
+                keyPath = arrayOf(
+                    "head/boxgirl2 Outlines","Group 11","**"
+                )
+            ),
+        )
+        LottieAnimation(
+            modifier = Modifier.size(360.dp),
+            composition = composition,
+            progress = { progress },
+            dynamicProperties=dynamicProperties
         )
 
         SpacerVerticalFour()

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSize = calculateWindowSizeClass(this)
             val displayFeatures = calculateDisplayFeatures(this)
-            RobinTheme {
+            RobinTheme() {
                 Surface {
                     RobinApp(
                         windowSize = windowSize,

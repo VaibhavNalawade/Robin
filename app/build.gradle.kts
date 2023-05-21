@@ -74,6 +74,7 @@ dependencies {
     implementation(Dependencies.Google.DaggerHilt.composeNavigationSupport)
 
     implementation(Dependencies.coil)
+    implementation(Dependencies.lottieCompose)
 
     implementation(Dependencies.AndroidX.Core.core)
     implementation(Dependencies.AndroidX.Core.splashScreen)
@@ -81,7 +82,8 @@ dependencies {
     implementation(Dependencies.AndroidX.Lifecycle.compose)
     implementation(Dependencies.AndroidX.Compose.ui)
     implementation(Dependencies.AndroidX.Compose.foundation)
-    implementation(Dependencies.AndroidX.Compose.uiPrview)
+    implementation(Dependencies.AndroidX.Compose.animation)
+    implementation(Dependencies.AndroidX.Compose.uiPreview)
     debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
     implementation(Dependencies.AndroidX.navigation)
     implementation(Dependencies.AndroidX.activity)

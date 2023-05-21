@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
-private val LightThemeColors = lightColorScheme(
 
+private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -25,23 +25,26 @@ private val LightThemeColors = lightColorScheme(
     tertiaryContainer = md_theme_light_tertiaryContainer,
     onTertiaryContainer = md_theme_light_onTertiaryContainer,
     error = md_theme_light_error,
-    errorContainer = md_theme_light_errorContainer,
     onError = md_theme_light_onError,
+    errorContainer = md_theme_light_errorContainer,
     onErrorContainer = md_theme_light_onErrorContainer,
+    outline = md_theme_light_outline,
     background = md_theme_light_background,
     onBackground = md_theme_light_onBackground,
     surface = md_theme_light_surface,
     onSurface = md_theme_light_onSurface,
     surfaceVariant = md_theme_light_surfaceVariant,
     onSurfaceVariant = md_theme_light_onSurfaceVariant,
-    outline = md_theme_light_outline,
-    inverseOnSurface = md_theme_light_inverseOnSurface,
     inverseSurface = md_theme_light_inverseSurface,
+    inverseOnSurface = md_theme_light_inverseOnSurface,
     inversePrimary = md_theme_light_inversePrimary,
-    //shadow = md_theme_light_shadow,
+    surfaceTint = md_theme_light_surfaceTint,
+    outlineVariant = md_theme_light_outlineVariant,
+    scrim = md_theme_light_scrim,
 )
-private val DarkThemeColors = darkColorScheme(
 
+
+private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -55,20 +58,22 @@ private val DarkThemeColors = darkColorScheme(
     tertiaryContainer = md_theme_dark_tertiaryContainer,
     onTertiaryContainer = md_theme_dark_onTertiaryContainer,
     error = md_theme_dark_error,
-    errorContainer = md_theme_dark_errorContainer,
     onError = md_theme_dark_onError,
+    errorContainer = md_theme_dark_errorContainer,
     onErrorContainer = md_theme_dark_onErrorContainer,
+    outline = md_theme_dark_outline,
     background = md_theme_dark_background,
     onBackground = md_theme_dark_onBackground,
     surface = md_theme_dark_surface,
     onSurface = md_theme_dark_onSurface,
     surfaceVariant = md_theme_dark_surfaceVariant,
     onSurfaceVariant = md_theme_dark_onSurfaceVariant,
-    outline = md_theme_dark_outline,
-    inverseOnSurface = md_theme_dark_inverseOnSurface,
     inverseSurface = md_theme_dark_inverseSurface,
+    inverseOnSurface = md_theme_dark_inverseOnSurface,
     inversePrimary = md_theme_dark_inversePrimary,
-    //shadow = md_theme_dark_shadow,
+    surfaceTint = md_theme_dark_surfaceTint,
+    outlineVariant = md_theme_dark_outlineVariant,
+    scrim = md_theme_dark_scrim,
 )
 
 private val shapes = Shapes(
@@ -90,8 +95,9 @@ fun RobinTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme -> DarkThemeColors
-        else -> LightThemeColors
+
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
     MaterialTheme(
@@ -100,20 +106,4 @@ fun RobinTheme(
         shapes = shapes,
         content = content
     )
-}
-@Composable
-fun ColorScheme.harmonizeWithPrimary(primaryColor: Color): Color {
-    val primaryHsl = FloatArray(3)
-
-    ColorUtils.colorToHSL(primaryColor.toArgb(), primaryHsl)
-    val harmonizedHsl = floatArrayOf(
-        primaryHsl[0], // Same hue as primary color
-        primaryHsl[1], // Same saturation as primary color
-        if (isSystemInDarkTheme())
-        0.7f // Midpoint lightness value
-        else 0.3f
-    )
-
-    val harmonizedColorInt = ColorUtils.HSLToColor(harmonizedHsl)
-    return Color(harmonizedColorInt)
 }

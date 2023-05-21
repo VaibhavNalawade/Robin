@@ -1,20 +1,21 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.8.20"
-    private const val COMPOSE_VERSION = "1.5.0-alpha03"
-    const val COMPOSE_COMPILER_VERSION = "1.4.6"
+    const val KOTLIN_VERSION = "1.8.21"
+    private const val COMPOSE_VERSION = "1.5.0-alpha04"
+    const val COMPOSE_COMPILER_VERSION = "1.4.7"
     private const val ACTIVITY_VERSION = "1.6.0-beta01"
-    private const val MDC3_VERSION = "1.1.0-rc01"
+    private const val MDC3_VERSION = "1.2.0-alpha01"
     private const val GSM_VERSION = "4.3.15"
-    private const val ACCOMPANIST_VERSION = "0.29.1-alpha"
+    private const val ACCOMPANIST_VERSION = "0.31.1-alpha"
     private const val LIFECYCLE_VERSION = "2.6.0"
     private const val COROUTINES_VERSION = "1.6.4"
-    private const val AGP_VERSION = "8.1.0-alpha11"
+    private const val AGP_VERSION = "8.0.1"
     private const val DAGGERHILT_VERSION = "2.44"
 
     const val androidPlugin = "com.android.application"
     const val androidGradle = "com.android.tools.build:gradle:$AGP_VERSION"
     const val coil = "io.coil-kt:coil-compose:2.2.2"
+    const val lottieCompose="com.airbnb.android:lottie-compose:6.0.0"
     const val junit = "junit:junit:4.13.2"
 
 
@@ -39,6 +40,7 @@ object Dependencies {
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
             const val adaptive = "com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
+            const val drawablePainter = "com.google.accompanist:accompanist-drawablepainter:$ACCOMPANIST_VERSION"
         }
 
         object DaggerHilt {
@@ -81,7 +83,8 @@ object Dependencies {
         object Compose {
             const val ui = "androidx.compose.ui:ui:$COMPOSE_VERSION"
             const val foundation = "androidx.compose.foundation:foundation:$COMPOSE_VERSION"
-            const val uiPrview = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
+            const val animation="androidx.compose.animation:animation-graphics:$COMPOSE_VERSION"
+            const val uiPreview = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
             const val previewTooling = "androidx.compose.ui:ui-tooling:$COMPOSE_VERSION"
 
             object Material3 {
