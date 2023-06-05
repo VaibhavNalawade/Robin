@@ -1,13 +1,7 @@
 package com.vaibhav.robin.presentation.ui.search
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+
 
 class SearchViewModel : ViewModel() {
 /*    private val _searchQuery = MutableStateFlow("")

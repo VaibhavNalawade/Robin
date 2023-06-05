@@ -35,11 +35,24 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
 
     suspend inline fun <reified T> fetchFromReferenceToObject(
         document: CollectionReference,
-        limitValue: Long = Long.MAX_VALUE
+        limitValue: Long
     ): Flow<Response<List<T>>> = flow {
         try {
             emit(Response.Loading)
             document.limit(limitValue).get().await().apply {
+
+                emit(Success(toObjects(T::class.java)))
+            }
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
+    suspend inline fun <reified T> fetchFromReferenceToObject(
+        document: CollectionReference,
+    ): Flow<Response<List<T>>> = flow {
+        try {
+            emit(Response.Loading)
+            document.get().await().apply {
 
                 emit(Success(toObjects(T::class.java)))
             }
@@ -113,6 +126,17 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
         try {
             emit(Response.Loading)
             query.get().await().documents.forEach{
+                it.reference.delete()
+            }
+            emit(Success(true))
+        } catch (e: Exception) {
+            emit(Error(e))
+        }
+    }
+    suspend fun deleteCollection(collection: CollectionReference): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Response.Loading)
+            collection.get().await().documents.forEach{
                 it.reference.delete()
             }
             emit(Success(true))

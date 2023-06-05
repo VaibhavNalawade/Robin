@@ -1,18 +1,37 @@
 package com.vaibhav.robin.presentation.ui.common
 
-    import android.widget.Toast
-    import androidx.compose.animation.*
+    import androidx.compose.animation.AnimatedVisibility
+    import androidx.compose.animation.EnterTransition
+    import androidx.compose.animation.ExitTransition
+    import androidx.compose.animation.animateContentSize
     import androidx.compose.animation.core.tween
+    import androidx.compose.animation.expandVertically
+    import androidx.compose.animation.shrinkVertically
     import androidx.compose.foundation.background
-    import androidx.compose.foundation.layout.*
+    import androidx.compose.foundation.layout.Arrangement
+    import androidx.compose.foundation.layout.Box
+    import androidx.compose.foundation.layout.Column
+    import androidx.compose.foundation.layout.Row
+    import androidx.compose.foundation.layout.Spacer
+    import androidx.compose.foundation.layout.fillMaxSize
+    import androidx.compose.foundation.layout.fillMaxWidth
+    import androidx.compose.foundation.layout.navigationBarsPadding
+    import androidx.compose.foundation.layout.padding
+    import androidx.compose.foundation.layout.statusBarsPadding
+    import androidx.compose.foundation.layout.width
     import androidx.compose.material.icons.Icons
     import androidx.compose.material.icons.filled.Check
     import androidx.compose.material.icons.filled.Warning
     import androidx.compose.material3.Icon
     import androidx.compose.material3.MaterialTheme
     import androidx.compose.material3.Text
-    import androidx.compose.material3.TextButton
-    import androidx.compose.runtime.*
+    import androidx.compose.runtime.Composable
+    import androidx.compose.runtime.DisposableEffect
+    import androidx.compose.runtime.getValue
+    import androidx.compose.runtime.mutableStateOf
+    import androidx.compose.runtime.remember
+    import androidx.compose.runtime.rememberUpdatedState
+    import androidx.compose.runtime.setValue
     import androidx.compose.ui.Alignment
     import androidx.compose.ui.Modifier
     import androidx.compose.ui.graphics.Color
@@ -20,20 +39,18 @@ package com.vaibhav.robin.presentation.ui.common
     import androidx.compose.ui.platform.LocalClipboardManager
     import androidx.compose.ui.platform.LocalContext
     import androidx.compose.ui.platform.testTag
-    import androidx.compose.ui.text.AnnotatedString
-    import androidx.compose.ui.text.style.TextAlign
     import androidx.compose.ui.text.style.TextOverflow
     import androidx.compose.ui.tooling.preview.Preview
     import androidx.compose.ui.unit.Dp
     import androidx.compose.ui.unit.dp
     import com.vaibhav.robin.presentation.models.state.MessageBarState
-    import com.vaibhav.robin.presentation.ui.common.TestTags.COPY_BUTTON
     import com.vaibhav.robin.presentation.ui.common.TestTags.MESSAGE_BAR
     import com.vaibhav.robin.presentation.ui.common.TestTags.MESSAGE_BAR_TEXT
-    import java.util.*
+    import com.vaibhav.robin.presentation.ui.theme.Values
+    import java.util.Timer
     import kotlin.concurrent.schedule
 
-    @Composable
+@Composable
     fun rememberMessageBarState(): MessageBarState {
         return remember { MessageBarState() }
     }
@@ -130,7 +147,9 @@ package com.vaibhav.robin.presentation.ui.common
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
             verticalArrangement = if (position == MessageBarPosition.TOP)
                 Arrangement.Top else Arrangement.Bottom
         ) {
@@ -153,6 +172,8 @@ package com.vaibhav.robin.presentation.ui.common
                     horizontalPadding = horizontalPadding,
                     showToastOnCopy = showToastOnCopy
                 )
+                if (position == MessageBarPosition.BOTTOM)
+                    Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }
     }
@@ -189,7 +210,9 @@ package com.vaibhav.robin.presentation.ui.common
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                modifier = Modifier.weight(4f),
+                modifier = Modifier
+                    .weight(4f)
+                    .navigationBarsPadding(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -202,45 +225,24 @@ package com.vaibhav.robin.presentation.ui.common
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    modifier = Modifier.testTag(tag = MESSAGE_BAR_TEXT),
+                    modifier = Modifier
+                        .padding( horizontal =  Values.Dimens.gird_one)
+                        .padding(top = Values.Dimens.gird_one )
+                        .testTag(tag = MESSAGE_BAR_TEXT),
                     text = message ?: (error ?: "Unknown"),
                     color = if (error != null) errorContentColor
                     else successContentColor,
                     fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
-            if (error != null) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(
-                        modifier = Modifier.testTag(tag = COPY_BUTTON),
-                        onClick = {
-                            clipboardManager.setText(AnnotatedString(text = "$error"))
-                            if (showToastOnCopy) {
-                                Toast.makeText(context, "Copied!", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        contentPadding = PaddingValues(vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Copy",
-                            color = errorContentColor,
-                            fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                            textAlign = TextAlign.End
-                        )
-                    }
-                }
-            }
+
         }
     }
 internal object TestTags {
     internal const val MESSAGE_BAR = "MessageBar"
     internal const val MESSAGE_BAR_TEXT = "MessageBarText"
-    internal const val COPY_BUTTON = "CopyButton"
 }
 
     @Composable

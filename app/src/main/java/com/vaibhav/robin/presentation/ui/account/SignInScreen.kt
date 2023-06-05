@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,7 +36,6 @@ import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.RobinNavigationType
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.models.state.TextFieldState
 import com.vaibhav.robin.presentation.ui.common.*
@@ -45,36 +45,33 @@ import com.vaibhav.robin.presentation.ui.theme.Values.Dimens.gird_two
 fun SignIn(
     navController: NavController,
     viewModel: SignInViewModel,
-    messageBarState: MessageBarState,
-    navigationType: RobinNavigationType
+    messageBarState: MessageBarState
 ) {
-    when (navigationType) {
-
-        else -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                SignInContent(
-                    emailState = viewModel.email,
-                    passwordState = viewModel.password,
-                    signInResponse = viewModel.signInResponse,
-                    messageBarState = messageBarState,
-                    signIn = {
-                        viewModel.signWithEmailPassword()
-                    },
-                    navigateToSignup = {
-                        navController.navigate(RobinDestinations.SIGN_UP)
-                    },
-                    onSignInSuccess = {
-                        navController.popBackStack()
-                    }
-                )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        SignInContent(
+            emailState = viewModel.email,
+            passwordState = viewModel.password,
+            signInResponse = viewModel.signInResponse,
+            messageBarState = messageBarState,
+            signIn = {
+                viewModel.signWithEmailPassword()
+            },
+            navigateToSignup = {
+                navController.navigate(RobinDestinations.SIGN_UP)
+            },
+            onSignInSuccess = {
+                navController.popBackStack()
+            },
+            onResetPassword = {
+                navController.navigate(RobinDestinations.RESET_PASSWORD)
             }
-        }
-
+        )
     }
 }
+
 
 @Composable
 private fun SignInContent(
@@ -85,12 +82,16 @@ private fun SignInContent(
     signIn: () -> Unit,
     navigateToSignup: () -> Unit,
     onSignInSuccess: () -> Unit,
+    onResetPassword: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
+            .statusBarsPadding()
             .padding(gird_two)
             .verticalScroll(rememberScrollState()),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
@@ -117,6 +118,7 @@ private fun SignInContent(
             SpacerVerticalFour()
 
             RobinTextField(
+                modifier = Modifier.fillMaxSize(),
                 state = emailState,
                 label = {
                     Text(text = stringResource(R.string.email))
@@ -150,8 +152,10 @@ private fun SignInContent(
                     }
                 )
             )
-            TextButton(modifier = Modifier.align(Alignment.End),
-                onClick = { /*TODO*/ }) {
+            TextButton(
+                modifier = Modifier.align(Alignment.End),
+                onClick = onResetPassword
+            ) {
                 Text(
 
                     text = stringResource(R.string.forgot_password),
@@ -172,8 +176,14 @@ private fun SignInContent(
                 }
             )
             SpacerVerticalOne()
-            OutlinedButton(modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
+            val t = stringArrayResource(id = R.array.not_implemented).random()
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = {
+                    messageBarState.addError(t)
+                }
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.google),
                     contentDescription = null,
@@ -195,7 +205,7 @@ private fun SignInContent(
 }
 
 @Composable
- fun SignInButton(
+fun SignInButton(
     response: Response<Boolean>,
     onSignInSuccess: () -> Unit,
     messageBarState: MessageBarState
@@ -220,14 +230,14 @@ private fun SignInContent(
         is Error -> {
             DefaultButtonAppearance()
             LaunchedEffect(key1 = true, block = {
-                messageBarState.addError(response.message.message ?: "")
+                messageBarState.addError(response.exception.message ?: "")
             })
         }
     }
 }
 
 @Composable
-private fun  DefaultButtonAppearance() {
+private fun DefaultButtonAppearance() {
     Icon(
         painter = painterResource(id = R.drawable.signin),
         contentDescription = "",
@@ -243,7 +253,7 @@ private fun  DefaultButtonAppearance() {
 @Composable
 fun SignInPreview() {
     RobinAppPreview {
-        val dummy =remember { mutableStateOf(TextFieldState()) }
+        val dummy = remember { mutableStateOf(TextFieldState()) }
         SignInContent(
             emailState = dummy,
             passwordState = dummy,
@@ -251,7 +261,8 @@ fun SignInPreview() {
             signInResponse = Success(true),
             signIn = {},
             navigateToSignup = {},
-            onSignInSuccess = {}
+            onSignInSuccess = {},
+            {}
         )
     }
 }

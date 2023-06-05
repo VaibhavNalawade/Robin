@@ -30,8 +30,6 @@ import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGenderViewModel) {
@@ -45,7 +43,7 @@ fun DateAndGenderSelect(navController: NavHostController, viewModel: DateAndGend
                 })
         }
         is Response.Error -> {
-            ShowError(response.message){}
+            ShowError(response.exception){}
                
 
         }

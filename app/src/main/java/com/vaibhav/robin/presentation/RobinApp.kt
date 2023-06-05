@@ -1,15 +1,19 @@
 package com.vaibhav.robin.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -17,11 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
+import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.ProfileData
@@ -35,6 +41,7 @@ import com.vaibhav.robin.presentation.ui.common.MessageBarPosition
 import com.vaibhav.robin.presentation.ui.common.NavigationRailsContent
 import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,7 +58,8 @@ fun RobinApp(
     filterState: FilterState,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
-    cartItems: Response<List<CartItem>>
+    cartItems: Response<List<CartItem>>,
+    orders: Response<List<OrderItem>>
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
@@ -63,7 +71,7 @@ fun RobinApp(
         }
 
         WindowWidthSizeClass.Expanded -> {
-            RobinNavigationType.PERMANENT_NAVIGATION_DRAWER
+            RobinNavigationType.NAVIGATION_RAILS
         }
 
         else -> {
@@ -87,7 +95,8 @@ fun RobinApp(
         filterState = filterState,
         onSelectProduct = onSelectProduct,
         selectedProduct = selectedProduct,
-        cartItems = cartItems
+        cartItems = cartItems,
+        orders = orders
     )
 }
 
@@ -106,15 +115,14 @@ fun RobinNavigationWrapper(
     filterState: FilterState,
     selectedProduct: Product?,
     cartItems: Response<List<CartItem>>,
-    onSelectProduct: (Product) -> Unit
+    onSelectProduct: (Product) -> Unit,
+    orders: Response<List<OrderItem>>
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
     val state = rememberMessageBarState()
-    val messageBarPosition =
-        if (navigationType == RobinNavigationType.PERMANENT_NAVIGATION_DRAWER) MessageBarPosition.TOP
-        else MessageBarPosition.BOTTOM
+    val messageBarPosition = MessageBarPosition.BOTTOM
 
     val closeDrawer: () -> Unit = {
         scope.launch {
@@ -140,7 +148,7 @@ fun RobinNavigationWrapper(
             else drawerState.animateTo(
                 DrawerValue.Closed,
                 TweenSpec(
-                    durationMillis=400,
+                    durationMillis = 400,
                     easing = FastOutSlowInEasing
                 )
             )
@@ -149,11 +157,11 @@ fun RobinNavigationWrapper(
     val showNavContent = remember {
         mutableStateOf(true)
     }
-    val cartItemSize=(cartItems as? Response.Success)?.data?.size?:0
+    val cartItemSize = (cartItems as? Response.Success)?.data?.size ?: 0
 
-    when (navigationType) {
-        RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawer(
-            drawerContent = {
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet() {
                 NavigationDrawer(
                     userAuthenticated = userAuthenticated,
                     navController = navController,
@@ -165,104 +173,28 @@ fun RobinNavigationWrapper(
                     onApply = onApply,
                     navigationType = navigationType,
                     filterState = filterState,
-                    cartItemsSize= cartItemSize
-                )
-            },
-            content = {
-                MessageBarWrapper(
-                    state = state,
-                    position = messageBarPosition,
-                    content = {
-                        RobinNavHost(
-                            navController = navController,
-                            profileUiState = profileUiState,
-                            toggleDrawer = toggleDrawer,
-                            productUiState = productUiState,
-                            messageBarState = state,
-                            navigationType = navigationType,
-                            appBarType = appBarType,
-                            onSelectProduct = onSelectProduct,
-                            selectedProduct = selectedProduct,
-                            cartItems = cartItems,
-                            showNavContent = showNavContent
-                        )
-                    }
+                    cartItemsSize = cartItemSize,
                 )
             }
-        )
-
-        RobinNavigationType.NAVIGATION_RAILS -> {
-            ModalNavigationDrawer(
-                drawerContent = {
-                    ModalDrawerSheet() {
-                        NavigationDrawer(
-                            userAuthenticated = userAuthenticated,
-                            navController = navController,
-                            signOut = signOut,
-                            closeDrawer = closeDrawer,
-                            brandsUiState = brandsUiState,
-                            categoriesUiState = categoriesUiState,
-                            showNavContent = showNavContent,
-                            onApply = onApply,
-                            navigationType = navigationType,
-                            filterState = filterState,
-                            cartItemsSize = cartItemSize,
-                        )
-                    }
-                },
-                content = {
-                    Row {
-                        NavigationRail {
-                            NavigationRailsContent(
-                                userAuthenticated = userAuthenticated,
-                                navController = navController,
-                                signOut = signOut
-                            )
-                        }
-                        MessageBarWrapper(
-                            state = state,
-                            position = messageBarPosition,
+        },
+        content = {
+            Row {
+                AnimatedVisibility(
+                    visible = navigationType == RobinNavigationType.NAVIGATION_RAILS,
+                    content = {
+                        NavigationRail(
+                            containerColor = colorScheme
+                                .surfaceColorAtElevation(Dimens.surface_elevation_1),
                             content = {
-                                RobinNavHost(
+                                NavigationRailsContent(
+                                    userAuthenticated = userAuthenticated,
                                     navController = navController,
-                                    profileUiState = profileUiState,
-                                    toggleDrawer = toggleDrawer,
-                                    productUiState = productUiState,
-                                    messageBarState = state,
-                                    navigationType = navigationType,
-                                    appBarType = appBarType,
-                                    onSelectProduct = onSelectProduct,
-                                    selectedProduct = selectedProduct,
-                                    cartItems = cartItems,
-                                    showNavContent = showNavContent
+                                    signOut = signOut
                                 )
                             }
                         )
                     }
-                },
-                drawerState = drawerState
-            )
-        }
-
-        else -> ModalNavigationDrawer(
-            drawerContent = {
-                ModalDrawerSheet {
-                    NavigationDrawer(
-                        userAuthenticated = userAuthenticated,
-                        navController = navController,
-                        signOut = signOut,
-                        closeDrawer = closeDrawer,
-                        brandsUiState = brandsUiState,
-                        categoriesUiState = categoriesUiState,
-                        showNavContent = showNavContent,
-                        onApply = onApply,
-                        navigationType = navigationType,
-                        filterState = filterState,
-                        cartItemsSize = cartItemSize
-                    )
-                }
-            },
-            content = {
+                )
                 MessageBarWrapper(
                     state = state,
                     position = messageBarPosition,
@@ -275,18 +207,20 @@ fun RobinNavigationWrapper(
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            onSelectProduct = onSelectProduct,
-                            selectedProduct = selectedProduct,
                             cartItems = cartItems,
-                            showNavContent = showNavContent
+                            selectedProduct = selectedProduct,
+                            onSelectProduct = onSelectProduct,
+                            showNavContent = showNavContent,
+                            orders = orders
                         )
                     }
                 )
-            },
-            drawerState = drawerState
-        )
-    }
+            }
+        },
+        drawerState = drawerState
+    )
 }
+
 
 @Composable
 fun MessageBarWrapper(
@@ -295,6 +229,7 @@ fun MessageBarWrapper(
     position: MessageBarPosition
 ) {
     ContentWithMessageBar(
+        modifier = Modifier,
         messageBarState = state,
         position = position,
         content = content
@@ -304,6 +239,8 @@ fun MessageBarWrapper(
 @Composable
 fun RobinAppPreview(content: @Composable () -> Unit) {
     RobinTheme {
-        content()
+        Surface {
+            content()
+        }
     }
 }

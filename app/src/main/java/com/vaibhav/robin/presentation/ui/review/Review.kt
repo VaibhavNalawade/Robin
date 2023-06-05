@@ -117,7 +117,7 @@ fun Review(
             }
         }
         when (response) {
-            is Response.Error -> ShowError(response.message) {}
+            is Response.Error -> ShowError(response.exception) {}
 
             is Response.Loading -> Loading(modifier = Modifier.fillMaxSize())
             is Response.Success -> {

@@ -53,7 +53,8 @@ class AppModule {
         getAuthState = GetAuthState(repo),
         signUpWithEmailPassword = SignUpWithEmailPassword(repo),
         personalDetailsUpdate = PersonalDetailsUpdate(repo) ,
-        getProfileData=GetUserProfileData(repo)
+        getProfileData=GetUserProfileData(repo),
+        sendPasswordResetMail = SendPasswordResetMail(repo)
     )
 
     @Provides
@@ -82,6 +83,9 @@ class AppModule {
             addPayment = AddPayment(repo),
             getPayments = GetPayments(repo),
             removeAddress = RemoveAddress(repo),
-            removePayment = RemovePayment(repo)
+            removePayment = RemovePayment(repo),
+            placeOrder = PlaceOrder(repo),
+            listenOrder = ListenForOrder(repo),
+            clearCartItem = ClearCartItems(repo)
         )
 }

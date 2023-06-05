@@ -127,17 +127,17 @@ fun ProductDetails(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState()),
             ) {
-                val pager= rememberPagerState()
+
                 Surface(tonalElevation = Dimens.surface_elevation_5) {
                     selectedProductUiState.media[viewModel.selectedVariant.value
                         ?: selectedProductUiState.variantIndex[0]].let { item ->
                         if (item != null) {
+                            val pager= rememberPagerState { item.size }
                             HorizontalPager(
-                               state = pager ,
-                                pageCount = item.size,
+                                state = pager,
                                 pageSize = PageSize.Fill,
                                 contentPadding = PaddingValues(horizontal = Dimens.gird_four),
-                                pageSpacing = Dimens.gird_half
+                                pageSpacing = Dimens.gird_half,
                             ) {
                                 AsyncImage(
                                     modifier= Modifier
@@ -215,7 +215,7 @@ fun ProductDetails(
                 )
                 SpacerVerticalOne()
                 when (val reviewResponse = viewModel.reviewsResponse) {
-                    is Error -> ShowError(exception = reviewResponse.message) {}
+                    is Error -> ShowError(exception = reviewResponse.exception) {}
 
                     Loading -> Loading()
                     is Success -> {

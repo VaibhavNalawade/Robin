@@ -22,6 +22,8 @@
    # This rule will properly ProGuard all the model classes in
     # the package com.yourcompany.models.
     # Modify this rule to fit the structure of your app.
-    -keepclassmembers class com.vaibhav.robin.data.remote.model.** {
-      *;
-    }
+    -keep class com.google.firebase.** { *; }
+    -keep class com.google.android.gms.internal.** { *; }
+    -dontwarn org.conscrypt.**
+    -dontwarn org.bouncycastle.**
+    -dontwarn org.openjsse.**

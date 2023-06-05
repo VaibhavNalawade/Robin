@@ -13,6 +13,7 @@ sealed class Values{
         val gird_three = 24.dp
         val gird_four = 32.dp
 
+        val surface_elevation_0=0.dp
         val surface_elevation_1=1.dp
         val surface_elevation_2=3.dp
         val surface_elevation_3=6.dp

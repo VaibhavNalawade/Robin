@@ -2,13 +2,14 @@ package com.vaibhav.robin.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.domain.model.Response.Error
+import com.vaibhav.robin.domain.model.Response.Loading
+import com.vaibhav.robin.domain.model.Response.Success
 import com.vaibhav.robin.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +51,10 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         try {
             emit(Loading)
             auth.createUserWithEmailAndPassword(email, password).await()
-            UpdateProfile(name,null)
+         /*   while (auth.currentUser==null){
+                delay(1000)
+            }*/
+            UpdateProfile(name,null).collect{}
             emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e))

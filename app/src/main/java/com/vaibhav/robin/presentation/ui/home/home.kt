@@ -44,7 +44,6 @@ import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
     navController: NavHostController,
@@ -62,7 +61,7 @@ fun Home(
         mutableStateOf(0)
     }
     Scaffold(
-        modifier = Modifier,
+        modifier = Modifier.statusBarsPadding().navigationBarsPadding(),
         topBar = {
             RobinAppBar(
                 profileData = profileUiState,
@@ -97,7 +96,7 @@ fun Home(
                 )
             ) {
                 when (productUiState) {
-                    is Response.Error -> ShowError(productUiState.message) {}
+                    is Response.Error -> ShowError(productUiState.exception) {}
                     is Response.Loading -> Loading()
                     is Response.Success -> {
                         items = productUiState.data.size
@@ -138,7 +137,7 @@ fun RobinAppBar(
     productSize: Int
 ) {
     when (navigationType) {
-        RobinNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
+        RobinNavigationType.NAVIGATION_RAILS -> {
             if (appBarType != RobinAppBarType.COLLAPSING_APPBAR)
                 PermanentAppBar(
                     showNavContent = showNavContent,
@@ -182,6 +181,7 @@ fun RobinAppBar(
                 productSize = productSize
             )
         }
+
     }
 }
 
@@ -195,7 +195,7 @@ fun CollapsingAppBar(
     showNavContent: MutableState<Boolean>,
     productSize: Int
 ) {
-    var oldPosition by remember { mutableStateOf(0) }
+    var oldPosition by remember { mutableIntStateOf(0) }
     val scrollUp = remember { mutableStateOf(false) }
 
     LaunchedEffect(scrollState) {

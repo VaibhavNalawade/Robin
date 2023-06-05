@@ -1,11 +1,15 @@
 package com.vaibhav.robin.presentation.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -13,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.firebase.firestore.model.Values
 import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 
@@ -23,7 +28,7 @@ fun NavigationRailsContent(
     signOut: () -> Unit,
 ) {
     val route = navController.currentBackStackEntryAsState().value?.destination?.route
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
 
         NavigationRailItem(
             icon = {
@@ -51,9 +56,12 @@ fun NavigationRailsContent(
                     contentDescription = null
                 )
             },
-            label = { Text("Your Orders") },
+            label = { Text(stringResource(id = R.string.your_orders)) },
             selected = false,
-            onClick = {}
+            onClick = {
+                if (route != RobinDestinations.MANAGE_ORDERS)
+                    navController.navigate(RobinDestinations.MANAGE_ORDERS)
+            }
         )
 
         NavigationRailItem(
@@ -63,7 +71,7 @@ fun NavigationRailsContent(
                     contentDescription = null
                 )
             },
-            label = { Text("Cart") },
+            label = { Text(stringResource(id = R.string.cart)) },
             selected = route == RobinDestinations.CART,
             onClick = {
                 if (route != RobinDestinations.CART)
@@ -115,7 +123,7 @@ fun NavigationRailsContent(
             }
         )
     }
-}
+
 
 @Composable
 fun AuthUserNavigationRailsItem(

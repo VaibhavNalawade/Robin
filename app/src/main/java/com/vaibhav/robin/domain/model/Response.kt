@@ -8,6 +8,6 @@ sealed class Response<out T> {
     ) : Response<T>()
 
     data class Error(
-        val message: Exception
+        val exception: Exception
     ) : Response<Nothing>()
 }

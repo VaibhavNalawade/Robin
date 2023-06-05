@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
-import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
 import com.vaibhav.robin.presentation.models.state.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authUseCases: AuthUseCases,
-    private val databaseUseCases: DatabaseUseCases
+    private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
     private val _signUpEmail = mutableStateOf(TextFieldState())
@@ -25,7 +23,6 @@ class SignUpViewModel @Inject constructor(
 
     private val _signUpPassword = mutableStateOf(TextFieldState())
     val signUpPassword get() = _signUpPassword
-
 
     private val _signUpConfirmPassword = mutableStateOf(TextFieldState())
     val signUpConfirmPassword get() = _signUpConfirmPassword
@@ -35,7 +32,6 @@ class SignUpViewModel @Inject constructor(
 
      var signUpResponse by mutableStateOf<Response<Boolean>>(Response.Success(false))
          private set
-
 
     fun signUp() = viewModelScope.launch(Dispatchers.IO) {
         authUseCases.signUpWithEmailPassword(
@@ -47,27 +43,5 @@ class SignUpViewModel @Inject constructor(
             signUpResponse = response
         }
     }
-
-    fun retry() {
-        signUpResponse = Response.Success(false)
-    }
-
-/*    private fun createProfile() = viewModelScope.launch(Dispatchers.IO) {
-        databaseUseCases.initializeProfile().collect {
-            initializeProfileResponse=it
-            when(it){
-                is Response.Error -> {
-                    if(authUseCases.isUserAuthenticated())
-                        Firebase.auth.apply {
-                            currentUser?.delete()
-                            signOut()
-                        }
-                    responseMain=it
-                }
-                Response.Loading -> {}
-                is Response.Success -> responseMain=it
-            }
-        }
-    }*/
 }
 
