@@ -1,17 +1,7 @@
 ﻿package com.vaibhav.robin.presentation.ui.cart
 
 
-import android.annotation.SuppressLint
-import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.LayerDrawable
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,36 +11,28 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.navigation.NavController
-import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.airbnb.lottie.compose.rememberLottieDynamicProperties
-import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.vaibhav.robin.R
+import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.domain.model.Response.*
 import com.vaibhav.robin.presentation.OrderSummary
 import com.vaibhav.robin.presentation.RobinAppPreview
+import com.vaibhav.robin.presentation.boxEmptyDynamicProperties
 import com.vaibhav.robin.presentation.calculateSummary
+import com.vaibhav.robin.presentation.priceFormat
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
 import com.vaibhav.robin.presentation.ui.common.ShowError
@@ -58,10 +40,9 @@ import com.vaibhav.robin.presentation.ui.common.SpaceBetweenContainer
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
+import com.vaibhav.robin.presentation.ui.common.Summary
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import org.xmlpull.v1.XmlPullParser
-import java.text.DecimalFormat
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,7 +94,7 @@ fun Cart(
             if (maxWidth < 600.dp)
                 CompactLayout(
                     cartItemResponse = cartItems,
-                    retry = {/*todo*/},
+                    retry = {/*todo*/ },
                     onRemoveCartItem = {
                         viewModel.removeCartItem(it)
                     },
@@ -151,7 +132,7 @@ fun Cart(
 }
 
 @Composable
- private fun CompactLayout(
+private fun CompactLayout(
     cartItemResponse: Response<List<CartItem>>,
     retry: () -> Unit,
     onRemoveCartItem: (String) -> Unit,
@@ -166,17 +147,26 @@ fun Cart(
             cartItemResponse = cartItemResponse,
             retry = retry,
             onRemoveCartItem = onRemoveCartItem,
-            onBrowse=onBrowse
+            onBrowse = onBrowse
         )
         SpacerVerticalTwo()
-        AnimatedVisibility(visible = !(cartItemResponse as? Response.Success)?.data.isNullOrEmpty()) {
+        AnimatedVisibility(visible = !(cartItemResponse as? Success)?.data.isNullOrEmpty()) {
             Box(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.gird_two)
             ) {
-                SummaryCart(
-                    cartItem = cartItemResponse as? Response.Success,
+                Summary(
+                    cartItem = cartItemResponse as? Success,
+                    buttonLabel = {
+                        Text(
+                            text = stringResource(
+                                R.string.cart_checkout,
+                                priceFormat.format(it.total)
+                            )
+                        )
+                    },
+                    textMessage = stringResource(id = R.string.cart_msg),
                     onClick = onCheckout
                 )
             }
@@ -216,9 +206,18 @@ private fun ExpandedLayout(
                 .verticalScroll(rememberScrollState())
         ) {
             SpacerVerticalFour()
-            AnimatedVisibility(visible = !(cartItemResponse as? Response.Success)?.data.isNullOrEmpty()) {
-                SummaryCart(
-                    cartItem = cartItemResponse as? Response.Success,
+            AnimatedVisibility(visible = !(cartItemResponse as? Success)?.data.isNullOrEmpty()) {
+                Summary(
+                    cartItem = cartItemResponse as? Success,
+                    buttonLabel = {
+                    Text(
+                        text = stringResource(
+                            R.string.cart_checkout,
+                            priceFormat.format(it.total)
+                        )
+                    )
+                },
+                    textMessage = stringResource(id = R.string.cart_msg),
                     onClick = onCheckout
                 )
             }
@@ -233,7 +232,7 @@ fun CartList(
     onRemoveCartItem: (String) -> Unit,
     onBrowse: () -> Unit
 ) {
-    val n = (cartItemResponse as? Response.Success)?.data?.size ?: 0
+    val n = (cartItemResponse as? Success)?.data?.size ?: 0
     Text(
         modifier = Modifier.padding(horizontal = Dimens.gird_three),
         text = stringResource(R.string.items_in_your_cart, n),
@@ -241,14 +240,14 @@ fun CartList(
         style = typography.bodySmall
     )
     when (cartItemResponse) {
-        is Response.Error ->
+        is Error ->
             ShowError(
                 exception = cartItemResponse.exception,
                 retry = retry
             )
 
-        Response.Loading -> Loading()
-        is Response.Success -> {
+        Loading -> Loading()
+        is Success -> {
             if (cartItemResponse.data.isNotEmpty())
                 cartItemResponse.data.forEach {
                     CartListItem(
@@ -307,112 +306,6 @@ fun CartListItem(
     )
 }
 
-
-@Composable
-private fun SummaryCart(
-    cartItem: Response.Success<List<CartItem>>?,
-    onClick: () -> Unit,
-) {
-    val summary = cartItem?.let { calculateSummary(it.data) } ?: OrderSummary()
-    val format = DecimalFormat("#,##0.00")
-    Surface(
-        shape = CardDefaults.shape,
-        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_2)
-    ) {
-        Column(modifier = Modifier.padding(Dimens.gird_two)) {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onClick,
-                content = {
-                    Text(
-                        text = stringResource(
-                            R.string.cart_checkout,
-                            format.format(summary.total)
-                        )
-                    )
-                }
-            )
-            SpacerVerticalTwo()
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.cart_msg),
-                textAlign = TextAlign.Center,
-                style = typography.bodyMedium
-            )
-            SpacerVerticalTwo()
-            Surface(
-                shape = CardDefaults.shape,
-                color = colorScheme.surface
-            ) {
-                Column(modifier = Modifier.padding(Dimens.gird_two)) {
-                    Text(
-                        text = stringResource(R.string.order_summary),
-                        style = typography.titleMedium
-                    )
-                    SpacerVerticalOne()
-                    SpaceBetweenContainer {
-                        Text(
-                            text = stringResource(R.string.total),
-                            style = typography.bodyMedium
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.local_price,
-                                format.format(summary.total)
-                            ),
-                            style = typography.titleMedium
-                        )
-                    }
-                    SpacerVerticalOne()
-                    SpaceBetweenContainer {
-                        Text(
-                            text = stringResource(R.string.subtotal),
-                            style = typography.bodyMedium
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.local_price,
-                                format.format(summary.subTotal)
-                            ),
-                            style = typography.bodyMedium
-                        )
-                    }
-                    SpacerVerticalOne()
-                    SpaceBetweenContainer {
-                        Text(
-                            text = stringResource(R.string.tax),
-                            style = typography.bodyMedium
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.local_price,
-                                format.format(summary.tax)
-                            ),
-                            style = typography.bodyMedium
-                        )
-                    }
-                    SpacerVerticalOne()
-                    SpaceBetweenContainer {
-                        Text(
-                            text = stringResource(R.string.shipping),
-                            style = typography.bodyMedium
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.local_price,
-                                format.format(summary.shippiing)
-                            ),
-                            style = typography.bodyMedium
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@SuppressLint("RestrictedApi")
-@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun EmptyCart(onBrowse: () -> Unit) {
     Column(
@@ -424,108 +317,33 @@ fun EmptyCart(onBrowse: () -> Unit) {
 
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.box_empty_animation))
         val progress by animateLottieCompositionAsState(composition)
-        val pxValue = LocalDensity.current.run { 6.dp.toPx() }
-        LaunchedEffect(key1 = composition, block = {
-            composition?.layers?.forEach{
-                Log.e("Some",it.name)
-            }
-        })
-        val dynamicProperties = rememberLottieDynamicProperties(
-            rememberLottieDynamicProperty(
-                property = LottieProperty.STROKE_COLOR,
-                value = colorScheme.primary.toArgb(),
-                keyPath = arrayOf(
-                    "**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.STROKE_WIDTH,
-                value = pxValue,
-                keyPath = arrayOf(
-                    "**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "Layer 8/boxgirl2 Outlines","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "Body/boxgirl2 Outlines","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "Legs/boxgirl2 Outlines","**"
-                )
-            )
-            ,
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.primaryContainer.toArgb(),
-                keyPath = arrayOf(
-                    "BOX/boxgirl2 Outlines","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "arms/boxgirl2 Outlines","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "head/boxgirl2 Outlines","Group 8","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5).toArgb(),
-                keyPath = arrayOf(
-                    "head/boxgirl2 Outlines","Group 7","**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = colorScheme.primary.toArgb(),
-                keyPath = arrayOf(
-                    "head/boxgirl2 Outlines","Group 11","**"
-                )
-            ),
-        )
+
         LottieAnimation(
             modifier = Modifier.size(360.dp),
             composition = composition,
             progress = { progress },
-            dynamicProperties=dynamicProperties
+            dynamicProperties = boxEmptyDynamicProperties()
         )
 
         SpacerVerticalFour()
         Text(
             text = stringResource(R.string.empty_cart_msg),
-            style = typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+            style = typography.titleLarge,
+            textAlign = TextAlign.Center
         )
         SpacerVerticalFour()
-        Button(onClick = onBrowse) {
-            Icon(
-                painter = painterResource(id = R.drawable.home),
-                contentDescription = "Localized description",
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.browse))
-
-        }
+        Button(
+            onClick = onBrowse,
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.shopping_bag),
+                    contentDescription = "Localized description",
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(stringResource(R.string.start_shopping))
+            }
+        )
     }
 }
 

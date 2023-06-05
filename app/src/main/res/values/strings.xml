@@ -127,11 +127,11 @@
     </string-array>
     <!--Cart-->
     <string name="cart_checkout">Checkout ₹ %1$s</string>
-    <string name="cart_msg">please click on checkout for complete the transaction </string>
+    <string name="cart_msg">Just a few more steps and you\'ll be on your way to enjoying your new product. \n Review your order details and make sure everything is correct.</string>
     <string name="there_s_nothing_here">There\'s Nothing Here</string>
-    <string name="empty_cart_msg">\"Uh oh, your cart is empty. Let\'s give it some love and fill it up with goodies!\"</string>
+    <string name="empty_cart_msg">\"Oops! Your cart is empty. Please add some items to continue.\"</string>
     <string name="items_in_your_cart">%1$s items in your cart.</string>
-    <string name="browse">Browse</string>
+    <string name="start_shopping">Start shopping</string>
     <!--Order-->
     <string name="order_date">Order Date</string>
     <string name="items_in_your_order">%1$s items in your Orders.</string>

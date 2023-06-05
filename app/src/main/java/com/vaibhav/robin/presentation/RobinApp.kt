@@ -11,6 +11,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -238,6 +239,8 @@ fun MessageBarWrapper(
 @Composable
 fun RobinAppPreview(content: @Composable () -> Unit) {
     RobinTheme {
-        content()
+        Surface {
+            content()
+        }
     }
 }

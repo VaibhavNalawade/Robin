@@ -195,7 +195,7 @@ fun CollapsingAppBar(
     showNavContent: MutableState<Boolean>,
     productSize: Int
 ) {
-    var oldPosition by remember { mutableStateOf(0) }
+    var oldPosition by remember { mutableIntStateOf(0) }
     val scrollUp = remember { mutableStateOf(false) }
 
     LaunchedEffect(scrollState) {

@@ -1,17 +1,14 @@
 package com.vaibhav.robin.presentation.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.vaibhav.robin.R
-
-val RobotoFlex = FontFamily(Font(R.font.roboto_flex))
+//TODO Custom Typography
+//val RobotoFlex = FontFamily(Font(R.font.roboto_flex))
 
 val RobinVariableTypography = Typography(
-    labelLarge = TextStyle(
+   /* labelLarge = TextStyle(
         fontFamily = RobotoFlex,
         fontWeight = FontWeight.W500,
         letterSpacing = 0.1.sp,
@@ -115,5 +112,5 @@ val RobinVariableTypography = Typography(
         letterSpacing = 0.10000000149011612.sp,
         lineHeight = 20.sp,
         fontSize = 14.sp
-    ),
+    ),*/
 )

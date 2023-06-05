@@ -6,9 +6,18 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -30,6 +39,7 @@ import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.domain.exceptions.RobinException
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
+import com.vaibhav.robin.presentation.ui.theme.Values
 import java.text.DecimalFormat
 import java.util.Calendar
 import java.util.Date
@@ -395,3 +405,86 @@ fun generateCardName(pan: String) = when (getCardTypeByPan(pan)) {
 
 fun generateFakeCardPan() =
     "${arrayOf(20, 40, 50, 60, 65).random()}${(10000000000000..99999999999999).random()}"
+
+@Composable
+fun boxEmptyDynamicProperties(): LottieDynamicProperties {
+    val pxValue = LocalDensity.current.run { 6.dp.toPx() }
+  return  rememberLottieDynamicProperties(
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_WIDTH,
+            value = pxValue,
+            keyPath = arrayOf(
+                "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "Layer 8/boxgirl2 Outlines", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "Body/boxgirl2 Outlines", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "Legs/boxgirl2 Outlines", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "BOX/boxgirl2 Outlines", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "arms/boxgirl2 Outlines", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "head/boxgirl2 Outlines", "Group 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_5)
+                .toArgb(),
+            keyPath = arrayOf(
+                "head/boxgirl2 Outlines", "Group 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "head/boxgirl2 Outlines", "Group 11", "**"
+            )
+        ),
+    )
+}
