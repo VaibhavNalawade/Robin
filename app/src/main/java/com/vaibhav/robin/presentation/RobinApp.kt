@@ -7,11 +7,12 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -22,9 +23,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
-import com.vaibhav.robin.data.models.CartItem
+import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.OrderItem
@@ -32,14 +34,16 @@ import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
+import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.FilterState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
-import com.vaibhav.robin.presentation.ui.navigation.RobinNavHost
 import com.vaibhav.robin.presentation.ui.common.ContentWithMessageBar
-import com.vaibhav.robin.presentation.ui.common.NavigationDrawer
 import com.vaibhav.robin.presentation.ui.common.MessageBarPosition
+import com.vaibhav.robin.presentation.ui.common.NavigationDrawer
 import com.vaibhav.robin.presentation.ui.common.NavigationRailsContent
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
+import com.vaibhav.robin.presentation.ui.navigation.RobinNavHost
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import kotlinx.coroutines.launch
@@ -58,7 +62,7 @@ fun RobinApp(
     filterState: FilterState,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
-    cartItems: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     orders: Response<List<OrderItem>>
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
@@ -95,7 +99,7 @@ fun RobinApp(
         filterState = filterState,
         onSelectProduct = onSelectProduct,
         selectedProduct = selectedProduct,
-        cartItems = cartItems,
+        cartUiState = cartUiState,
         orders = orders
     )
 }
@@ -114,7 +118,7 @@ fun RobinNavigationWrapper(
     onApply: (QueryProduct) -> Unit,
     filterState: FilterState,
     selectedProduct: Product?,
-    cartItems: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     onSelectProduct: (Product) -> Unit,
     orders: Response<List<OrderItem>>
 ) {
@@ -157,7 +161,8 @@ fun RobinNavigationWrapper(
     val showNavContent = remember {
         mutableStateOf(true)
     }
-    val cartItemSize = (cartItems as? Response.Success)?.data?.size ?: 0
+    val cartItemSize = (cartUiState as? CartUiState.Success)?.cartItems?.size ?: 0
+    val orderItemSize =(orders as? Response.Success)?.data?.size ?: 0
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -185,11 +190,21 @@ fun RobinNavigationWrapper(
                         NavigationRail(
                             containerColor = colorScheme
                                 .surfaceColorAtElevation(Dimens.surface_elevation_1),
+                            header = {
+                                SpacerVerticalFour()
+                                     Text(
+                                         text = stringResource(id = R.string.app_name),
+                                         style = typography.titleLarge
+                                     )
+
+                            },
                             content = {
                                 NavigationRailsContent(
                                     userAuthenticated = userAuthenticated,
                                     navController = navController,
-                                    signOut = signOut
+                                    signOut = signOut,
+                                    cartItemSize=cartItemSize,
+                                    orderItemsSize = orderItemSize
                                 )
                             }
                         )
@@ -202,12 +217,13 @@ fun RobinNavigationWrapper(
                         RobinNavHost(
                             navController = navController,
                             profileUiState = profileUiState,
+                            userAuthenticated = userAuthenticated,
                             toggleDrawer = toggleDrawer,
                             productUiState = productUiState,
                             messageBarState = state,
                             navigationType = navigationType,
                             appBarType = appBarType,
-                            cartItems = cartItems,
+                            cartUiState = cartUiState,
                             selectedProduct = selectedProduct,
                             onSelectProduct = onSelectProduct,
                             showNavContent = showNavContent,

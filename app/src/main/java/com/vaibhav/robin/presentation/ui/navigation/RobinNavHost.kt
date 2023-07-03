@@ -3,6 +3,7 @@ package com.vaibhav.robin.presentation.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -11,20 +12,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.ProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
+import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.account.DateAndGenderSelect
-import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.PersonalDetails
 import com.vaibhav.robin.presentation.ui.account.ResetPassword
+import com.vaibhav.robin.presentation.ui.account.SignIn
 import com.vaibhav.robin.presentation.ui.account.SignUp
 import com.vaibhav.robin.presentation.ui.cart.Cart
+import com.vaibhav.robin.presentation.ui.cart.CartViewModel
 import com.vaibhav.robin.presentation.ui.checkout.Checkout
 import com.vaibhav.robin.presentation.ui.checkout.CheckoutDone
 import com.vaibhav.robin.presentation.ui.home.Home
@@ -38,12 +40,13 @@ import com.vaibhav.robin.presentation.ui.search.SearchBar
 fun RobinNavHost(
     navController: NavHostController,
     profileUiState: ProfileData?,
+    userAuthenticated: Boolean,
     toggleDrawer: () -> Unit,
     productUiState: Response<List<Product>>,
     messageBarState: MessageBarState,
     navigationType: RobinNavigationType,
     appBarType: RobinAppBarType,
-    cartItems: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     selectedProduct: Product?,
     onSelectProduct: (Product) -> Unit,
     showNavContent: MutableState<Boolean>,
@@ -74,18 +77,40 @@ fun RobinNavHost(
         ) { SearchBar(navController) }
 
         composable(RobinDestinations.CART) {
-            Cart(
-                viewModel = hiltViewModel(),
-                navController = navController,
-                cartItems = cartItems
-            )
+            if (userAuthenticated) {
+                val viewModel: CartViewModel = hiltViewModel()
+                Cart(
+                    cartUiState = cartUiState,
+                    messageBarState=messageBarState,
+                    itemRemoveState=viewModel.itemIsRemovedState.collectAsState(),
+                    onBackNavigation = {
+                        navController.popBackStack()
+                    },
+                    onRemoveCartItem = { cartId ->
+                        viewModel.removeCartItem(cartId)
+                    },
+                    onCheckout = {
+                        navController.navigate(RobinDestinations.CHECKOUT) {
+                            popUpTo(RobinDestinations.CART)
+                        }
+                    },
+                    onBrowse = {
+                        navController.navigate(RobinDestinations.HOME) {
+                            popUpTo(RobinDestinations.HOME)
+                        }
+                    },
+                    retry = {}
+                )
+
+            }
+            else navController.navigate(RobinDestinations.LOGIN_ROUTE)
         }
 
         composable(RobinDestinations.CHECKOUT) {
             Checkout(
                 viewModel = hiltViewModel(),
                 navController = navController,
-                cartItem = cartItems,
+                cartUiState = cartUiState,
                 messageBarState = messageBarState
             )
         }
@@ -111,7 +136,7 @@ fun RobinNavHost(
                     navController = navController,
                     viewModel = hiltViewModel(),
                     selectedProductUiState = selectedProduct,
-                    cartItems = cartItems,
+                    cartItems = cartUiState as? CartUiState.Success,
                     messageBarState = messageBarState,
                 )
             }

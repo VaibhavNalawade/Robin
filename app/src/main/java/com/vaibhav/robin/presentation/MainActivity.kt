@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                         brandsUiState = viewModel.brands,
                         categoriesUiState = viewModel.categories,
                         filterState = viewModel.filterState,
-                        cartItems = viewModel.cartItem,
+                        cartUiState = viewModel.cartUiState,
                         orders = viewModel.orders,
                         signOut = {
                             viewModel.signOut()

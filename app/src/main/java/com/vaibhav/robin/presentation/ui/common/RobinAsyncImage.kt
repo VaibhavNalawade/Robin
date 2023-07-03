@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import coil.compose.AsyncImage
 
 @Composable
@@ -16,7 +17,7 @@ fun RobinAsyncImage(
 ) {
     val placeholder = remember { mutableStateOf(true) }
     AsyncImage(
-        modifier = modifier.placeholder(placeholder.value),
+        modifier = modifier.placeholder(placeholder.value).testTag("CartListItemImage"),
         contentScale = contentScale,
         model = model,
         onSuccess = { placeholder.value = false },

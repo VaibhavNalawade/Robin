@@ -18,6 +18,7 @@ android {
         targetSdk = RobinConfig.targetSdk
         versionCode = RobinConfig.versionCode
         versionName = RobinConfig.versionName
+        testInstrumentationRunner = RobinConfig.instrumentRunner
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -91,4 +92,6 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.Material3.windowsSizeClass)
 
     testImplementation(Dependencies.junit)
+    androidTestImplementation(Dependencies.AndroidX.Compose.testJunit)
+    debugImplementation(Dependencies.AndroidX.Compose.testManifest)
 }

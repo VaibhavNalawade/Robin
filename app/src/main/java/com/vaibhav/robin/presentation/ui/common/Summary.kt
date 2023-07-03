@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.CartItem
-import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.OrderSummary
 import com.vaibhav.robin.presentation.calculateSummary
 import com.vaibhav.robin.presentation.priceFormat
@@ -28,14 +27,14 @@ import com.vaibhav.robin.presentation.ui.theme.Values
 
 @Composable
 fun Summary(
-    cartItem: Response.Success<List<CartItem>>?,
+    cartItem: List<CartItem>?,
     buttonLabel: @Composable RowScope.(OrderSummary) -> Unit,
     textMessage: String,
     onClick: () -> Unit,
 ) {
-    val summary = cartItem?.let { calculateSummary(it.data) } ?: OrderSummary()
+    val summary = cartItem?.let { calculateSummary(it) } ?: OrderSummary()
     Surface(
-        modifier = Modifier.widthIn(max = 480.dp),
+        modifier = Modifier.widthIn(max = 450.dp),
         shape = CardDefaults.shape,
         color = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_2)
     ) {
@@ -128,7 +127,7 @@ fun Summary(
 @Composable
 fun SummaryPreview() {
     Summary(
-        cartItem = Response.Success(listOf(PreviewMocks.cartItem)),
+        cartItem = listOf(PreviewMocks.cartItem),
         buttonLabel = { Text(text = "ButtonLabelMessage") },
         textMessage = "This is Text Message shown below Button",
         onClick = {}

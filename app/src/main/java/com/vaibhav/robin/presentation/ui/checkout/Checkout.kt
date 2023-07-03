@@ -1,7 +1,6 @@
 package com.vaibhav.robin.presentation.ui.checkout
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,10 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,36 +36,31 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.Address
-import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.PaymentData
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.RobinAppPreview
+import com.vaibhav.robin.domain.model.Response.Error
+import com.vaibhav.robin.domain.model.Response.Loading
+import com.vaibhav.robin.domain.model.Response.Success
 import com.vaibhav.robin.presentation.OrderSummary
 import com.vaibhav.robin.presentation.calculateSummary
 import com.vaibhav.robin.presentation.generateCardName
 import com.vaibhav.robin.presentation.getCardResourceByPan
+import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.ProfileInitial
-import com.vaibhav.robin.presentation.ui.common.RobinAppBar
 import com.vaibhav.robin.presentation.ui.common.ShowError
 import com.vaibhav.robin.presentation.ui.common.SpaceBetweenContainer
-import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalThree
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
@@ -80,7 +74,7 @@ import java.text.DecimalFormat
 fun Checkout(
     navController: NavController,
     viewModel: CheckoutViewModel,
-    cartItem: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     messageBarState: MessageBarState
 ) {
     val addPaymentDialogState = rememberSaveable { mutableStateOf(false) }
@@ -150,7 +144,7 @@ fun Checkout(
                     viewModel.selectedAddressId.value != null &&
                     viewModel.selectedPaymentId.value != null
                 ) {
-                    viewModel.placeOrder((cartItem as Success).data)
+                    viewModel.placeOrder((cartUiState as CartUiState.Success).cartItems)
                 } else
                     messageBarState.addError("Please Select Address and payment method")
             }
@@ -191,7 +185,7 @@ fun Checkout(
                 CompactLayout(
                     addressResponse = viewModel.addressResponse,
                     paymentsResponse = viewModel.paymentsResponse,
-                    cartItem = cartItem as? Success,
+                    cartUiState = cartUiState as? CartUiState.Success,
                     currentSelectedPaymentID = viewModel.selectedPaymentId,
                     currentSelectedAddressId = viewModel.selectedAddressId,
                     refreshAddress = { viewModel.loadAddresses() },
@@ -205,7 +199,7 @@ fun Checkout(
                 ExpandedLayout(
                     addressResponse = viewModel.addressResponse,
                     paymentsResponse = viewModel.paymentsResponse,
-                    cartItem = cartItem as? Success,
+                    cartUiState = cartUiState as? CartUiState.Success,
                     currentSelectedPaymentID = viewModel.selectedPaymentId,
                     currentSelectedAddressId = viewModel.selectedAddressId,
                     refreshAddress = { viewModel.loadAddresses() },
@@ -223,7 +217,7 @@ fun Checkout(
 private fun CompactLayout(
     addressResponse: Response<List<Address>>,
     paymentsResponse: Response<List<PaymentData>>,
-    cartItem: Success<List<CartItem>>?,
+    cartUiState: CartUiState.Success?,
     currentSelectedPaymentID: MutableState<String?>,
     currentSelectedAddressId: MutableState<String?>,
     refreshAddress: () -> Unit,
@@ -254,7 +248,7 @@ private fun CompactLayout(
         )
         SpacerVerticalTwo()
         Summary(
-            cartItem = cartItem,
+            cartUiState as? CartUiState.Success,
             onClick = onPay,
             orderResponse = orderResponse
         )
@@ -267,7 +261,7 @@ private fun CompactLayout(
 private fun ExpandedLayout(
     addressResponse: Response<List<Address>>,
     paymentsResponse: Response<List<PaymentData>>,
-    cartItem: Success<List<CartItem>>?,
+    cartUiState: CartUiState.Success?,
     currentSelectedPaymentID: MutableState<String?>,
     currentSelectedAddressId: MutableState<String?>,
     refreshAddress: () -> Unit,
@@ -308,7 +302,7 @@ private fun ExpandedLayout(
         ) {
             SpacerVerticalFour()
             Summary(
-                cartItem = cartItem,
+                cartUiState = cartUiState,
                 onClick = onPay,
                 orderResponse = orderResponse
             )
@@ -481,11 +475,11 @@ private fun PaymentListItem(
 
 @Composable
 private fun Summary(
-    cartItem: Success<List<CartItem>>?,
+    cartUiState: CartUiState.Success?,
     onClick: () -> Unit,
     orderResponse: Response<Boolean>
 ) {
-    val summary = remember { cartItem?.let { calculateSummary(it.data) } ?: OrderSummary() }
+    val summary = remember { cartUiState?.let { calculateSummary(it.cartItems) } ?: OrderSummary() }
     val format = DecimalFormat("#,##0.00")
     Surface(
         shape = CardDefaults.shape,
@@ -593,6 +587,7 @@ private fun Summary(
     }
 }
 
+/*
 @Preview
 @Composable
 fun AddressListItemPreview() {
@@ -714,7 +709,9 @@ fun ExpandedPreview() {
     RobinAppPreview {
         Surface {
             RobinAppBar(
-                title = "order", onBack = { /*TODO*/ },
+                title = "order", onBack = { */
+/*TODO*//*
+ },
                 content = {
                     Box(
                         Modifier
@@ -766,4 +763,4 @@ fun ExpandedPreview() {
             )
         }
     }
-}
+}*/

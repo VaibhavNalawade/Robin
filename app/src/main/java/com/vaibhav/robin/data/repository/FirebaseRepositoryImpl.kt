@@ -1,6 +1,7 @@
 package com.vaibhav.robin.data.repository
 
 
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -150,14 +151,14 @@ class FirebaseRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteCartItem(productId: String): Flow<Response<Boolean>> =
+    override suspend fun deleteCartItem(cartItemId: String): Flow<Response<Boolean>> =
         tryCatchScaffold {
             source.deleteDocument(
                 firestore
                     .collection(COLLECTION_PROFILE_DATA)
                     .document(auth.getUserUid()!!)
                     .collection(COLLECTION_CART)
-                    .document(productId)
+                    .document(cartItemId)
             )
         }
 
@@ -278,7 +279,8 @@ class FirebaseRepositoryImpl @Inject constructor(
         ).catch {
             trySend(Response.Error(it as Exception))
         }.collect {
-            trySend(Response.Success(it.toObjects(CartItem::class.java)))
+            if(it.metadata.isFromCache) trySend(Response.Error(FirebaseNetworkException("OFFLINE")))
+            else trySend(Response.Success(it.toObjects(CartItem::class.java)))
         }
     }
 

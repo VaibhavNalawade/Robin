@@ -17,6 +17,7 @@ object PreviewMocks {
         email = "Vn123@test.com",
         phone = "8668835535",
         userIsVerified = false,
+        uid = "12345678456789"
     )
     val product = Product(
         brandId = "asdjr43ddD",

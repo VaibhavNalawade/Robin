@@ -1,15 +1,15 @@
 object Dependencies {
 
-    const val KOTLIN_VERSION = "1.8.21"
-    private const val COMPOSE_VERSION = "1.5.0-beta01"
-    const val COMPOSE_COMPILER_VERSION = "1.4.7"
+    const val KOTLIN_VERSION = "1.8.22"
+    private const val COMPOSE_VERSION = "1.6.0-alpha01"
+    const val COMPOSE_COMPILER_VERSION = "1.4.8"
     private const val ACTIVITY_VERSION = "1.7.2"
-    private const val MDC3_VERSION = "1.2.0-alpha02"
+    private const val MDC3_VERSION = "1.2.0-alpha03"
     private const val GSM_VERSION = "4.3.15"
     private const val ACCOMPANIST_VERSION = "0.31.2-alpha"
     private const val LIFECYCLE_VERSION = "2.6.1"
     private const val COROUTINES_VERSION = "1.7.1"
-    private const val AGP_VERSION = "8.0.1"
+    private const val AGP_VERSION = "8.1.0-rc01"
     private const val DAGGER_HILT_VERSION = "2.44"
 
     const val androidPlugin = "com.android.application"
@@ -40,7 +40,6 @@ object Dependencies {
             const val placeholderMaterial =
                 "com.google.accompanist:accompanist-placeholder:$ACCOMPANIST_VERSION"
             const val adaptive = "com.google.accompanist:accompanist-adaptive:$ACCOMPANIST_VERSION"
-            const val drawablePainter = "com.google.accompanist:accompanist-drawablepainter:$ACCOMPANIST_VERSION"
         }
 
         object DaggerHilt {
@@ -64,7 +63,7 @@ object Dependencies {
 
 
     object AndroidX {
-        const val navigation = "androidx.navigation:navigation-compose:2.7.0-alpha01"
+        const val navigation = "androidx.navigation:navigation-compose:2.7.0-beta02"
         const val activity = "androidx.activity:activity-compose:$ACTIVITY_VERSION"
 
         object Core {
@@ -85,6 +84,8 @@ object Dependencies {
             const val animation="androidx.compose.animation:animation-graphics:$COMPOSE_VERSION"
             const val uiPreview = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
             const val previewTooling = "androidx.compose.ui:ui-tooling:$COMPOSE_VERSION"
+            const val testJunit="androidx.compose.ui:ui-test-junit4:$COMPOSE_VERSION"
+            const val testManifest="androidx.compose.ui:ui-test-manifest:$COMPOSE_VERSION"
 
             object Material3 {
                 const val main = "androidx.compose.material3:material3:$MDC3_VERSION"

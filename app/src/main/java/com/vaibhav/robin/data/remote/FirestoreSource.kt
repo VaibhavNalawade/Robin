@@ -3,16 +3,15 @@ package com.vaibhav.robin.data.remote
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
-import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Success
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -155,7 +154,7 @@ class FirestoreSource @Inject constructor(private val firestore: FirebaseFiresto
     }
 
     fun listenDocumentChanges(collectionReference: CollectionReference) =
-        collectionReference.snapshots()
+        collectionReference.snapshots(MetadataChanges.INCLUDE)
 
     suspend inline fun <reified T> fetchFromReferenceToObject(query: Query) = flow {
         try {

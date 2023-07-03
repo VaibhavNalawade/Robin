@@ -2,72 +2,105 @@
 
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.CartItem
-import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.model.Response.*
-import com.vaibhav.robin.presentation.OrderSummary
 import com.vaibhav.robin.presentation.RobinAppPreview
-import com.vaibhav.robin.presentation.boxEmptyDynamicProperties
-import com.vaibhav.robin.presentation.calculateSummary
+import com.vaibhav.robin.presentation.models.state.CartErrorHandler
+import com.vaibhav.robin.presentation.models.state.CartUiState
+import com.vaibhav.robin.presentation.models.state.CartUiState.EmptyCart
+import com.vaibhav.robin.presentation.models.state.CartUiState.Error
+import com.vaibhav.robin.presentation.models.state.CartUiState.Loading
+import com.vaibhav.robin.presentation.models.state.CartUiState.Success
+import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.priceFormat
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
-import com.vaibhav.robin.presentation.ui.common.ShowError
-import com.vaibhav.robin.presentation.ui.common.SpaceBetweenContainer
+import com.vaibhav.robin.presentation.ui.common.ShowFullScreenError
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
-import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
-import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.common.Summary
-import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
+import com.vaibhav.robin.presentation.ui.common.boxEmptyDynamicProperties
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Cart(
-    viewModel: CartViewModel,
-    navController: NavController,
-    cartItems: Response<List<CartItem>>
+    cartUiState: CartUiState,
+    messageBarState: MessageBarState,
+    itemRemoveState: State<CartItemRemoveState?>,
+    onBackNavigation: () -> Unit,
+    onRemoveCartItem: (String) -> Unit,
+    onCheckout: () -> Unit,
+    onBrowse: () -> Unit,
+    retry: () -> Unit,
 ) {
+    val message = itemRemoveState.value?.message?.asString()
     LaunchedEffect(
-        key1 = false,
+        key1 = message,
         block = {
-            if (!viewModel.getAuthState())
-                navController.navigate(RobinDestinations.LOGIN_ROUTE) {
-                    popUpTo(
-                        route = RobinDestinations.CART
-                    ) {
-                        inclusive = true
-                    }
-                }
+            if (message?.isNotEmpty() == true) {
+                if (itemRemoveState.value?.isError == false)
+                    messageBarState.addSuccess(message)
+                else messageBarState.addError(message)
+            }
         }
     )
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = {
@@ -78,7 +111,10 @@ fun Cart(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = onBackNavigation,
+                        modifier = Modifier.testTag(CartTestTags.BACK_BUTTON)
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = stringResource(id = R.string.navigation_back)
@@ -91,41 +127,32 @@ fun Cart(
     ) { padding ->
         BoxWithConstraints(modifier = Modifier.padding(padding)) {
 
-            if (maxWidth < 600.dp)
-                CompactLayout(
-                    cartItemResponse = cartItems,
-                    retry = {/*todo*/ },
-                    onRemoveCartItem = {
-                        viewModel.removeCartItem(it)
-                    },
-                    onCheckout = {
-                        navController.navigate(RobinDestinations.CHECKOUT) {
-                            popUpTo(RobinDestinations.CART)
-                        }
-                    },
-                    onBrowse = {
-                        navController.navigate(RobinDestinations.HOME) {
-                            popUpTo(RobinDestinations.HOME)
-                        }
-                    }
-                )
-            else
+            if (maxWidth < 600.dp) {
+                var visibilityAnimation by remember {
+                    mutableStateOf(false)
+                }
+                LaunchedEffect(key1 = 0, block = {
+                    visibilityAnimation = true
+                })
+                AnimatedVisibility(
+                    visible = visibilityAnimation,
+                    enter = slideInVertically(tween(200)) { +60 },
+                ) {
+                    CompactLayout(
+                        cartUiState = cartUiState,
+                        retry = retry,
+                        onRemoveCartItem = onRemoveCartItem,
+                        onCheckout = onCheckout,
+                        onBrowse = onBrowse
+                    )
+                }
+            } else
                 ExpandedLayout(
-                    cartItemResponse = cartItems,
-                    retry = {},
-                    onRemoveCartItem = {
-                        viewModel.removeCartItem(it)
-                    },
-                    onCheckout = {
-                        navController.navigate(RobinDestinations.CHECKOUT) {
-                            popUpTo(RobinDestinations.CART)
-                        }
-                    },
-                    onBrowse = {
-                        navController.navigate(RobinDestinations.HOME) {
-                            popUpTo(RobinDestinations.HOME)
-                        }
-                    }
+                    cartUiState = cartUiState,
+                    retry = retry,
+                    onRemoveCartItem = onRemoveCartItem,
+                    onCheckout = onCheckout,
+                    onBrowse = onBrowse
                 )
         }
     }
@@ -133,140 +160,182 @@ fun Cart(
 
 @Composable
 private fun CompactLayout(
-    cartItemResponse: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     retry: () -> Unit,
     onRemoveCartItem: (String) -> Unit,
     onCheckout: () -> Unit,
     onBrowse: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-        CartList(
-            cartItemResponse = cartItemResponse,
-            retry = retry,
-            onRemoveCartItem = onRemoveCartItem,
-            onBrowse = onBrowse
-        )
-        SpacerVerticalTwo()
-        AnimatedVisibility(visible = !(cartItemResponse as? Success)?.data.isNullOrEmpty()) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimens.gird_two)
-            ) {
-                Summary(
-                    cartItem = cartItemResponse as? Success,
-                    buttonLabel = {
-                        Text(
-                            text = stringResource(
-                                R.string.cart_checkout,
-                                priceFormat.format(it.total)
-                            )
-                        )
-                    },
-                    textMessage = stringResource(id = R.string.cart_msg),
-                    onClick = onCheckout
+    when (cartUiState) {
+
+        EmptyCart -> EmptyCart(onBrowse)
+
+
+        Loading -> Loading()
+
+        is Error -> {
+            val errorHandler = remember {
+                CartErrorHandler(
+                    exception = cartUiState.exception,
+                    onSupport = {},
+                    onAttemptLater = {},
+                    onRetry = retry
                 )
             }
+            ShowFullScreenError(errorHandler = errorHandler)
         }
+
+        is Success -> CartList(
+            cartUiSuccess = cartUiState,
+            onRemoveCartItem = onRemoveCartItem,
+            endContent = { modifier ->
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.gird_two)
+                ) {
+                    Summary(
+                        cartItem = cartUiState.cartItems,
+                        buttonLabel = {
+                            Text(
+                                text = stringResource(
+                                    R.string.cart_checkout,
+                                    priceFormat.format(it.total)
+                                )
+                            )
+                        },
+                        textMessage = stringResource(id = R.string.cart_msg),
+                        onClick = onCheckout
+                    )
+                }
+            }
+        )
     }
 }
 
 @Composable
 private fun ExpandedLayout(
-    cartItemResponse: Response<List<CartItem>>,
+    cartUiState: CartUiState,
     retry: () -> Unit,
     onRemoveCartItem: (String) -> Unit,
     onCheckout: () -> Unit,
     onBrowse: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .widthIn(300.dp, 1500.dp)
-    ) {
-        Column(
-            Modifier
-                .padding(Dimens.gird_two)
-                .fillMaxWidth(.60f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            CartList(
-                cartItemResponse = cartItemResponse,
-                retry = retry,
-                onRemoveCartItem = onRemoveCartItem,
-                onBrowse = onBrowse
-            )
-        }
-        Column(
-            Modifier
-                .padding(Dimens.gird_two)
-                .widthIn(300.dp, 500.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            SpacerVerticalFour()
-            AnimatedVisibility(visible = !(cartItemResponse as? Success)?.data.isNullOrEmpty()) {
-                Summary(
-                    cartItem = cartItemResponse as? Success,
-                    buttonLabel = {
-                    Text(
-                        text = stringResource(
-                            R.string.cart_checkout,
-                            priceFormat.format(it.total)
-                        )
-                    )
-                },
-                    textMessage = stringResource(id = R.string.cart_msg),
-                    onClick = onCheckout
+    when (cartUiState) {
+
+        EmptyCart -> EmptyCart(onBrowse)
+
+        Loading -> Loading()
+
+        is Error -> {
+            val errorHandler = remember {
+                CartErrorHandler(
+                    exception = cartUiState.exception,
+                    onSupport = {},
+                    onAttemptLater = {},
+                    onRetry = retry
                 )
+            }
+            ShowFullScreenError(errorHandler = errorHandler)
+        }
+
+        is Success -> {
+            Row(
+                modifier = Modifier
+                    .widthIn(300.dp, 1500.dp)
+            ) {
+                Column(
+                    Modifier
+                        .padding(Dimens.gird_two)
+                        .weight(1f)
+                ) {
+                    CartList(
+                        cartUiSuccess = cartUiState,
+                        onRemoveCartItem = onRemoveCartItem,
+                    )
+                }
+                Column(
+                    Modifier
+                        .padding(Dimens.gird_two)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    SpacerVerticalFour()
+                    Summary(
+                        cartItem = cartUiState.cartItems,
+                        buttonLabel = {
+                            Text(
+                                text = stringResource(
+                                    R.string.cart_checkout,
+                                    priceFormat.format(it.total)
+                                )
+                            )
+                        },
+                        textMessage = stringResource(id = R.string.cart_msg),
+                        onClick = onCheckout
+                    )
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CartList(
-    cartItemResponse: Response<List<CartItem>>,
-    retry: () -> Unit,
+    cartUiSuccess: Success,
     onRemoveCartItem: (String) -> Unit,
-    onBrowse: () -> Unit
+    endContent: @Composable (Modifier) -> Unit = {}
 ) {
-    val n = (cartItemResponse as? Success)?.data?.size ?: 0
-    Text(
-        modifier = Modifier.padding(horizontal = Dimens.gird_three),
-        text = stringResource(R.string.items_in_your_cart, n),
-        maxLines = 1,
-        style = typography.bodySmall
-    )
-    when (cartItemResponse) {
-        is Error ->
-            ShowError(
-                exception = cartItemResponse.exception,
-                retry = retry
-            )
-
-        Loading -> Loading()
-        is Success -> {
-            if (cartItemResponse.data.isNotEmpty())
-                cartItemResponse.data.forEach {
+    LazyColumn(
+        content = {
+            item(key = null) {
+                val n = cartUiSuccess.cartItems.size
+                Text(
+                    modifier = Modifier.padding(horizontal = Dimens.gird_three),
+                    text = stringResource(R.string.items_in_your_cart, n),
+                    maxLines = 1,
+                    style = typography.bodySmall
+                )
+            }
+            items(
+                items = cartUiSuccess.cartItems,
+                key = { it.cartId },
+                itemContent = {
                     CartListItem(
+                        modifier = Modifier.animateItemPlacement(
+                            animationSpec = TweenSpec(300)
+                        ),
                         cartItems = it,
                         onRemoveCartItem = onRemoveCartItem
                     )
                 }
-            else
-                EmptyCart(onBrowse)
+            )
+            item(key = "null") {
+
+                endContent(
+                    Modifier.animateItemPlacement(
+                        animationSpec = TweenSpec(300)
+                    )
+                )
+
+            }
         }
-    }
+    )
 }
+
 
 @Composable
 fun CartListItem(
+    modifier: Modifier = Modifier,
     cartItems: CartItem,
     onRemoveCartItem: (String) -> Unit
 ) {
     ListItem(
+        modifier = modifier,
         headlineContent = {
             Text(
                 text = cartItems.productName,
@@ -281,19 +350,26 @@ fun CartListItem(
         },
         supportingContent = {
             Text(
-                text = stringResource(id = R.string.local_price, cartItems.price),
+                text = stringResource(
+                    id = R.string.local_price,
+                    priceFormat.format(cartItems.price)
+                ),
                 maxLines = 1
             )
         },
         leadingContent = {
             RobinAsyncImage(
-                modifier = Modifier.size(56.dp),
                 contentDescription = null,
-                model = cartItems.productImage
+                model = cartItems.productImage,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(56.dp)
             )
         },
         trailingContent = {
             IconButton(
+                modifier = Modifier
+                    .testTag("RemoveButton"),
                 onClick = { onRemoveCartItem(cartItems.cartId) },
                 content = {
                     Icon(
@@ -309,22 +385,24 @@ fun CartListItem(
 @Composable
 fun EmptyCart(onBrowse: () -> Unit) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Dimens.gird_four),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(Dimens.gird_four)
+            .verticalScroll(rememberScrollState())
     ) {
 
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.box_empty_animation))
         val progress by animateLottieCompositionAsState(composition)
 
         LottieAnimation(
-            modifier = Modifier.size(360.dp),
             composition = composition,
             progress = { progress },
-            dynamicProperties = boxEmptyDynamicProperties()
+            dynamicProperties = boxEmptyDynamicProperties(),
+            modifier = Modifier
+                .size(360.dp)
+                .testTag(CartTestTags.EMPTY_CART_ANIMATED_ILLUSTRATE)
         )
-
         SpacerVerticalFour()
         Text(
             text = stringResource(R.string.empty_cart_msg),
@@ -337,14 +415,20 @@ fun EmptyCart(onBrowse: () -> Unit) {
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.shopping_bag),
-                    contentDescription = "Localized description",
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(ButtonDefaults.IconSize)
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(stringResource(R.string.start_shopping))
             }
         )
     }
+}
+object CartTestTags{
+    const val BACK_BUTTON="BackButton"
+    const val EMPTY_CART_ANIMATED_ILLUSTRATE="EmptyCartAnimation"
+    const val TAG="CartCompose"
 }
 
 @Preview

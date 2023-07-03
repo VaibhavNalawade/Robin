@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vaibhav.robin.data.models.CartItem
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.OrderItem
@@ -15,6 +16,7 @@ import com.vaibhav.robin.data.models.QueryProduct
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
+import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.FilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +39,7 @@ class MainViewModel @Inject constructor(
         private set
     var brands by mutableStateOf<Response<List<MainBrand>>>(Response.Loading)
         private set
-    var cartItem by mutableStateOf<Response<List<CartItem>>>(Response.Loading)
+    var cartUiState by mutableStateOf<CartUiState>(CartUiState.Loading)
         private set
     val filterState by mutableStateOf(FilterState())
 
@@ -53,10 +55,14 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            authUseCases.getAuthState().collect {
-                userAuthenticated = it
-                profileData = authUseCases.getProfileData()
-                subscribeCartItems()
+            authUseCases.getAuthState().collect { currentUser ->
+                userAuthenticated = currentUser
+                if (currentUser) {
+                    profileData = authUseCases.getProfileData()
+                    subscribeCartItems()
+                    subscribeOrders()
+                    Firebase.crashlytics.setUserId(profileData?.uid?:"NA")
+                }
             }
         }
         viewModelScope.launch {
@@ -79,8 +85,6 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
-        subscribeCartItems()
-        subscribeOrders()
     }
 
     var products by mutableStateOf<Response<List<Product>>>(Response.Loading)
@@ -105,7 +109,12 @@ class MainViewModel @Inject constructor(
             databaseUseCases.listenForCartItems()
                 .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }
                 .collect {
-                    cartItem = it
+                    cartUiState = when (it) {
+                        is Response.Error -> CartUiState.Error(it.exception)
+                        Response.Loading -> CartUiState.Loading
+                        is Response.Success -> if (it.data.isEmpty()) CartUiState.EmptyCart
+                        else CartUiState.Success(it.data)
+                    }
                 }
         }
     }

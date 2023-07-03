@@ -132,6 +132,8 @@
     <string name="empty_cart_msg">\"Oops! Your cart is empty. Please add some items to continue.\"</string>
     <string name="items_in_your_cart">%1$s items in your cart.</string>
     <string name="start_shopping">Start shopping</string>
+    <string name="remove_cart_message_bar_error">Something went wrong while remove items</string>
+    <string name="remove_cart_message_bar_success">%1$s items removed from cart.</string>
     <!--Order-->
     <string name="order_date">Order Date</string>
     <string name="items_in_your_order">%1$s items in your Orders.</string>

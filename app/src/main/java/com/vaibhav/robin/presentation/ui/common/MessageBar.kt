@@ -114,7 +114,7 @@ package com.vaibhav.robin.presentation.ui.common
     }
 
     @Composable
-    internal fun MessageBarComponent(
+    private fun MessageBarComponent(
         messageBarState: MessageBarState,
         position: MessageBarPosition,
         visibilityDuration: Long,
@@ -179,7 +179,7 @@ package com.vaibhav.robin.presentation.ui.common
     }
 
     @Composable
-    internal fun MessageBar(
+    private fun MessageBar(
         message: String?,
         error: String?,
         successIcon: ImageVector,
@@ -240,14 +240,14 @@ package com.vaibhav.robin.presentation.ui.common
 
         }
     }
-internal object TestTags {
-    internal const val MESSAGE_BAR = "MessageBar"
-    internal const val MESSAGE_BAR_TEXT = "MessageBarText"
+ object TestTags {
+    const val MESSAGE_BAR = "MessageBar"
+    const val MESSAGE_BAR_TEXT = "MessageBarText"
 }
 
     @Composable
     @Preview
-    internal fun MessageBarPreview() {
+    private fun MessageBarPreview() {
         MessageBar(
             message = "Successfully Updated.",
             error = null,
@@ -265,7 +265,7 @@ internal object TestTags {
 
     @Composable
     @Preview
-    internal fun MessageBarErrorPreview() {
+    private fun MessageBarErrorPreview() {
         MessageBar(
             message = null,
             error = "Internet Unavailable.",

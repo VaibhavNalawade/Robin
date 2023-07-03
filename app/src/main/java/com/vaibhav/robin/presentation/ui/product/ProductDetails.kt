@@ -1,17 +1,53 @@
 package com.vaibhav.robin.presentation.ui.product
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconToggleButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,14 +63,33 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.vaibhav.robin.R
-import com.vaibhav.robin.data.models.*
+import com.vaibhav.robin.data.models.Product
+import com.vaibhav.robin.data.models.Review
 import com.vaibhav.robin.domain.model.Response
-import com.vaibhav.robin.domain.model.Response.*
+import com.vaibhav.robin.domain.model.Response.Error
+import com.vaibhav.robin.domain.model.Response.Loading
+import com.vaibhav.robin.domain.model.Response.Success
+import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.timeStampHandler
+import com.vaibhav.robin.presentation.ui.common.CircularImage
+import com.vaibhav.robin.presentation.ui.common.ExpandingCard
+import com.vaibhav.robin.presentation.ui.common.Loading
+import com.vaibhav.robin.presentation.ui.common.ProfileInitial
+import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
+import com.vaibhav.robin.presentation.ui.common.ShowError
+import com.vaibhav.robin.presentation.ui.common.SlideInTopVisibilityAnimation
+import com.vaibhav.robin.presentation.ui.common.SpaceBetweenContainer
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalHalf
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalOne
+import com.vaibhav.robin.presentation.ui.common.SpacerHorizontalTwo
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalOne
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalThree
+import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
+import com.vaibhav.robin.presentation.ui.common.Star
+import com.vaibhav.robin.presentation.ui.common.tweenSpec
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
-import com.vaibhav.robin.presentation.ui.common.*
-import com.vaibhav.robin.presentation.ui.theme.Values.*
+import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import kotlin.math.abs
 
 
@@ -46,7 +101,7 @@ fun ProductDetails(
     viewModel: ProductViewModel,
     navController: NavHostController,
     selectedProductUiState: Product,
-    cartItems: Response<List<CartItem>>,
+    cartItems: CartUiState.Success?,
     messageBarState: MessageBarState
 ) {
     LaunchedEffect(
@@ -55,16 +110,12 @@ fun ProductDetails(
             viewModel.loadCurrentUserReview(productId = selectedProductUiState.id)
             viewModel.loadReview(productId = selectedProductUiState.id)
             viewModel.checkFavorite(productId = selectedProductUiState.id)
-            when(cartItems){
-                is Success -> {
-                    cartItems.data.forEach {
-                        if (it.productId==selectedProductUiState.id) {
-                            messageBarState.addError("Item already exits in your cart")
-                            return@forEach
-                        }
-                    }
+
+            cartItems?.cartItems?.forEach {
+                if (it.productId == selectedProductUiState.id) {
+                    messageBarState.addError("Item already exits in your cart")
+                    return@forEach
                 }
-                else->{}
             }
         }
     )
@@ -132,7 +183,7 @@ fun ProductDetails(
                     selectedProductUiState.media[viewModel.selectedVariant.value
                         ?: selectedProductUiState.variantIndex[0]].let { item ->
                         if (item != null) {
-                            val pager= rememberPagerState { item.size }
+                            val pager = rememberPagerState { item.size }
                             HorizontalPager(
                                 state = pager,
                                 pageSize = PageSize.Fill,
@@ -140,7 +191,7 @@ fun ProductDetails(
                                 pageSpacing = Dimens.gird_half,
                             ) {
                                 AsyncImage(
-                                    modifier= Modifier
+                                    modifier = Modifier
                                         .aspectRatio(0.6f)
                                         .graphicsLayer {
                                             lerp(
@@ -174,18 +225,18 @@ fun ProductDetails(
                     selectedSize = viewModel.selectedSize.value ?: 0
                 )
                 SpacerVerticalOne()
-                Box(modifier = Modifier.padding(horizontal = Dimens.gird_three)){
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.addCartItem(selectedProductUiState) },
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.add_shopping_cart),
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(text = "Add To Cart")
-                    }
-                )
+                Box(modifier = Modifier.padding(horizontal = Dimens.gird_three)) {
+                    Button(modifier = Modifier.fillMaxWidth(),
+                        onClick = { viewModel.addCartItem(selectedProductUiState) },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_shopping_cart),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+                            Text(text = "Add To Cart")
+                        }
+                    )
                 }
                 SpacerVerticalOne()
                 VariantSelector(
