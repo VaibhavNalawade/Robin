@@ -417,11 +417,13 @@ fun generateFakeCardPan() =
 
 
  object RobinTestTags{
-     const val errorResolveBtn="ErrorButton"
-     const val errorTitle="ErrorTitle"
-     const val errorMsg="ErrorMessage"
-     const val errorVisuals="ErrorVisuals"
-     const val loading="Loading"
+     const val ERROR_RESOLVE_BUTTON="ErrorButton"
+     const val ERROR_TITLE="ErrorTitle"
+     const val ERROR_MESSAGE="ErrorMessage"
+     const val ERROR_VISUALS="ErrorVisuals"
+     const val LOADING="Loading"
+     const val SUMMARY="Summary"
+     const val SUMMARY_CHECKOUT_BUTTON="SummaryCheckoutButton"
  }
 
 fun cartResponseIsEmpty(response: Response<List<CartItem>>):Boolean{

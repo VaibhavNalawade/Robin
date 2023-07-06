@@ -87,7 +87,7 @@ fun ShowError(
                         modifier = Modifier
                             .size(128.dp)
                             .padding(Dimens.gird_three)
-                            .testTag(RobinTestTags.errorVisuals)
+                            .testTag(RobinTestTags.ERROR_VISUALS)
                     )
                 }
                 Text(
@@ -96,7 +96,7 @@ fun ShowError(
                     style = typography.titleLarge.copy(colorScheme.onSurfaceVariant),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag(RobinTestTags.errorTitle)
+                        .testTag(RobinTestTags.ERROR_TITLE)
                 )
                 SpacerVerticalOne()
                 Text(
@@ -105,13 +105,13 @@ fun ShowError(
                     style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag(RobinTestTags.errorMsg)
+                        .testTag(RobinTestTags.ERROR_MESSAGE)
                 )
                 SpacerVerticalTwo()
                 Button(
                     onClick = retry,
                     modifier = Modifier
-                        .testTag(RobinTestTags.errorResolveBtn),
+                        .testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
                     content = {
                         Text(text = stringResource(R.string.try_again))
                     }
@@ -157,7 +157,7 @@ fun ShowFullScreenError(
                             progress = { progress },
                             modifier = Modifier
                                 .size(360.dp)
-                                .testTag(RobinTestTags.errorVisuals),
+                                .testTag(RobinTestTags.ERROR_VISUALS),
                         )
                     }
                     else
@@ -172,7 +172,7 @@ fun ShowFullScreenError(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(64.dp)
-                                    .testTag(RobinTestTags.errorVisuals)
+                                    .testTag(RobinTestTags.ERROR_VISUALS)
                             )
                         }
                 }
@@ -183,7 +183,7 @@ fun ShowFullScreenError(
                     style = typography.titleLarge.copy(colorScheme.onSurfaceVariant),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag(RobinTestTags.errorTitle)
+                        .testTag(RobinTestTags.ERROR_TITLE)
                 )
                 SpacerVerticalOne()
                 Text(
@@ -192,7 +192,7 @@ fun ShowFullScreenError(
                     style = typography.bodyMedium.copy(colorScheme.onSurfaceVariant),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag(RobinTestTags.errorMsg)
+                        .testTag(RobinTestTags.ERROR_MESSAGE)
                 )
                 SpacerVerticalTwo()
                 ErrorResolutionPolicyUI(resolutionPolicy = errorHandler.getErrorResolutionPolicy())
@@ -230,7 +230,7 @@ fun ErrorResolutionPolicyUI(resolutionPolicy: ErrorResolutionPolicy) {
     Button(
         onClick = onclick,
         modifier = Modifier
-            .testTag(RobinTestTags.errorResolveBtn),
+            .testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
         content = {
             Icon(
                 painter = painterResource(id = drawableRes),

@@ -51,25 +51,24 @@ class MainActivity : ComponentActivity() {
                 Surface {
                     RobinApp(
                         windowSize = windowSize,
-                        displayFeatures = displayFeatures,
-                        profileUiState = viewModel.profileData,
-                        userAuthenticated = viewModel.userAuthenticated,
-                        productUiState = viewModel.products,
-                        selectedProduct = viewModel.selectedProduct,
-                        brandsUiState = viewModel.brands,
-                        categoriesUiState = viewModel.categories,
-                        filterState = viewModel.filterState,
-                        cartUiState = viewModel.cartUiState,
-                        orders = viewModel.orders,
                         signOut = {
                             viewModel.signOut()
                         },
+                        userAuthenticated = viewModel.userAuthenticated,
+                        profileUiState = viewModel.profileData,
+                        productUiState = viewModel.products,
+                        categoriesUiState = viewModel.categories,
+                        brandsUiState = viewModel.brands,
                         onApply = {
                             viewModel.quarry(it)
                         },
+                        filterState = viewModel.filterState,
+                        selectedProduct = viewModel.selectedProduct,
                         onSelectProduct = { product ->
                             viewModel.selectedProduct = product
-                        }
+                        },
+                        cartUiState = viewModel.cartUiState,
+                        orders = viewModel.orders
                     )
                 }
             }

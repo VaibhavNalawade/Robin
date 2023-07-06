@@ -35,16 +35,62 @@ object PreviewMocks {
         status = "Avilable",
 
     )
-    val cartItem = CartItem(
-        cartId = UUID.randomUUID().toString(),
-        productId = product.id,
-        productName = product.name,
-        productVariant = "S",
-        productSize = 0,
-        productImage = "https://picsum.photos/200",
-        price = 3243.00,
-        brandName = product.brandName,
-        brandLogo = product.brandLogo
+    val cartItem = listOf(
+        CartItem(
+            brandName ="Loop" ,
+            productImage = "https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/Product%2Fu0TkO3sMDEAoQqnAzFmh%2F58056.jpg?alt=media&token=831f730d-ae21-4d7d-997e-fe902dcf462b",
+            productId = "u0TkO3sMDEAoQqnAzFmh",
+            productVariant = "variant_0",
+            price = 2299.00,
+            productSize = 0,
+            cartId ="8bfdba13-728d-4ded-936d-f1f287f17077" ,
+            brandLogo ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%206.png?alt=media&token=39141dd7-112e-4be4-8b40-e76f74c1d252" ,
+            productName = "Shopper",
+        ),
+        CartItem(
+            brandName ="Flame" ,
+            productImage ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/Product%2F0JeBFgoTTrXW5UaG4zWb%2F12565.jpg?alt=media&token=648d2a2a-060a-43dc-b3b6-3b9d3988f98a",
+            productId = "0JeBFgoTTrXW5UaG4zWb",
+            productVariant ="variant_1" ,
+            price =1999.00,
+            productSize =0,
+            cartId = "8f24d952-cb57-4168-aa0a-eb79861de91d",
+            brandLogo = "https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda",
+            productName ="Linen-blend shirt",
+        ),
+        CartItem(
+            brandName ="Loop" ,
+            productImage ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/Product%2FXMd8KkntoI3aDhwiLarO%2F49710.jpg?alt=media&token=779cda11-aa24-4e1c-87f8-b3e3ea50b4e6" ,
+            productId = "XMd8KkntoI3aDhwiLarO",
+            productVariant ="variant_0" ,
+            price = 699.00,
+            productSize =0 ,
+            cartId ="a3f08372-6d76-4358-a3af-19713971995e" ,
+            brandLogo = "https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%206.png?alt=media&token=39141dd7-112e-4be4-8b40-e76f74c1d252",
+            productName ="Belt" ,
+        ),
+        CartItem(
+            brandName ="Flame" ,
+            productImage ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/Product%2FI7uIHF772ag4WRglBAJV%2F64522.jpg?alt=media&token=216c464d-91ba-4a14-b829-9dad519d3ab7" ,
+            productId = "I7uIHF772ag4WRglBAJV",
+            productVariant = "variant_0",
+            price = 1499.00,
+            productSize =0 ,
+            cartId ="d2a373bb-0b46-4bed-8a5d-1ce877e1b9b3" ,
+            brandLogo = "https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%201.png?alt=media&token=f83bdcb4-3e9c-4c67-bc91-68b95b075cda",
+            productName ="Wide twill trousers" ,
+        ),
+        CartItem(
+            brandName ="Loop" ,
+            productImage ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/Product%2F77tSL1hcwIeeVaPyj08T%2F82559.jpg?alt=media&token=0d805288-7945-4532-a945-095d1c72fb67",
+            productId = "77tSL1hcwIeeVaPyj08T",
+            productVariant ="variant_0" ,
+            price =2299.00 ,
+            productSize =0 ,
+            cartId = "e1b446f3-4450-4e83-ace9-f0bb5b1de209",
+            brandLogo ="https://firebasestorage.googleapis.com/v0/b/projectrobin-a74a8.appspot.com/o/brandProfileImage%2FArtboard%206.png?alt=media&token=39141dd7-112e-4be4-8b40-e76f74c1d252" ,
+            productName = "Trainers",
+        )
     )
 
     val address=Address(
@@ -64,7 +110,7 @@ object PreviewMocks {
         cardHolderName = "John Muir"
     )
     val orderItem=OrderItem(
-        items = listOf(cartItem, cartItem),
+        items = cartItem,
         shippingAddress = generateSingleLineAddress(address),
        totalPrice =  4444.00
     )

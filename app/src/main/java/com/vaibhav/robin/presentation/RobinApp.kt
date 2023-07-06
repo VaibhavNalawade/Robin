@@ -25,7 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
-import androidx.window.layout.DisplayFeature
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
@@ -51,7 +50,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun RobinApp(
     windowSize: WindowSizeClass,
-    displayFeatures: List<DisplayFeature>,
     signOut: () -> Unit,
     userAuthenticated: Boolean,
     profileUiState: ProfileData?,

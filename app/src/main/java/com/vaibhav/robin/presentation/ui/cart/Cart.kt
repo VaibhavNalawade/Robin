@@ -167,9 +167,7 @@ private fun CompactLayout(
     onBrowse: () -> Unit
 ) {
     when (cartUiState) {
-
         EmptyCart -> EmptyCart(onBrowse)
-
 
         Loading -> Loading()
 
@@ -223,7 +221,6 @@ private fun ExpandedLayout(
     onBrowse: () -> Unit
 ) {
     when (cartUiState) {
-
         EmptyCart -> EmptyCart(onBrowse)
 
         Loading -> Loading()
@@ -315,13 +312,11 @@ fun CartList(
                 }
             )
             item(key = "null") {
-
                 endContent(
                     Modifier.animateItemPlacement(
                         animationSpec = TweenSpec(300)
                     )
                 )
-
             }
         }
     )
@@ -369,7 +364,7 @@ fun CartListItem(
         trailingContent = {
             IconButton(
                 modifier = Modifier
-                    .testTag("RemoveButton"),
+                    .testTag(CartTestTags.REMOVE_BUTTON),
                 onClick = { onRemoveCartItem(cartItems.cartId) },
                 content = {
                     Icon(
@@ -428,6 +423,7 @@ fun EmptyCart(onBrowse: () -> Unit) {
 object CartTestTags{
     const val BACK_BUTTON="BackButton"
     const val EMPTY_CART_ANIMATED_ILLUSTRATE="EmptyCartAnimation"
+    const val REMOVE_BUTTON="RemoveButton"
     const val TAG="CartCompose"
 }
 

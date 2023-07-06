@@ -5,7 +5,6 @@ import com.vaibhav.robin.presentation.ErrorVisualsType
 import com.vaibhav.robin.presentation.UiText
 
 interface RobinErrorHandler {
-
     fun getTitle():UiText
     fun getMessage():UiText
     fun getErrorCode():UiText? = null

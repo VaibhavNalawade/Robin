@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,7 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.presentation.OrderSummary
+import com.vaibhav.robin.presentation.RobinTestTags
 import com.vaibhav.robin.presentation.calculateSummary
 import com.vaibhav.robin.presentation.priceFormat
 import com.vaibhav.robin.presentation.ui.theme.Values
@@ -34,15 +36,19 @@ fun Summary(
 ) {
     val summary = cartItem?.let { calculateSummary(it) } ?: OrderSummary()
     Surface(
-        modifier = Modifier.widthIn(max = 450.dp),
         shape = CardDefaults.shape,
-        color = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_2)
+        color = MaterialTheme.colorScheme.surfaceColorAtElevation(Values.Dimens.surface_elevation_2),
+        modifier = Modifier
+            .widthIn(max = 450.dp)
+            .testTag(RobinTestTags.SUMMARY)
     ) {
         Column(modifier = Modifier.padding(Values.Dimens.gird_two)) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
                 onClick = onClick,
-                content = { buttonLabel(summary) }
+                content = { buttonLabel(summary) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(RobinTestTags.SUMMARY_CHECKOUT_BUTTON)
             )
             SpacerVerticalTwo()
             Text(
@@ -127,7 +133,7 @@ fun Summary(
 @Composable
 fun SummaryPreview() {
     Summary(
-        cartItem = listOf(PreviewMocks.cartItem),
+        cartItem = PreviewMocks.cartItem,
         buttonLabel = { Text(text = "ButtonLabelMessage") },
         textMessage = "This is Text Message shown below Button",
         onClick = {}

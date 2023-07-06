@@ -20,7 +20,7 @@ fun Loading(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxWidth()
-            .testTag(RobinTestTags.loading),
+            .testTag(RobinTestTags.LOADING),
         content = {
             CircularProgressIndicator(strokeWidth = strokeWidth)
         }
