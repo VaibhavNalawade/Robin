@@ -9,7 +9,7 @@ object Dependencies {
     private const val ACCOMPANIST_VERSION = "0.31.2-alpha"
     private const val LIFECYCLE_VERSION = "2.6.1"
     private const val COROUTINES_VERSION = "1.7.1"
-    private const val AGP_VERSION = "8.1.0-rc01"
+    private const val AGP_VERSION = "8.0.2"
     private const val DAGGER_HILT_VERSION = "2.44"
 
     const val androidPlugin = "com.android.application"

@@ -54,10 +54,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
 
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
@@ -65,11 +62,12 @@ dependencies {
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
 
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
-    implementation(Dependencies.Google.Accompanist.adaptive)
+
     implementation(platform(Dependencies.Google.Firebase.BOM))
     implementation(Dependencies.Google.Firebase.firestore)
     implementation(Dependencies.Google.Firebase.auth)
     implementation(Dependencies.Google.Firebase.crashlytics)
+
     implementation(Dependencies.Google.DaggerHilt.daggerHilt)
     kapt(Dependencies.Google.DaggerHilt.kapt)
     implementation(Dependencies.Google.DaggerHilt.composeNavigationSupport)
@@ -85,7 +83,6 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.foundation)
     implementation(Dependencies.AndroidX.Compose.animation)
     implementation(Dependencies.AndroidX.Compose.uiPreview)
-    debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
     implementation(Dependencies.AndroidX.navigation)
     implementation(Dependencies.AndroidX.activity)
     implementation(Dependencies.AndroidX.Compose.Material3.main)
@@ -93,5 +90,6 @@ dependencies {
 
     testImplementation(Dependencies.junit)
     androidTestImplementation(Dependencies.AndroidX.Compose.testJunit)
+    debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
     debugImplementation(Dependencies.AndroidX.Compose.testManifest)
 }

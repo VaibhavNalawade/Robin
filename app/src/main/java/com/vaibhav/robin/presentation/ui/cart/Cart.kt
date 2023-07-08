@@ -136,7 +136,7 @@ fun Cart(
                 })
                 AnimatedVisibility(
                     visible = visibilityAnimation,
-                    enter = slideInVertically(tween(200)) { +60 },
+                    enter = slideInVertically(tween(300)) { +100 },
                 ) {
                     CompactLayout(
                         cartUiState = cartUiState,
