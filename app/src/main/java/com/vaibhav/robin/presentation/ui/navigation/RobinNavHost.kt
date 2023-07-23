@@ -3,13 +3,11 @@ package com.vaibhav.robin.presentation.ui.navigation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -86,10 +84,9 @@ fun RobinNavHost(
         composable(RobinDestinations.CART) {
             if (userAuthenticated) {
                 val viewModel: CartViewModel = hiltViewModel()
+                viewModel.setMessageBarState(messageBarState)
                 Cart(
                     cartUiState = cartUiState,
-                    messageBarState = messageBarState,
-                    itemRemoveState = viewModel.itemIsRemovedState.collectAsState(),
                     onBackNavigation = {
                         navController.popBackStack()
                     },

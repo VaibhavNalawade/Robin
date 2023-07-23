@@ -9,15 +9,20 @@ object Dependencies {
     private const val ACCOMPANIST_VERSION = "0.31.2-alpha"
     private const val LIFECYCLE_VERSION = "2.6.1"
     private const val COROUTINES_VERSION = "1.7.1"
-    private const val AGP_VERSION = "8.0.2"
+    private const val AGP_VERSION = "8.2.0-alpha13"
     private const val DAGGER_HILT_VERSION = "2.44"
+
 
     const val androidPlugin = "com.android.application"
     const val androidGradle = "com.android.tools.build:gradle:$AGP_VERSION"
     const val coil = "io.coil-kt:coil-compose:2.4.0"
-    const val lottieCompose="com.airbnb.android:lottie-compose:6.0.0"
+    const val lottieCompose = "com.airbnb.android:lottie-compose:6.0.0"
     const val junit = "junit:junit:4.13.2"
 
+    object Mockito {
+        const val core = "org.mockito:mockito-core:5.1.1"
+        const val kotlin = "org.mockito.kotlin:mockito-kotlin:5.0.0"
+    }
 
     object Kotlin {
         const val androidPlugin = "org.jetbrains.kotlin.android"
@@ -29,6 +34,7 @@ object Dependencies {
                 "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
             const val playServiceSupport =
                 "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$COROUTINES_VERSION"
+            const val testing = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$COROUTINES_VERSION"
         }
     }
 
@@ -72,7 +78,9 @@ object Dependencies {
         }
 
         object Lifecycle {
-            const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VERSION"
+            // const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VERSION"
+            const val composeUtilities =
+                "androidx.lifecycle:lifecycle-runtime-compose:$LIFECYCLE_VERSION"
             const val compose =
                 "androidx.lifecycle:lifecycle-viewmodel-compose:$LIFECYCLE_VERSION"
         }
@@ -81,11 +89,11 @@ object Dependencies {
         object Compose {
             const val ui = "androidx.compose.ui:ui:$COMPOSE_VERSION"
             const val foundation = "androidx.compose.foundation:foundation:$COMPOSE_VERSION"
-            const val animation="androidx.compose.animation:animation-graphics:$COMPOSE_VERSION"
+            const val animation = "androidx.compose.animation:animation-graphics:$COMPOSE_VERSION"
             const val uiPreview = "androidx.compose.ui:ui-tooling-preview:$COMPOSE_VERSION"
             const val previewTooling = "androidx.compose.ui:ui-tooling:$COMPOSE_VERSION"
-            const val testJunit="androidx.compose.ui:ui-test-junit4:$COMPOSE_VERSION"
-            const val testManifest="androidx.compose.ui:ui-test-manifest:$COMPOSE_VERSION"
+            const val testJunit = "androidx.compose.ui:ui-test-junit4:$COMPOSE_VERSION"
+            const val testManifest = "androidx.compose.ui:ui-test-manifest:$COMPOSE_VERSION"
 
             object Material3 {
                 const val main = "androidx.compose.material3:material3:$MDC3_VERSION"

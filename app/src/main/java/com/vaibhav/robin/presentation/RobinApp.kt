@@ -50,18 +50,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun RobinApp(
     windowSize: WindowSizeClass,
-    signOut: () -> Unit,
     userAuthenticated: Boolean,
     profileUiState: ProfileData?,
     productUiState: Response<List<Product>>,
-    categoriesUiState: Response<List<MainCategory>>,
-    brandsUiState: Response<List<MainBrand>>,
-    onApply: (QueryProduct) -> Unit,
-    filterState: FilterState,
-    selectedProduct: Product?,
-    onSelectProduct: (Product) -> Unit,
+    orders: Response<List<OrderItem>>,
     cartUiState: CartUiState,
-    orders: Response<List<OrderItem>>
+    categoriesUiState: Response<List<MainCategory>>,
+    selectedProduct: Product?,
+    filterState: FilterState,
+    brandsUiState: Response<List<MainBrand>>,
+    signOut: () -> Unit,
+    onSelectProduct: (Product) -> Unit,
+    onApply: (QueryProduct) -> Unit
 ) {
     val navigationType: RobinNavigationType = when (windowSize.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {

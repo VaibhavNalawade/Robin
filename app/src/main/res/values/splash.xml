@@ -2,7 +2,6 @@
 <resources>
 
     <style name="Theme.App.Start" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#fff</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/avd_anim</item>
         <item name="windowSplashScreenAnimationDuration">3000</item>
         <item name="postSplashScreenTheme">@style/Theme.Robin</item>

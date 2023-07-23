@@ -134,6 +134,7 @@
     <string name="start_shopping">Start shopping</string>
     <string name="remove_cart_message_bar_error">Something went wrong while remove items</string>
     <string name="remove_cart_message_bar_success">%1$s items removed from cart.</string>
+    <string name="remove_cart_message_bar_removing">Removing....</string>
     <!--Order-->
     <string name="order_date">Order Date</string>
     <string name="items_in_your_order">%1$s items in your Orders.</string>

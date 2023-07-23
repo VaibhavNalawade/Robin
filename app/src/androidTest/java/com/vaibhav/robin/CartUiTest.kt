@@ -14,12 +14,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.firebase.FirebaseNetworkException
 import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.presentation.RobinTestTags
+import com.vaibhav.robin.presentation.UiText
 import com.vaibhav.robin.presentation.models.state.CartUiState
+import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.cart.Cart
 import com.vaibhav.robin.presentation.ui.cart.CartTestTags
 import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -37,13 +40,11 @@ class CartUiTest {
             RobinTheme {
                 Cart(
                     cartUiState = CartUiState.EmptyCart,
-                    messageBarState = rememberMessageBarState(),
-                    itemRemoveState = remember { mutableStateOf(null) },
                     onBackNavigation = { assert(true) },
-                    onRemoveCartItem = {},
-                    onCheckout = { },
+                    onRemoveCartItem = {assert(false)},
+                    onCheckout = { assert(false) },
                     onBrowse = { assert(true) },
-                    retry = {}
+                    retry = { assert(false) }
                 )
             }
         }
@@ -70,8 +71,6 @@ class CartUiTest {
             RobinTheme {
                 Cart(
                     cartUiState = CartUiState.Loading,
-                    messageBarState = rememberMessageBarState(),
-                    itemRemoveState = remember { mutableStateOf(null) },
                     onBackNavigation = { assert(true) },
                     onRemoveCartItem = {},
                     onCheckout = { },
@@ -89,9 +88,31 @@ class CartUiTest {
             .assertExists()
             .performClick()
     }
+    @Test
+    fun test_ui_state_errorCart() {
+        composeTestRule.setContent {
+            RobinTheme {
+                Cart(
+                    cartUiState = CartUiState.Error(FirebaseNetworkException(DUMMY_ERROR_MSG)),
+                    onBackNavigation = { assert(true) },
+                    onRemoveCartItem = { assert(false) },
+                    onCheckout = { assert(false) },
+                    onBrowse = { assert(false) },
+                    retry = { assert(true) }
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_MESSAGE).assertExists()
+        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_RESOLVE_BUTTON).assertExists()
+            .performClick()
+        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_TITLE).assertExists()
+        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_VISUALS).assertExists()
+        composeTestRule.onNodeWithTag(CartTestTags.BACK_BUTTON).assertExists()
+    }
 
     @Test
-    fun test_Ui_state_Success() {
+    fun test_ui_state_success() {
 
         val mutableCartUiState = MutableStateFlow(CartUiState.Success(PreviewMocks.cartItem))
         composeTestRule.setContent {
@@ -102,8 +123,6 @@ class CartUiTest {
             RobinTheme {
                 Cart(
                     cartUiState = mutableCartUiState.collectAsState().value,
-                    messageBarState = rememberMessageBarState(),
-                    itemRemoveState = remember { mutableStateOf(null) },
                     onBackNavigation = { assert(true) },
                     onRemoveCartItem = { removeCartItem(it) },
                     onCheckout = { assert(true) },
@@ -150,29 +169,35 @@ class CartUiTest {
     }
 
     @Test
-    fun test_ui_state_errorCart() {
+    fun test_MessageBarState_success(){
+        val messageBarState= MutableStateFlow(MessageBarState())
+        val mutableCartUiState = MutableStateFlow(CartUiState.Success(PreviewMocks.cartItem))
         composeTestRule.setContent {
+            fun removeCartItem(id: String) {
+                val updatedState = mutableCartUiState.value.cartItems.filter { it.cartId == id }
+                mutableCartUiState.value = CartUiState.Success(updatedState)
+            }
             RobinTheme {
                 Cart(
-                    cartUiState = CartUiState.Error(FirebaseNetworkException(DUMMY_ERROR_MSG)),
-                    messageBarState = rememberMessageBarState(),
-                    itemRemoveState = remember { mutableStateOf(null) },
+                    cartUiState = mutableCartUiState.collectAsState().value,
                     onBackNavigation = { assert(true) },
-                    onRemoveCartItem = { assert(false) },
-                    onCheckout = { assert(false) },
+                    onRemoveCartItem = { removeCartItem(it) },
+                    onCheckout = { assert(true) },
                     onBrowse = { assert(false) },
-                    retry = { assert(true) }
+                    retry = { assert(false) }
                 )
             }
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_MESSAGE).assertExists()
-        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_RESOLVE_BUTTON).assertExists()
-            .performClick()
-        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_TITLE).assertExists()
-        composeTestRule.onNodeWithTag(RobinTestTags.ERROR_VISUALS).assertExists()
-        composeTestRule.onNodeWithTag(CartTestTags.BACK_BUTTON).assertExists()
+        runTest {
+            messageBarState.collect {
+                if (it.success!=null)
+                    assert(true)
+            }
+        }
     }
+
+
     companion object{
         const val DUMMY_ERROR_MSG="Unable to connect to server"
     }

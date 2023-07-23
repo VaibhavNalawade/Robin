@@ -4,5 +4,5 @@ import com.vaibhav.robin.domain.repository.DatabaseRepository
 import javax.inject.Inject
 
 class RemoveCartItems@Inject constructor(private val repository: DatabaseRepository) {
-suspend operator fun invoke(cartId:String)=repository.deleteCartItem(cartId)
+suspend operator fun invoke(cartId:String)=repository.removeCartItem(cartId)
 }

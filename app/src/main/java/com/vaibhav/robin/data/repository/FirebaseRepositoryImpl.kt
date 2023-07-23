@@ -151,7 +151,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteCartItem(cartItemId: String): Flow<Response<Boolean>> =
+    override suspend fun removeCartItem(cartItemId: String): Flow<Response<Boolean>> =
         tryCatchScaffold {
             source.deleteDocument(
                 firestore

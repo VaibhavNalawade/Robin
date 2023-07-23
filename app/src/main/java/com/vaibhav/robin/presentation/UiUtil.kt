@@ -1,6 +1,7 @@
 package com.vaibhav.robin.presentation
 
 
+import android.content.Context
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
@@ -32,12 +33,10 @@ import com.vaibhav.robin.data.models.CartItem
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.domain.exceptions.RobinException
 import com.vaibhav.robin.domain.exceptions.ValidationFailedException
-import com.vaibhav.robin.domain.model.Response
 import java.text.DecimalFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
-
 
 sealed class UiText {
     data class DynamicString(val value: String) : UiText()
@@ -47,15 +46,24 @@ sealed class UiText {
     ) : UiText()
 
     @Composable
-    fun asString(): String {
-        return when (this) {
-            is DynamicString -> value
-            is StringResource -> stringResource(id, *args)
-        }
+    fun asString(): String = when (this) {
+        is DynamicString -> value
+        is StringResource -> stringResource(id, *args)
+    }
+
+    fun asString(context: Context) = when (this) {
+        is DynamicString -> value
+        is StringResource -> context.getString(id, *args)
     }
 }
 
-//TODO Need To add all Exception error message and Icons
+/**
+ * Just as name suggest this function do nothing. Useful in when block to [doNothing] for certain conditions
+ * */
+fun doNothing() {}
+
+
+@Deprecated("Migrate to new ErrorHandler Pattern")
 class ExceptionHandler(val exception: Exception) {
     var title: UiText = UiText.StringResource(R.string.unknown_error)
         private set
@@ -301,23 +309,28 @@ enum class RobinNavigationType {
 enum class RobinAppBarType {
     COLLAPSING_APPBAR, PERMANENT_APPBAR
 }
-sealed class ErrorResolutionPolicy{
-    data class Retry(val onClick:()->Unit):ErrorResolutionPolicy()
-    data class Support(val onClick:()->Unit):ErrorResolutionPolicy()
-    data class Restart(val onClick:()->Unit):ErrorResolutionPolicy()
-    data class AttemptLater(val onClick:()->Unit):ErrorResolutionPolicy()
+
+sealed class ErrorResolutionPolicy {
+    data class Retry(val onClick: () -> Unit) : ErrorResolutionPolicy()
+    data class Support(val onClick: () -> Unit) : ErrorResolutionPolicy()
+    data class Restart(val onClick: () -> Unit) : ErrorResolutionPolicy()
+    data class AttemptLater(val onClick: () -> Unit) : ErrorResolutionPolicy()
 }
-enum class ErrorUiType{
-    FULLSCREEN,SMALL_CARD
+
+enum class ErrorUiType {
+    FULLSCREEN, SMALL_CARD
 }
-sealed class ErrorVisualsType{
+
+sealed class ErrorVisualsType {
     data class lottieAnimationType(
-        @RawRes val res:Int,
-        val iterations:Int=1,
-        val dynamicProperties: LottieDynamicProperties?=null
-        ):ErrorVisualsType()
-    data class NativeDrawable(@DrawableRes val id: Int):ErrorVisualsType()
+        @RawRes val res: Int,
+        val iterations: Int = 1,
+        val dynamicProperties: LottieDynamicProperties? = null
+    ) : ErrorVisualsType()
+
+    data class NativeDrawable(@DrawableRes val id: Int) : ErrorVisualsType()
 }
+
 enum class Order {
     ASCENDING,
     DESCENDING
@@ -347,7 +360,6 @@ fun getCardTypeByPan(pan: String): CardType =
     else if (pan.startsWith("60") || pan.startsWith("65"))
         CardType.Rupee
     else CardType.Other
-
 
 
 fun calculateSummary(list: List<CartItem>): OrderSummary {
@@ -407,7 +419,11 @@ fun generateOrderName(order: OrderItem) =
 
 fun generateCardName(pan: String) = when (getCardTypeByPan(pan)) {
     CardType.Visa -> UiText.StringResource(R.string.visa_ending, arrayOf(pan.takeLast(4)))
-    CardType.MasterCard -> UiText.StringResource(R.string.mastercard_ending, arrayOf(pan.takeLast(4)))
+    CardType.MasterCard -> UiText.StringResource(
+        R.string.mastercard_ending,
+        arrayOf(pan.takeLast(4))
+    )
+
     CardType.Rupee -> UiText.StringResource(R.string.rupee_ending, arrayOf(pan.takeLast(4)))
     CardType.Other -> UiText.StringResource(R.string.card_ending, arrayOf(pan.takeLast(4)))
 }
@@ -416,19 +432,12 @@ fun generateFakeCardPan() =
     "${arrayOf(20, 40, 50, 60, 65).random()}${(10000000000000..99999999999999).random()}"
 
 
- object RobinTestTags{
-     const val ERROR_RESOLVE_BUTTON="ErrorButton"
-     const val ERROR_TITLE="ErrorTitle"
-     const val ERROR_MESSAGE="ErrorMessage"
-     const val ERROR_VISUALS="ErrorVisuals"
-     const val LOADING="Loading"
-     const val SUMMARY="Summary"
-     const val SUMMARY_CHECKOUT_BUTTON="SummaryCheckoutButton"
- }
-
-fun cartResponseIsEmpty(response: Response<List<CartItem>>):Boolean{
-    return when(response){
-        is Response.Success -> response.data.isEmpty()
-        else ->false
-    }
+object RobinTestTags {
+    const val ERROR_RESOLVE_BUTTON = "ErrorButton"
+    const val ERROR_TITLE = "ErrorTitle"
+    const val ERROR_MESSAGE = "ErrorMessage"
+    const val ERROR_VISUALS = "ErrorVisuals"
+    const val LOADING = "Loading"
+    const val SUMMARY = "Summary"
+    const val SUMMARY_CHECKOUT_BUTTON = "SummaryCheckoutButton"
 }

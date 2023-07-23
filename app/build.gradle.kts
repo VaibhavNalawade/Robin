@@ -60,6 +60,7 @@ android {
 dependencies {
     implementation(Dependencies.Kotlin.Coroutines.android)
     implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
+    implementation(Dependencies.Kotlin.Coroutines.testing)
 
     implementation(Dependencies.Google.Accompanist.placeholderMaterial)
 
@@ -77,8 +78,8 @@ dependencies {
 
     implementation(Dependencies.AndroidX.Core.core)
     implementation(Dependencies.AndroidX.Core.splashScreen)
-    implementation(Dependencies.AndroidX.Lifecycle.runtime)
     implementation(Dependencies.AndroidX.Lifecycle.compose)
+    implementation(Dependencies.AndroidX.Lifecycle.composeUtilities)
     implementation(Dependencies.AndroidX.Compose.ui)
     implementation(Dependencies.AndroidX.Compose.foundation)
     implementation(Dependencies.AndroidX.Compose.animation)
@@ -89,6 +90,8 @@ dependencies {
     implementation(Dependencies.AndroidX.Compose.Material3.windowsSizeClass)
 
     testImplementation(Dependencies.junit)
+    testImplementation(Dependencies.Mockito.core)
+    testImplementation(Dependencies.Mockito.kotlin)
     androidTestImplementation(Dependencies.AndroidX.Compose.testJunit)
     debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
     debugImplementation(Dependencies.AndroidX.Compose.testManifest)

@@ -160,8 +160,8 @@ package com.vaibhav.robin.presentation.ui.common
                 exit = exitAnimation
             ) {
                 MessageBar(
-                    message = message,
-                    error = error,
+                    message = message?.asString(),
+                    error = error?.asString(),
                     successIcon = successIcon,
                     errorIcon = errorIcon,
                     successContainerColor = successContainerColor,
@@ -226,8 +226,8 @@ package com.vaibhav.robin.presentation.ui.common
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     modifier = Modifier
-                        .padding( horizontal =  Values.Dimens.gird_one)
-                        .padding(top = Values.Dimens.gird_one )
+                        .padding(horizontal = Values.Dimens.gird_one)
+                        .padding(top = Values.Dimens.gird_one)
                         .testTag(tag = MESSAGE_BAR_TEXT),
                     text = message ?: (error ?: "Unknown"),
                     color = if (error != null) errorContentColor

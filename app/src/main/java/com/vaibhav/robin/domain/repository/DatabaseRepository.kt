@@ -27,7 +27,7 @@ interface DatabaseRepository {
     suspend fun getCartItems():Flow<Response<List<CartItem>>>
     suspend fun getProducts():Flow<Response<List<Product>>>
     suspend fun listenForCartItems():Flow<Response<List<CartItem>>>
-    suspend fun deleteCartItem(cartItemId: String):Flow<Response<Boolean>>
+    suspend fun removeCartItem(cartItemId: String):Flow<Response<Boolean>>
     suspend fun getCategory():Flow<Response<List<MainCategory>>>
     suspend fun getBrand():Flow<Response<List<MainBrand>>>
     suspend fun queryProduct(queryProduct: QueryProduct):Flow<Response<List<Product>>>

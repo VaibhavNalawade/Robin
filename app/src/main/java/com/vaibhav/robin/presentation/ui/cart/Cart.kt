@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,31 +72,19 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.Summary
 import com.vaibhav.robin.presentation.ui.common.boxEmptyDynamicProperties
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Cart(
     cartUiState: CartUiState,
-    messageBarState: MessageBarState,
-    itemRemoveState: State<CartItemRemoveState?>,
     onBackNavigation: () -> Unit,
     onRemoveCartItem: (String) -> Unit,
     onCheckout: () -> Unit,
     onBrowse: () -> Unit,
     retry: () -> Unit,
 ) {
-    val message = itemRemoveState.value?.message?.asString()
-    LaunchedEffect(
-        key1 = message,
-        block = {
-            if (message?.isNotEmpty() == true) {
-                if (itemRemoveState.value?.isError == false)
-                    messageBarState.addSuccess(message)
-                else messageBarState.addError(message)
-            }
-        }
-    )
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
