@@ -2,8 +2,6 @@ package com.vaibhav.robin
 
 import android.content.res.Resources
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
@@ -14,15 +12,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.firebase.FirebaseNetworkException
 import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.presentation.RobinTestTags
-import com.vaibhav.robin.presentation.UiText
 import com.vaibhav.robin.presentation.models.state.CartUiState
-import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.cart.Cart
 import com.vaibhav.robin.presentation.ui.cart.CartTestTags
-import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -41,7 +35,7 @@ class CartUiTest {
                 Cart(
                     cartUiState = CartUiState.EmptyCart,
                     onBackNavigation = { assert(true) },
-                    onRemoveCartItem = {assert(false)},
+                    onRemoveCartItem = { assert(false) },
                     onCheckout = { assert(false) },
                     onBrowse = { assert(true) },
                     retry = { assert(false) }
@@ -88,6 +82,7 @@ class CartUiTest {
             .assertExists()
             .performClick()
     }
+
     @Test
     fun test_ui_state_errorCart() {
         composeTestRule.setContent {
@@ -168,37 +163,41 @@ class CartUiTest {
             .performClick()
     }
 
+    /**
+     * MESSAGE BAR Ui IS NOT PART OF CART. ITS STATE IS MANAGED IN [com.vaibhav.robin.presentation.ui.cart.CartViewModel]*/
+    /*
+     *TODO Individual unit test recommended on its state and instrument test on components
     @Test
     fun test_MessageBarState_success(){
-        val messageBarState= MutableStateFlow(MessageBarState())
-        val mutableCartUiState = MutableStateFlow(CartUiState.Success(PreviewMocks.cartItem))
-        composeTestRule.setContent {
-            fun removeCartItem(id: String) {
-                val updatedState = mutableCartUiState.value.cartItems.filter { it.cartId == id }
-                mutableCartUiState.value = CartUiState.Success(updatedState)
-            }
-            RobinTheme {
-                Cart(
-                    cartUiState = mutableCartUiState.collectAsState().value,
-                    onBackNavigation = { assert(true) },
-                    onRemoveCartItem = { removeCartItem(it) },
-                    onCheckout = { assert(true) },
-                    onBrowse = { assert(false) },
-                    retry = { assert(false) }
-                )
-            }
-        }
-        composeTestRule.waitForIdle()
-        runTest {
-            messageBarState.collect {
-                if (it.success!=null)
-                    assert(true)
-            }
-        }
+    val messageBarState= MutableStateFlow(MessageBarState())
+    val mutableCartUiState = MutableStateFlow(CartUiState.Success(PreviewMocks.cartItem))
+    composeTestRule.setContent {
+    fun removeCartItem(id: String) {
+    val updatedState = mutableCartUiState.value.cartItems.filter { it.cartId == id }
+    mutableCartUiState.value = CartUiState.Success(updatedState)
     }
+    RobinTheme {
+    Cart(
+    cartUiState = mutableCartUiState.collectAsState().value,
+    onBackNavigation = { assert(true) },
+    onRemoveCartItem = { removeCartItem(it) },
+    onCheckout = { assert(true) },
+    onBrowse = { assert(false) },
+    retry = { assert(false) }
+    )
+    }
+    }
+    composeTestRule.waitForIdle()
+    runTest {
+    messageBarState.collect {
+    if (it.success!=null)
+    assert(true)
+    }
+    }
+    }*/
 
 
-    companion object{
-        const val DUMMY_ERROR_MSG="Unable to connect to server"
+    companion object {
+        const val DUMMY_ERROR_MSG = "Unable to connect to server"
     }
 }

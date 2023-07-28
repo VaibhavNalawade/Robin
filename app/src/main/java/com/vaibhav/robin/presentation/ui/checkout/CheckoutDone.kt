@@ -37,18 +37,20 @@ import androidx.navigation.NavController
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieDynamicProperties
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.RobinAppPreview
+import com.vaibhav.robin.presentation.ui.common.DynamicProperties
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckoutDone(navController: NavController) {
+fun CheckoutDone(onBackNavigation: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -62,7 +64,7 @@ fun CheckoutDone(navController: NavController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBackNavigation) {
                         Icon(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = stringResource(id = R.string.navigation_back)
@@ -81,14 +83,9 @@ fun CheckoutDone(navController: NavController) {
         ) {
             if (maxWidth > 460.dp)
                 Box(modifier = Modifier.width(460.dp)) {
-                    CheckoutDoneUI {
-                        navController.popBackStack()
-                    }
+                    CheckoutDoneUI(onContinueShopping = onBackNavigation)
                 }
-            else
-                CheckoutDoneUI {
-                    navController.popBackStack()
-                }
+            else CheckoutDoneUI(onContinueShopping = onBackNavigation)
         }
     }
 }
@@ -104,42 +101,13 @@ private fun CheckoutDoneUI(onContinueShopping: () -> Unit) {
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confirmed))
         val progress by animateLottieCompositionAsState(composition)
-        val dynamicProperties = rememberLottieDynamicProperties(
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = MaterialTheme.colorScheme.primary.toArgb(),
-                keyPath = arrayOf(
-                    "**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
-                keyPath = arrayOf(
-                    "circle", "**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = MaterialTheme.colorScheme.tertiary.toArgb(),
-                keyPath = arrayOf(
-                    "stars", "**"
-                )
-            ),
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR,
-                value = MaterialTheme.colorScheme.onPrimary.toArgb(),
-                keyPath = arrayOf(
-                    "check", "**"
-                )
-            ),
-        )
+
         LottieAnimation(
             modifier = Modifier.size(300.dp),
             composition = composition,
             progress = { progress },
             contentScale = ContentScale.Crop,
-            dynamicProperties = dynamicProperties
+            dynamicProperties = DynamicProperties.confirmed()
         )
         SpacerVerticalTwo()
         Text(
@@ -172,8 +140,6 @@ private fun CheckoutDoneUI(onContinueShopping: () -> Unit) {
 @Composable
 fun CheckoutDoneUiPreview() {
     RobinAppPreview {
-        Box(modifier = Modifier.padding(Dimens.gird_two)) {
-            CheckoutDoneUI {}
-        }
+        CheckoutDoneUI {}
     }
 }

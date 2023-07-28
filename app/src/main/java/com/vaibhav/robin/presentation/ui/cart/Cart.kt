@@ -65,12 +65,12 @@ import com.vaibhav.robin.presentation.models.state.CartUiState.Loading
 import com.vaibhav.robin.presentation.models.state.CartUiState.Success
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.priceFormat
+import com.vaibhav.robin.presentation.ui.common.DynamicProperties
 import com.vaibhav.robin.presentation.ui.common.Loading
 import com.vaibhav.robin.presentation.ui.common.RobinAsyncImage
 import com.vaibhav.robin.presentation.ui.common.ShowFullScreenError
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalFour
 import com.vaibhav.robin.presentation.ui.common.Summary
-import com.vaibhav.robin.presentation.ui.common.boxEmptyDynamicProperties
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -382,7 +382,7 @@ fun EmptyCart(onBrowse: () -> Unit) {
         LottieAnimation(
             composition = composition,
             progress = { progress },
-            dynamicProperties = boxEmptyDynamicProperties(),
+            dynamicProperties = DynamicProperties.boxEmpty(),
             modifier = Modifier
                 .size(360.dp)
                 .testTag(CartTestTags.EMPTY_CART_ANIMATED_ILLUSTRATE)

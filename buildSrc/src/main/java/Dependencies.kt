@@ -1,15 +1,15 @@
 object Dependencies {
 
     const val KOTLIN_VERSION = "1.8.22"
-    private const val COMPOSE_VERSION = "1.6.0-alpha01"
+    private const val COMPOSE_VERSION = "1.6.0-alpha02"
     const val COMPOSE_COMPILER_VERSION = "1.4.8"
     private const val ACTIVITY_VERSION = "1.7.2"
-    private const val MDC3_VERSION = "1.2.0-alpha03"
+    private const val MDC3_VERSION = "1.2.0-alpha04"
     private const val GSM_VERSION = "4.3.15"
     private const val ACCOMPANIST_VERSION = "0.31.2-alpha"
     private const val LIFECYCLE_VERSION = "2.6.1"
     private const val COROUTINES_VERSION = "1.7.1"
-    private const val AGP_VERSION = "8.2.0-alpha13"
+    private const val AGP_VERSION = "8.2.0-alpha14"
     private const val DAGGER_HILT_VERSION = "2.44"
 
 
@@ -78,7 +78,6 @@ object Dependencies {
         }
 
         object Lifecycle {
-            // const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VERSION"
             const val composeUtilities =
                 "androidx.lifecycle:lifecycle-runtime-compose:$LIFECYCLE_VERSION"
             const val compose =
