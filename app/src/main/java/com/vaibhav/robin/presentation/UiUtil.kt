@@ -322,10 +322,10 @@ enum class ErrorUiType {
 }
 
 sealed class ErrorVisualsType {
-    data class lottieAnimationType(
+    data class LottieAnimationType(
         @RawRes val res: Int,
         val iterations: Int = 1,
-        val dynamicProperties: LottieDynamicProperties? = null
+        val dynamicProperties: @Composable ()->LottieDynamicProperties? ={null}
     ) : ErrorVisualsType()
 
     data class NativeDrawable(@DrawableRes val id: Int) : ErrorVisualsType()

@@ -10,7 +10,8 @@ import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.ErrorResolutionPolicy
 import com.vaibhav.robin.presentation.ErrorVisualsType
 import com.vaibhav.robin.presentation.UiText
-import com.vaibhav.robin.presentation.util.RobinErrorHandler
+import com.vaibhav.robin.presentation.handler.RobinErrorHandler
+import com.vaibhav.robin.presentation.ui.common.DynamicProperties
 
 class CartErrorHandler(
     val exception: Exception,
@@ -25,9 +26,11 @@ class CartErrorHandler(
     private var errorResolutionPolicy: ErrorResolutionPolicy =
         ErrorResolutionPolicy.Support(onSupport)
     private var errorVisualsType: ErrorVisualsType = ErrorVisualsType
-        .lottieAnimationType(
+        .LottieAnimationType(
             res = R.raw.trex,
-            iterations = Int.MAX_VALUE,)
+            iterations = Int.MAX_VALUE,
+            dynamicProperties = {  DynamicProperties.trex()}
+            )
 
     init {
         when (exception) {

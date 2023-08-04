@@ -11,6 +11,7 @@ import com.airbnb.lottie.compose.LottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.vaibhav.robin.presentation.ui.theme.Values
+
 @Suppress("SpellCheckingInspection")
 object DynamicProperties {
     @Composable
@@ -126,5 +127,490 @@ object DynamicProperties {
                 "check", "**"
             )
         ),
+    )
+
+    @Composable
+    fun trex() = rememberLottieDynamicProperties(
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Chao 5", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Chao 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Chao 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Chao", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 19", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 20", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 21", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 22", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 23", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 24", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 25", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 26", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Layer 27", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "Bola", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "D_perna", "Group 1", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "D_perna", "Group 2", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "D_perna", "Group 4", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "D_perna", "Group 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "D_perna", "Group 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "D_unhas_01", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "D_unha_02", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "D_antebraco", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "D_braco", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "rabo", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "rabo", "Group 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "Dino_corpo", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "BG 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "BG 4", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "BG 3", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_antebraco", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "L_antebraco", "Group 1", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "L_unha_02", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "L_unhas_01", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "L_braco", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_braco", "Group 5", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_braco", "Group 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_braco", "Group 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "Group 10", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "Group 12", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "Group 14", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "Group 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "L_perna", "Group 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "Sobrancelha", "Shape 1", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "nariz_olho", "Group 2", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "nariz_olho", "Group 3", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima","Group 5", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima","Group 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima","Group 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima","Group 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.outline.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_cima","Group 9", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 2", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 3", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 9", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 5", "**"
+            )
+        ),   rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 6", "**"
+            )
+        ),   rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "cabeca_baixo 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+                "Corpo", "Dino_corpo", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+            keyPath = arrayOf(
+              "Corpo",  "Dino_corpo 3", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "sombra", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "Dino_corpo 6", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "Dino_corpo 7", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "Dino_corpo 8", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "Dino_corpo 9", "**"
+            )
+        ),
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.primary.toArgb(),
+            keyPath = arrayOf(
+                "Corpo",  "Dino_corpo 10", "**"
+            )
+        )
     )
 }

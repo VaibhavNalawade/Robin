@@ -42,28 +42,26 @@ import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.RobinTestTags
 import com.vaibhav.robin.presentation.UiText
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import com.vaibhav.robin.presentation.util.RobinErrorHandler
+import com.vaibhav.robin.presentation.handler.RobinErrorHandler
 
 @Deprecated("Move To New ErrorHandler Imp Remove in future")
 @Composable
 fun ShowError(
-    exception: Exception,
-    retry: () -> Unit
+    exception: Exception, retry: () -> Unit
 ) {
     val errorHandler = remember {
         ExceptionHandler(exception)
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = colorScheme.primary.copy(alpha = 0.05f) //TODO:Chenge this
+        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_1)
     ) {
         Box {
             Text(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(
-                        horizontal = Dimens.gird_two,
-                        vertical = Dimens.gird_four
+                        horizontal = Dimens.gird_two, vertical = Dimens.gird_four
                     ),
                 text = stringResource(id = R.string.app_name),
                 style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
@@ -77,8 +75,7 @@ fun ShowError(
             ) {
                 SpacerVerticalTwo()
                 Surface(
-                    shape = CircleShape,
-                    color = colorScheme.errorContainer
+                    shape = CircleShape, color = colorScheme.errorContainer
                 ) {
                     Icon(
                         imageVector = errorHandler.icon,
@@ -108,14 +105,11 @@ fun ShowError(
                         .testTag(RobinTestTags.ERROR_MESSAGE)
                 )
                 SpacerVerticalTwo()
-                Button(
-                    onClick = retry,
-                    modifier = Modifier
-                        .testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
+                Button(onClick = retry,
+                    modifier = Modifier.testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
                     content = {
                         Text(text = stringResource(R.string.try_again))
-                    }
-                )
+                    })
             }
         }
     }
@@ -126,18 +120,17 @@ fun ShowFullScreenError(
     errorHandler: RobinErrorHandler,
 ) {
     Surface(
-        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_5),
+        color = colorScheme.surfaceColorAtElevation(Dimens.surface_elevation_1),
         modifier = Modifier.fillMaxSize()
     ) {
-        BoxWithConstraints {
+        Box {
             Text(
                 text = stringResource(id = R.string.app_name),
                 style = typography.titleLarge.copy(colorScheme.onSurfaceVariant),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(
-                        horizontal = Dimens.gird_two,
-                        vertical = Dimens.gird_four
+                        horizontal = Dimens.gird_two, vertical = Dimens.gird_four
                     )
             )
             Column(
@@ -147,34 +140,38 @@ fun ShowFullScreenError(
                     .padding(Dimens.gird_four)
                     .verticalScroll(rememberScrollState())
             ) {
-                val visualsType=errorHandler.getErrorVisualType()
+                val visualsType = errorHandler.getErrorVisualType()
                 Box(modifier = Modifier.size(300.dp)) {
-                    if (visualsType is ErrorVisualsType.lottieAnimationType) {
-                        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(visualsType.res))
-                        val progress by animateLottieCompositionAsState(composition, iterations = visualsType.iterations)
+                    if (visualsType is ErrorVisualsType.LottieAnimationType) {
+                        val composition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(
+                                visualsType.res
+                            )
+                        )
+                        val progress by animateLottieCompositionAsState(
+                            composition, iterations = visualsType.iterations
+                        )
                         LottieAnimation(
                             composition = composition,
                             progress = { progress },
+                            dynamicProperties = visualsType.dynamicProperties(),
                             modifier = Modifier
                                 .size(360.dp)
                                 .testTag(RobinTestTags.ERROR_VISUALS),
                         )
+                    } else Surface(
+                        shape = CircleShape, color = colorScheme.errorContainer
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.check_circle),
+                            contentDescription = null,
+                            tint = colorScheme.error,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(64.dp)
+                                .testTag(RobinTestTags.ERROR_VISUALS)
+                        )
                     }
-                    else
-                        Surface(
-                            shape = CircleShape,
-                            color = colorScheme.errorContainer
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.check_circle),
-                                contentDescription = null,
-                                tint = colorScheme.error,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(64.dp)
-                                    .testTag(RobinTestTags.ERROR_VISUALS)
-                            )
-                        }
                 }
                 SpacerVerticalTwo()
                 Text(
@@ -203,7 +200,7 @@ fun ShowFullScreenError(
 
 @Composable
 fun ErrorResolutionPolicyUI(resolutionPolicy: ErrorResolutionPolicy) {
-    val onclick:()->Unit =remember {
+    val onclick: () -> Unit = remember {
         when (resolutionPolicy) {
             is ErrorResolutionPolicy.AttemptLater -> resolutionPolicy.onClick
             is ErrorResolutionPolicy.Restart -> resolutionPolicy.onClick
@@ -211,7 +208,7 @@ fun ErrorResolutionPolicyUI(resolutionPolicy: ErrorResolutionPolicy) {
             is ErrorResolutionPolicy.Support -> resolutionPolicy.onClick
         }
     }
-    val drawableRes=remember {
+    val drawableRes = remember {
         when (resolutionPolicy) {
             is ErrorResolutionPolicy.AttemptLater -> R.drawable.check_circle
             is ErrorResolutionPolicy.Restart -> R.drawable.check_circle
@@ -219,27 +216,23 @@ fun ErrorResolutionPolicyUI(resolutionPolicy: ErrorResolutionPolicy) {
             is ErrorResolutionPolicy.Support -> R.drawable.check_circle
         }
     }
-    val stringRes =remember {
+    val stringRes = remember {
         when (resolutionPolicy) {
-            is ErrorResolutionPolicy.AttemptLater ->R.string.try_again
+            is ErrorResolutionPolicy.AttemptLater -> R.string.try_again
             is ErrorResolutionPolicy.Restart -> R.string.try_again
             is ErrorResolutionPolicy.Retry -> R.string.try_again
             is ErrorResolutionPolicy.Support -> R.string.try_again
         }
     }
-    Button(
-        onClick = onclick,
-        modifier = Modifier
-            .testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
+    Button(onClick = onclick,
+        modifier = Modifier.testTag(RobinTestTags.ERROR_RESOLVE_BUTTON),
         content = {
             Icon(
-                painter = painterResource(id = drawableRes),
-                contentDescription = null
+                painter = painterResource(id = drawableRes), contentDescription = null
             )
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(text = stringResource(stringRes))
-        }
-    )
+        })
 }
 
 @Composable
@@ -252,22 +245,21 @@ private fun ErrorVisuals(visualsType: ErrorVisualsType) {
 @Composable
 fun ErrorPreview() {
     RobinAppPreview {
-       ShowFullScreenError(errorHandler = object :RobinErrorHandler{
-           override fun getTitle(): UiText =
-             UiText.DynamicString("This is Error title")
+        ShowFullScreenError(errorHandler = object : RobinErrorHandler {
+            override fun getTitle(): UiText = UiText.DynamicString("This is Error title")
 
 
-           override fun getMessage(): UiText =
-               UiText.DynamicString("This is error message. it tell about more about resolve the error and Resolution action")
+            override fun getMessage(): UiText =
+                UiText.DynamicString("This is error message. it tell about more about resolve the error and Resolution action")
 
 
-           override fun getErrorResolutionPolicy(): ErrorResolutionPolicy =
-              ErrorResolutionPolicy.Retry {}
+            override fun getErrorResolutionPolicy(): ErrorResolutionPolicy =
+                ErrorResolutionPolicy.Retry {}
 
 
-           override fun getErrorVisualType(): ErrorVisualsType? =ErrorVisualsType.lottieAnimationType(R.raw.trex,
-               Int.MAX_VALUE,null)
+            override fun getErrorVisualType(): ErrorVisualsType =
+                ErrorVisualsType.LottieAnimationType(R.raw.trex, Int.MAX_VALUE, { null })
 
-       })
+        })
     }
 }

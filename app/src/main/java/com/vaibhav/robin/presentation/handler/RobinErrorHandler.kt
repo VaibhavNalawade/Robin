@@ -1,4 +1,4 @@
-package com.vaibhav.robin.presentation.util
+package com.vaibhav.robin.presentation.handler
 
 import com.vaibhav.robin.presentation.ErrorResolutionPolicy
 import com.vaibhav.robin.presentation.ErrorVisualsType
