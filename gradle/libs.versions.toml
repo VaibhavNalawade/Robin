@@ -1,0 +1,106 @@
+[versions]
+accompanist-placeholder = "0.31.2-alpha"
+coil-compose = "2.4.0"
+compose-ver = "1.6.0-alpha03"
+compose-navigation = "2.7.0"
+junit = "4.13.2"
+lottie-compose = "6.0.0"
+material3-ver = "1.2.0-alpha05"
+lifecycle-ver = "2.6.1"
+agp_ver = "8.2.0-alpha15"
+kotlin_ver = "1.9.0"
+google-service-ver = "4.3.15"
+firbase-crashlytics-gradle-ver = "2.9.8"
+daggerhilt_ver = "2.47"
+couroutine-ver = "1.7.1"
+mockito-core = "5.1.1"
+mockito-kotlin = "5.0.0"
+
+[libraries]
+accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder", version.ref = "accompanist-placeholder" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
+compose-animation = { module = "androidx.compose.animation:animation-graphics", version.ref = "compose-ver" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose-ver" }
+compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose-ver" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ver" }
+compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ver" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ver" }
+compose-ui-tooling-privew = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-ver" }
+compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ver" }
+compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3-ver" }
+compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-ver" }
+junit = { module = "junit:junit", version.ref = "junit" }
+lifecycle-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-ver" }
+lifecycle-compose-utilities = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-ver" }
+androidx-core = { module = "androidx.core:core-ktx", version.prefer = "1.10.1" }
+androidx-splash-screen = { module = "androidx.core:core-splashscreen", version.prefer = "1.0.1" }
+androidx-activity = { module = "androidx.activity:activity-compose", version.prefer = "1.7.2" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.prefer = "32.2.2" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-authentication = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+kotlin-couroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "couroutine-ver" }
+kotlin-couroutines-playservice-support = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "couroutine-ver" }
+kotlin-couroutines-testing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "couroutine-ver" }
+daggerhilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerhilt_ver" }
+daggerhilt-kapt = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerhilt_ver" }
+daggerhilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.strictly = "1.0.0" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+
+
+[bundles]
+compose = [
+    "compose-animation",
+    "compose-foundation",
+    "compose-runtime",
+    "compose-ui",
+    "compose-ui-tooling-privew",
+    "compose-navigation",
+    "compose-material3",
+    "compose-material3-window-size",
+    "lifecycle-compose",
+    "lifecycle-compose-utilities"
+]
+compose-debug = [
+    "compose-ui-tooling",
+    "compose-test-manifest"
+]
+compose-test = [
+    "compose-ui-test"
+]
+androidx = [
+    "androidx-activity",
+    "androidx-core",
+    "androidx-splash-screen"
+]
+firebase = [
+    "firebase-firestore",
+    "firebase-authentication",
+    "firebase-crashlytics"
+]
+kotlin-couroutines = [
+    "kotlin-couroutines",
+    "kotlin-couroutines-testing",
+    "kotlin-couroutines-playservice-support"
+]
+daggerhilt = [
+    "daggerhilt",
+    "daggerhilt-navigation-compose"
+]
+mockito = [
+    "mockito-core",
+    "mockito-kotlin"
+]
+
+[plugins]
+android = { id = "com.android.application", version.ref = "agp_ver" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin_ver" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin_ver" }
+googleservice = { id = "com.google.gms.google-services", version.ref = "google-service-ver" }
+daggerhilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerhilt_ver" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firbase-crashlytics-gradle-ver" }
+
+

@@ -1,24 +1,25 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.kotlin.dsl.libs
 
 plugins {
-    id(Dependencies.androidPlugin)
-    id(Dependencies.Kotlin.androidPlugin)
-    id(Dependencies.Google.googleServicePlugin)
-    id(Dependencies.Google.DaggerHilt.daggerHiltPlugin)
-    id(Dependencies.Kotlin.kapt)
-    id(Dependencies.Google.Firebase.crashlyticsPlugin)
+    alias(libs.plugins.android)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.googleservice)
+    alias(libs.plugins.daggerhilt)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
-    compileSdk = RobinConfig.compileSdk
-    namespace = RobinConfig.namespace
+    namespace = "com.vaibhav.robin"
+    compileSdk = 34
+
     defaultConfig {
-        applicationId = RobinConfig.applicationId
-        minSdk = RobinConfig.minsdk
-        targetSdk = RobinConfig.targetSdk
-        versionCode = RobinConfig.versionCode
-        versionName = RobinConfig.versionName
-        testInstrumentationRunner = RobinConfig.instrumentRunner
+        applicationId = "com.vaibhav.robin"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 10
+        versionName = "alpha-0.82"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -35,19 +36,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_17.toString()
+            jvmTarget = JavaVersion.VERSION_11.toString()
         }
-    }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Dependencies.COMPOSE_COMPILER_VERSION
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -58,41 +57,18 @@ android {
 }
 
 dependencies {
-    implementation(Dependencies.Kotlin.Coroutines.android)
-    implementation(Dependencies.Kotlin.Coroutines.playServiceSupport)
-    implementation(Dependencies.Kotlin.Coroutines.testing)
-
-    implementation(Dependencies.Google.Accompanist.placeholderMaterial)
-
-    implementation(platform(Dependencies.Google.Firebase.BOM))
-    implementation(Dependencies.Google.Firebase.firestore)
-    implementation(Dependencies.Google.Firebase.auth)
-    implementation(Dependencies.Google.Firebase.crashlytics)
-
-    implementation(Dependencies.Google.DaggerHilt.daggerHilt)
-    kapt(Dependencies.Google.DaggerHilt.kapt)
-    implementation(Dependencies.Google.DaggerHilt.composeNavigationSupport)
-
-    implementation(Dependencies.coil)
-    implementation(Dependencies.lottieCompose)
-
-    implementation(Dependencies.AndroidX.Core.core)
-    implementation(Dependencies.AndroidX.Core.splashScreen)
-    implementation(Dependencies.AndroidX.Lifecycle.compose)
-    implementation(Dependencies.AndroidX.Lifecycle.composeUtilities)
-    implementation(Dependencies.AndroidX.Compose.ui)
-    implementation(Dependencies.AndroidX.Compose.foundation)
-    implementation(Dependencies.AndroidX.Compose.animation)
-    implementation(Dependencies.AndroidX.Compose.uiPreview)
-    implementation(Dependencies.AndroidX.navigation)
-    implementation(Dependencies.AndroidX.activity)
-    implementation(Dependencies.AndroidX.Compose.Material3.main)
-    implementation(Dependencies.AndroidX.Compose.Material3.windowsSizeClass)
-
-    testImplementation(Dependencies.junit)
-    testImplementation(Dependencies.Mockito.core)
-    testImplementation(Dependencies.Mockito.kotlin)
-    androidTestImplementation(Dependencies.AndroidX.Compose.testJunit)
-    debugImplementation(Dependencies.AndroidX.Compose.previewTooling)
-    debugImplementation(Dependencies.AndroidX.Compose.testManifest)
+    implementation(libs.bundles.kotlin.couroutines)
+    implementation(libs.bundles.daggerhilt)
+    kapt(libs.daggerhilt.kapt)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
+    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
+    implementation(libs.accompanist.placeholder)
+    testImplementation(libs.junit)
+    testImplementation(libs.bundles.mockito)
+    androidTestImplementation(libs.bundles.compose.test)
+    debugImplementation(libs.bundles.compose.debug)
 }

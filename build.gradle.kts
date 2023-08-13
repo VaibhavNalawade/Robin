@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath(Dependencies.androidGradle)
-        classpath(Dependencies.Kotlin.kotlinGradle)
-        classpath(Dependencies.Google.googleServiceGradle)
-        classpath (Dependencies.Google.DaggerHilt.daggerHiltGradle)
-        classpath(Dependencies.Google.Firebase.crashlyticsGradle)
-    }
-}
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-repositories {
-    mavenCentral()
+
+plugins {
+    alias(libs.plugins.android) apply false
+    alias(libs.plugins.kotlin) apply false
+    alias(libs.plugins.kapt) apply false
+    alias(libs.plugins.googleservice) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.daggerhilt) apply false
 }
