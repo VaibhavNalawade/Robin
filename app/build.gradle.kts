@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
-    implementation(libs.accompanist.placeholder)
     testImplementation(libs.junit)
     testImplementation(libs.bundles.mockito)
     androidTestImplementation(libs.bundles.compose.test)

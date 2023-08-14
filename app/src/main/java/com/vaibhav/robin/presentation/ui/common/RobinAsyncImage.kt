@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import coil.compose.AsyncImage
+import com.vaibhav.robin.presentation.ui.common.placeholder.PlaceholderHighlight
+import com.vaibhav.robin.presentation.ui.common.placeholder.placeholder
+import com.vaibhav.robin.presentation.ui.common.placeholder.shimmer
 
 @Composable
 fun RobinAsyncImage(
@@ -17,7 +20,12 @@ fun RobinAsyncImage(
 ) {
     val placeholder = remember { mutableStateOf(true) }
     AsyncImage(
-        modifier = modifier.placeholder(placeholder.value).testTag("CartListItemImage"),
+        modifier = modifier
+            .placeholder(
+                placeholder.value,
+                highlight = PlaceholderHighlight.shimmer()
+            )
+            .testTag("CartListItemImage"),
         contentScale = contentScale,
         model = model,
         onSuccess = { placeholder.value = false },

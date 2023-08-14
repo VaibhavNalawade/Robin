@@ -1,8 +1,5 @@
 package com.vaibhav.robin.presentation.ui.common
 
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,16 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.placeholder
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 
 @Composable
@@ -72,23 +62,6 @@ fun CircularImage(
     )
 }
 
-fun Modifier.placeholder(
-    visible: Boolean,
-    color: Color = Color.Unspecified,
-    shape: Shape = RectangleShape,
-    highlight: PlaceholderHighlight? = null,
-    placeholderFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
-    contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
-): Modifier = composed {
-    Modifier.placeholder(
-        visible = visible,
-        color = if (color.isSpecified) color else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-        shape = shape,
-        highlight = highlight,
-        placeholderFadeTransitionSpec = placeholderFadeTransitionSpec,
-        contentFadeTransitionSpec = contentFadeTransitionSpec,
-    )
-}
 
 @Composable
 fun SpacerHorizontalHalf(): Unit = Spacer(modifier = Modifier.width(Dimens.gird_half))
