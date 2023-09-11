@@ -3,10 +3,10 @@ import org.gradle.kotlin.dsl.libs
 plugins {
     alias(libs.plugins.android)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.kapt)
     alias(libs.plugins.googleservice)
     alias(libs.plugins.daggerhilt)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -46,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -59,7 +59,7 @@ android {
 dependencies {
     implementation(libs.bundles.kotlin.couroutines)
     implementation(libs.bundles.daggerhilt)
-    kapt(libs.daggerhilt.kapt)
+    ksp(libs.daggerhilt.kapt)
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     implementation(libs.bundles.androidx)

@@ -1,25 +1,106 @@
 package com.vaibhav.robin.presentation.ui.common
 
-import android.util.Log
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.IntrinsicMeasureScope
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutIdParentData
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.lerp
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
-import com.google.common.io.Files.append
-import  com.vaibhav.robin.R
+import androidx.compose.ui.unit.offset
+import androidx.compose.ui.util.lerp
+import com.vaibhav.robin.R
 import com.vaibhav.robin.presentation.models.state.TextFieldState
+import kotlin.math.max
+import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextField(
     state: MutableState<TextFieldState>,
@@ -65,7 +146,6 @@ fun PasswordTextField(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RobinTextField(
     modifier: Modifier=Modifier,
@@ -113,7 +193,6 @@ fun RobinTextField(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentCardTextField(
     state: MutableState<TextFieldState>,
@@ -122,7 +201,7 @@ fun PaymentCardTextField(
     keyboardActions: KeyboardActions = KeyboardActions(),
     supportingText: String? = null
 ) {
-    OutlinedTextField(
+    ModifiedOutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = state.value.text,
         onValueChange = onValueChange,
@@ -141,14 +220,14 @@ fun PaymentCardTextField(
         keyboardActions = keyboardActions,
         leadingIcon = {
             Icon(
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(48.dp,32.dp),
                 painter = if (state.value.text.startsWith("4"))
                     painterResource(id = R.drawable.visa_2021)
                 else if(state.value.text.startsWith("2")||state.value.text.startsWith("5"))
                     painterResource(id = R.drawable.mastercard_logo)
                 else if(state.value.text.startsWith("60")||state.value.text.startsWith("65"))
                     painterResource(id = R.drawable.rupay)
-                else painterResource(id = R.drawable.credit_card),
+                else painterResource(id = R.drawable.paymentcard),
                 contentDescription = null,
                 tint = Color.Unspecified
             )
@@ -156,7 +235,7 @@ fun PaymentCardTextField(
     )
 }
 
-val mask = "1234  5678  1234  5678"
+const val mask = "1234  5678  1234  5678"
 
 fun creditCardFilter(text: AnnotatedString): TransformedText {
     val trimmed = if (text.text.length >= 16) text.text.substring(0..15) else text.text
@@ -182,7 +261,6 @@ fun creditCardFilter(text: AnnotatedString): TransformedText {
             return 22
         }
 
-        // todo need to fix the bug
         override fun transformedToOriginal(offset: Int): Int {
             return if (text.text.isEmpty()) 0
             else text.length
