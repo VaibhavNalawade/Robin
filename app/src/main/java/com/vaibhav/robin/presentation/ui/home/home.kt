@@ -29,11 +29,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.Product
-import com.vaibhav.robin.domain.model.ProfileData
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinAppPreview
@@ -42,12 +43,13 @@ import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.common.*
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @Composable
 fun Home(
     navController: NavHostController,
-    profileUiState: ProfileData?,
+    CurrentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     toggleDrawer: () -> Unit,
     productUiState: Response<List<Product>>,
     messageBarState: MessageBarState,
@@ -64,7 +66,7 @@ fun Home(
         modifier = Modifier.statusBarsPadding().navigationBarsPadding(),
         topBar = {
             RobinAppBar(
-                profileData = profileUiState,
+                profileData = CurrentUserProfileData.collectAsStateWithLifecycle().value,
                 toggleDrawer = toggleDrawer,
                 messageBarState = messageBarState,
                 scrollState = lazyGridState,
@@ -127,7 +129,7 @@ fun Home(
 
 @Composable
 fun RobinAppBar(
-    profileData: ProfileData?,
+    profileData: CurrentUserProfileData,
     messageBarState: MessageBarState,
     toggleDrawer: () -> Unit,
     scrollState: LazyGridState,
@@ -189,7 +191,7 @@ fun RobinAppBar(
 @Composable
 fun CollapsingAppBar(
     messageBarState: MessageBarState,
-    profileData: ProfileData?,
+    profileData: CurrentUserProfileData?,
     toggleDrawer: () -> Unit,
     scrollState: LazyGridState,
     showNavContent: MutableState<Boolean>,
@@ -317,7 +319,7 @@ fun CollapsingAppBar(
 fun PermanentAppBar(
     showNavContent: MutableState<Boolean>,
     productSize: Int,
-    profileData: ProfileData?
+    profileData: CurrentUserProfileData
 ) {
     Surface(tonalElevation = Dimens.surface_elevation_1) {
         Column(

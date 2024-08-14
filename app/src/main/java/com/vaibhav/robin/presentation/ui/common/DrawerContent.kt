@@ -44,10 +44,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.DrawerDefaults
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vaibhav.robin.R
 import com.vaibhav.robin.data.models.MainBrand
 import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.QueryProduct
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.Order
 import com.vaibhav.robin.presentation.RobinNavigationType
@@ -55,11 +57,12 @@ import com.vaibhav.robin.presentation.models.state.FilterState
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
 import com.vaibhav.robin.presentation.ui.theme.Values.Shapes
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @Composable
 fun NavigationDrawer(
-    userAuthenticated: Boolean,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     navController: NavHostController,
     signOut: () -> Unit,
     closeDrawer: () -> Unit,
@@ -71,12 +74,13 @@ fun NavigationDrawer(
     filterState: FilterState,
     cartItemsSize: Int
 ) {
+    val currentUser = currentUserProfileData.collectAsStateWithLifecycle()
     if (navigationType == RobinNavigationType.NAVIGATION_RAILS)
         PermanentDrawerSheet(
             drawerTonalElevation = DrawerDefaults.ModalDrawerElevation
         ) {
             DrawerContent(
-                userAuthenticated = userAuthenticated,
+                userAuthenticated = currentUser.value.userAuthenticated,
                 navController = navController,
                 signOut = signOut,
                 closeDrawer = closeDrawer,
@@ -91,7 +95,7 @@ fun NavigationDrawer(
         }
     else ModalDrawerSheet {
         DrawerContent(
-            userAuthenticated = userAuthenticated,
+            userAuthenticated = currentUser.value.userAuthenticated,
             navController = navController,
             signOut = signOut,
             closeDrawer = closeDrawer,

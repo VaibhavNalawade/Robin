@@ -2,10 +2,10 @@ package com.vaibhav.robin.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.ktx.Firebase
-import com.vaibhav.robin.domain.model.ProfileData
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.Firebase
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Loading
@@ -21,6 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : AuthRepository {
+    @Deprecated("Gone Removed in Feature use ui state from passthrough ui tree")
     override fun isUserAuthenticated() = auth.currentUser != null
 
     override suspend fun signInWithEmailPassword(email: String, password: String) = flow {
@@ -54,16 +55,18 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
          /*   while (auth.currentUser==null){
                 delay(1000)
             }*/
-            UpdateProfile(name,null).collect{}
+            updateProfile(name,null).collect{}
             emit(Success(true))
         } catch (e: Exception) {
             emit(Error(e))
         }
     }
 
-    override fun getAuthState() = callbackFlow {
+    override suspend fun listenUserState() = callbackFlow {
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser != null)
+            if (auth.currentUser!=null)
+            trySend(sendUserData())
+            else trySend(sendGustUserData())
         }
         auth.addAuthStateListener(authStateListener)
         awaitClose {
@@ -71,7 +74,7 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override suspend fun UpdateProfile(
+    override suspend fun updateProfile(
         displayName: String?, photoUri: String?
     ): Flow<Response<Boolean>> = flow {
         emit(Loading)
@@ -109,15 +112,17 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
     }
 
-    override fun getProfileData(): ProfileData? {
+    @Deprecated("Gone Removed in Feature use ui state from passthrough ui tree")
+    override fun getProfileData(): CurrentUserProfileData? {
         try {
             auth.currentUser!!.apply {
-                return ProfileData(
-                    displayName,
+                return CurrentUserProfileData(
+                    true,
+                    displayName?:"No Name",
                     photoUrl,
-                    email,
+                    email?:"No Email",
                     isEmailVerified,
-                    phoneNumber,
+                    phoneNumber?:"No Phone",
                     uid
                 )
             }
@@ -127,4 +132,19 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
     }
 
     override fun getUserUid(): String?=auth.currentUser?.uid
+
+    private fun sendUserData():CurrentUserProfileData{
+        auth.currentUser!!.apply {
+            return CurrentUserProfileData(
+                true,
+                displayName,
+                photoUrl,
+                email,
+                isEmailVerified,
+                phoneNumber,
+                uid
+            )
+        }
+    }
+    private fun sendGustUserData()=CurrentUserProfileData()
 }

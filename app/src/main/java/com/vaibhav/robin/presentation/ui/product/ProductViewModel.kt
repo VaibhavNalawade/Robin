@@ -27,17 +27,16 @@ class ProductViewModel @Inject constructor(
 ) : ViewModel() {
 
     var reviewsResponse by mutableStateOf<Response<List<Review>>>(Loading)
-    var yourReviewResponse by mutableStateOf<Response<Review>>(Loading)
+    var userReviewResponse by mutableStateOf<Response<Review>>(Loading)
     var favouriteToggleButtonState by mutableStateOf(false)
-    fun getAuthState() = authUseCases.isUserAuthenticated()
 
     fun loadCurrentUserReview(productId: String) = viewModelScope.launch(Dispatchers.IO) {
         if (authUseCases.isUserAuthenticated()) {
 
-            if (yourReviewResponse is Loading) databaseUseCases.getUserReview(productId).collect {
-                yourReviewResponse = it
+            if (userReviewResponse is Loading) databaseUseCases.getUserReview(productId).collect {
+                userReviewResponse = it
             }
-        } else yourReviewResponse = Error(AuthenticationRequiredException())
+        } else userReviewResponse = Error(AuthenticationRequiredException())
     }
 
     fun loadReview(productId: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -123,6 +122,12 @@ class ProductViewModel @Inject constructor(
                 }
             }
         }
+
+    fun loadProductDetails(productId: String) {
+        loadCurrentUserReview(productId)
+        loadReview(productId)
+        checkFavorite(productId)
+    }
 
     companion object {
         private const val TAG = "PRODUCT_VIEW_MODEL"

@@ -14,20 +14,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vaibhav.robin.R
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationRailsContent(
-    userAuthenticated: Boolean,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     navController: NavHostController,
     signOut: () -> Unit,
     cartItemSize: Int,
     orderItemsSize: Int
 ) {
+    val currentUser = currentUserProfileData.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.Center
@@ -144,7 +149,7 @@ SpacerVerticalOne()
         SpacerVerticalOne()
 
         AuthUserNavigationRailsItem(
-            userAuthenticated = userAuthenticated,
+            userAuthenticated = currentUser.value.userAuthenticated,
             signOut = signOut,
             selected = route == RobinDestinations.LOGIN,
             signIn = {

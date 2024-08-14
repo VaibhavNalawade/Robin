@@ -13,6 +13,7 @@ import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.use_case.auth.AuthUseCases
 import com.vaibhav.robin.domain.use_case.database.DatabaseUseCases
@@ -21,6 +22,7 @@ import com.vaibhav.robin.presentation.models.state.FilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -28,12 +30,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val authUseCases: AuthUseCases,
-    val databaseUseCases: DatabaseUseCases
+    private val authUseCases: AuthUseCases, private val databaseUseCases: DatabaseUseCases
 ) : ViewModel() {
-    var userAuthenticated by mutableStateOf(authUseCases.isUserAuthenticated())
-        private set
-    var profileData by mutableStateOf(authUseCases.getProfileData())
+
+    var currentUserProfileData = MutableStateFlow(CurrentUserProfileData())
         private set
     var categories by mutableStateOf<Response<List<MainCategory>>>(Response.Loading)
         private set
@@ -42,7 +42,6 @@ class MainViewModel @Inject constructor(
     var cartUiState by mutableStateOf<CartUiState>(CartUiState.Loading)
         private set
     val filterState by mutableStateOf(FilterState())
-
     var selectedProduct by mutableStateOf<Product?>(null)
     var orders by mutableStateOf<Response<List<OrderItem>>>(Response.Loading)
         private set
@@ -56,15 +55,15 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             authUseCases.getAuthState().collect { currentUser ->
-                userAuthenticated = currentUser
-                if (currentUser) {
-                    profileData = authUseCases.getProfileData()
+                currentUserProfileData.emit(currentUser)
+                if (currentUser.userAuthenticated) {
                     subscribeCartItems()
                     subscribeOrders()
-                    Firebase.crashlytics.setUserId(profileData?.uid?:"NA")
+                    Firebase.crashlytics.setUserId(currentUser.uid?: "NA")
                 }
             }
         }
+
         viewModelScope.launch {
             databaseUseCases.getCategory().collect {
                 when (it) {
@@ -89,12 +88,11 @@ class MainViewModel @Inject constructor(
 
     var products by mutableStateOf<Response<List<Product>>>(Response.Loading)
 
-    fun fetchUiState() =
-        viewModelScope.launch(Dispatchers.IO) {
-            databaseUseCases.filterProducts(queryProduct = QueryProduct(null, null, null)).collect {
-                products = it
-            }
+    fun fetchUiState() = viewModelScope.launch(Dispatchers.IO) {
+        databaseUseCases.filterProducts(queryProduct = QueryProduct(null, null, null)).collect {
+            products = it
         }
+    }
 
     fun quarry(queryProduct: QueryProduct) = viewModelScope.launch {
         databaseUseCases.filterProducts(queryProduct = queryProduct).collect {
@@ -107,8 +105,7 @@ class MainViewModel @Inject constructor(
         cartItemsJob?.cancel()
         cartItemsJob = viewModelScope.launch {
             databaseUseCases.listenForCartItems()
-                .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }
-                .collect {
+                .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }.collect {
                     cartUiState = when (it) {
                         is Response.Error -> CartUiState.Error(it.exception)
                         Response.Loading -> CartUiState.Loading
@@ -123,10 +120,8 @@ class MainViewModel @Inject constructor(
     private fun subscribeOrders() {
         ordersJob?.cancel()
         ordersJob = viewModelScope.launch {
-            databaseUseCases.listenOrder()
-                .cancellable()
-                .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }
-                .collect {
+            databaseUseCases.listenOrder().cancellable()
+                .catch { Log.e("AT", it.message ?: it.stackTraceToString()) }.collect {
                     orders = it
                 }
         }

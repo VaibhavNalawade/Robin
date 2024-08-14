@@ -1,7 +1,6 @@
 package com.vaibhav.robin.presentation.ui.product
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,16 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -37,38 +32,44 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.carousel.CarouselDefaults
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ScaleFactor
-import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.vaibhav.robin.R
+import com.vaibhav.robin.data.PreviewMocks
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.Review
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.domain.model.Response.Error
 import com.vaibhav.robin.domain.model.Response.Loading
 import com.vaibhav.robin.domain.model.Response.Success
+import com.vaibhav.robin.presentation.RobinAppPreview
 import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.MessageBarState
 import com.vaibhav.robin.presentation.timeStampHandler
@@ -88,31 +89,36 @@ import com.vaibhav.robin.presentation.ui.common.SpacerVerticalThree
 import com.vaibhav.robin.presentation.ui.common.SpacerVerticalTwo
 import com.vaibhav.robin.presentation.ui.common.Star
 import com.vaibhav.robin.presentation.ui.common.tweenSpec
-import com.vaibhav.robin.presentation.ui.navigation.RobinDestinations
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
-import kotlin.math.abs
+import kotlinx.coroutines.flow.MutableStateFlow
+import java.lang.Exception
 
-
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetails(
-    viewModel: ProductViewModel,
-    navController: NavHostController,
-    selectedProductUiState: Product,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
+    product: Product,
     cartItems: CartUiState.Success?,
-    messageBarState: MessageBarState
+    messageBarState: MessageBarState,
+    productIsFavourite: Boolean,
+    loadProductDetails: (String) -> Unit,
+    reviewsResponse: Response<List<Review>>,
+    userReviewResponse: Response<Review>,
+    addItemToCart: (items: CartItemAdder) -> Unit,
+    onBackPressed: () -> Unit,
+    routeToLogin: () -> Unit
 ) {
+    val currentUser = currentUserProfileData.collectAsStateWithLifecycle()
+    val selectedVariant = rememberSaveable { mutableStateOf(product.variantIndex.first()) }
+    val selectedSize = rememberSaveable { mutableIntStateOf(0) }
+    val ratingStars = rememberSaveable { mutableIntStateOf(0) }
+
     LaunchedEffect(
         key1 = true,
         block = {
-            viewModel.loadCurrentUserReview(productId = selectedProductUiState.id)
-            viewModel.loadReview(productId = selectedProductUiState.id)
-            viewModel.checkFavorite(productId = selectedProductUiState.id)
-
+            loadProductDetails(product.id)
             cartItems?.cartItems?.forEach {
-                if (it.productId == selectedProductUiState.id) {
+                if (it.productId == product.id) {
                     messageBarState.addError("Item already exits in your cart")
                     return@forEach
                 }
@@ -133,7 +139,7 @@ fun ProductDetails(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = onBackPressed) {
                         Icon(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = "Localized description"
@@ -142,22 +148,18 @@ fun ProductDetails(
                 },
                 actions = {
                     IconToggleButton(
-                        checked = viewModel.favouriteToggleButtonState,
+                        checked = productIsFavourite,
                         onCheckedChange = {
-                            if (viewModel.getAuthState())
-                                if (it)
-                                    viewModel.addFavorite(selectedProductUiState)
-                                else
-                                    viewModel.removeFavorite(selectedProductUiState.id)
-                            else
-                                navController.navigate(RobinDestinations.LOGIN_ROUTE) {
-                                    popUpTo(RobinDestinations.LOGIN_ROUTE) {
-                                        inclusive = true
-                                    }
-                                }
+                            if (currentUser.value.userAuthenticated)
+                            /*        if (it)TODO Disabled temporry
+                                        viewModel.addFavorite(selectedProductUiState)
+                                    else
+                                        viewModel.removeFavorite(selectedProductUiState.id)*/
+                            else routeToLogin()
+
                         },
                         content = {
-                            if (viewModel.favouriteToggleButtonState)
+                            if (productIsFavourite)
                                 Icon(
                                     painter = painterResource(id = R.drawable.favorite_fill),
                                     contentDescription = "Localized description",
@@ -178,56 +180,45 @@ fun ProductDetails(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState()),
             ) {
-
-                Surface(tonalElevation = Dimens.surface_elevation_5) {
-                    selectedProductUiState.media[viewModel.selectedVariant.value
-                        ?: selectedProductUiState.variantIndex[0]].let { item ->
-                        if (item != null) {
-                            val pager = rememberPagerState { item.size }
-                            HorizontalPager(
-                                state = pager,
-                                pageSize = PageSize.Fill,
-                                contentPadding = PaddingValues(horizontal = Dimens.gird_four),
-                                pageSpacing = Dimens.gird_half,
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .aspectRatio(0.6f)
-                                        .graphicsLayer {
-                                            lerp(
-                                                start = ScaleFactor(.8f, .8f),
-                                                stop = ScaleFactor(1f, 1f),
-                                                fraction = if (it == pager.currentPage) 1f
-                                                else abs(pager.currentPageOffsetFraction) + .5f
-                                            ).also { scale ->
-                                                scaleX = scale.scaleX
-                                                scaleY = scale.scaleY
-                                            }
-
-                                            alpha = lerp(
-                                                start = ScaleFactor(.5f, .5f),
-                                                stop = ScaleFactor(1f, 1f),
-                                                fraction = 1f - pager.currentPageOffsetFraction
-                                            ).scaleY
-                                        },
-                                    model = item[it],
-                                    contentDescription = ""
-                                )
-                            }
-                        }
+                product.media[selectedVariant.value]?.let { item ->
+                    val pager = rememberCarouselState { item.size }
+                    HorizontalUncontainedCarousel(
+                        state = pager,
+                        modifier = Modifier.fillMaxWidth(),
+                        flingBehavior = CarouselDefaults.singleAdvanceFlingBehavior(pager),
+                        itemWidth = 300.dp,
+                        itemSpacing = 16.dp,
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) { i ->
+                        RobinAsyncImage(
+                            modifier = Modifier
+                                .height(450.dp)
+                                .maskClip(shapes.extraLarge),
+                            model = item[i],
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
                     }
                 }
+
                 SpacerVerticalTwo()
                 TitleDescription(
-                    product = selectedProductUiState,
-                    selectedVariant = viewModel.selectedVariant.value
-                        ?: selectedProductUiState.variantIndex[0],
-                    selectedSize = viewModel.selectedSize.value ?: 0
+                    product = product,
+                    selectedVariant = selectedVariant.value,
+                    selectedSize = selectedSize.intValue
                 )
                 SpacerVerticalOne()
                 Box(modifier = Modifier.padding(horizontal = Dimens.gird_three)) {
                     Button(modifier = Modifier.fillMaxWidth(),
-                        onClick = { viewModel.addCartItem(selectedProductUiState) },
+                        onClick = {
+                            addItemToCart(
+                                CartItemAdder(
+                                    product = product,
+                                    selectedVariant = selectedVariant.value,
+                                    selectedSize = selectedSize.intValue
+                                )
+                            )
+                        },
                         content = {
                             Icon(
                                 painter = painterResource(id = R.drawable.add_shopping_cart),
@@ -240,22 +231,21 @@ fun ProductDetails(
                 }
                 SpacerVerticalOne()
                 VariantSelector(
-                    product = selectedProductUiState,
-                    selectedVariantState = viewModel.selectedVariant,
-                    selectedSizeState = viewModel.selectedSize
+                    product = product,
+                    selectedVariantState = selectedVariant,
+                    selectedSizeState = selectedSize
                 )
                 Size(
-                    product = selectedProductUiState,
-                    selectedVariant = viewModel.selectedVariant.value
-                        ?: selectedProductUiState.variantIndex[0],
-                    selectedSizeState = viewModel.selectedSize
+                    product = product,
+                    selectedVariant = selectedVariant.value,
+                    selectedSizeState = selectedSize
                 )
-                Details(product = selectedProductUiState)
+                Details(product = product)
                 Rating(
-                    starState = viewModel.stars,
-                    review = viewModel.yourReviewResponse,
+                    starState = ratingStars,
+                    review = userReviewResponse,
                     onClick = {
-                        navController.navigate(RobinDestinations.review(star = viewModel.stars.value))
+                        //  navController.navigate(RobinDestinations.review(star = viewModel.stars.value))
                     }
                 )
                 SpacerVerticalTwo()
@@ -265,13 +255,13 @@ fun ProductDetails(
                     style = typography.titleLarge.copy(colorScheme.onSurfaceVariant)
                 )
                 SpacerVerticalOne()
-                when (val reviewResponse = viewModel.reviewsResponse) {
-                    is Error -> ShowError(exception = reviewResponse.exception) {}
+                when (reviewsResponse) {
+                    is Error -> ShowError(exception = reviewsResponse.exception) {}
 
                     Loading -> Loading()
                     is Success -> {
-                        if (reviewResponse.data.isNotEmpty())
-                            reviewResponse.data.forEach { review ->
+                        if (reviewsResponse.data.isNotEmpty())
+                            reviewsResponse.data.forEach { review ->
                                 ReviewContainer(review = review)
                             }
                         else
@@ -409,8 +399,8 @@ fun BulletPoints(productData: Product, visible: Boolean) {
 @Composable
 fun VariantSelector(
     product: Product,
-    selectedVariantState: MutableState<String?>,
-    selectedSizeState: MutableState<Int?>
+    selectedVariantState: MutableState<String>,
+    selectedSizeState: MutableIntState
 ) {
     SpacerVerticalOne()
     LazyRow {
@@ -430,7 +420,7 @@ fun VariantSelector(
                         )
                         .clickable {
                             selectedVariantState.value = variant
-                            selectedSizeState.value = 0
+                            selectedSizeState.intValue = 0
                         },
                     contentDescription = null,
                     model = (product.media[variant] as List<*>)[0],
@@ -442,19 +432,18 @@ fun VariantSelector(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Size(
-    product: Product, selectedVariant: String, selectedSizeState: MutableState<Int?>
+    product: Product, selectedVariant: String, selectedSizeState: MutableIntState
 ) {
     SpacerVerticalOne()
     LazyRow {
         product.sizes[selectedVariant]?.forEachIndexed { index, size ->
             item {
                 SpacerHorizontalTwo()
-                val selectedThis = index == selectedSizeState.value
+                val selectedThis = index == selectedSizeState.intValue
                 FilterChip(selected = selectedThis,
-                    onClick = { selectedSizeState.value = index },
+                    onClick = { selectedSizeState.intValue = index },
                     label = { Text(size.get("size") as String) },
                     leadingIcon = if (selectedThis) {
                         {
@@ -653,6 +642,29 @@ fun ReviewContent(
             text = review.content, style = typography.bodyMedium.copy(
                 colorScheme.onSurfaceVariant
             )
+        )
+    }
+}
+
+data class CartItemAdder(val product: Product, val selectedVariant: String, val selectedSize: Int)
+
+
+@Preview
+@Composable
+private fun ProductDetailsPreview() {
+    RobinAppPreview {
+        ProductDetails(
+            currentUserProfileData = MutableStateFlow(CurrentUserProfileData()),
+            product = PreviewMocks.product,
+            cartItems = CartUiState.Success(PreviewMocks.cartItem),
+            messageBarState = MessageBarState(),
+            productIsFavourite = true,
+            loadProductDetails = {},
+            reviewsResponse = Response.Error(Exception()),
+            userReviewResponse = Response.Error(Exception()),
+            addItemToCart = {},
+            onBackPressed = {},
+            routeToLogin = {}
         )
     }
 }

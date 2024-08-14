@@ -1,10 +1,11 @@
 package com.vaibhav.robin
 
 import android.app.Application
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.firestoreSettings
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.initialize
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.firestoreSettings
+import com.google.firebase.firestore.persistentCacheSettings
+import com.google.firebase.initialize
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -13,7 +14,9 @@ class RobinApplication : Application() {
         super.onCreate()
         Firebase.initialize(this)
         Firebase.firestore.firestoreSettings = firestoreSettings {
-            isPersistenceEnabled = true
+            setLocalCacheSettings(persistentCacheSettings {
+                this.setSizeBytes(10240L)
+            })
         }
     }
 }

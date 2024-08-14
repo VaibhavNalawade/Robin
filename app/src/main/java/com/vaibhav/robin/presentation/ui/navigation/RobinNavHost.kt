@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,7 +16,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
-import com.vaibhav.robin.domain.model.ProfileData
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.RobinAppBarType
 import com.vaibhav.robin.presentation.RobinNavigationType
@@ -34,14 +35,15 @@ import com.vaibhav.robin.presentation.ui.home.Home
 import com.vaibhav.robin.presentation.ui.orders.ManageOrders
 import com.vaibhav.robin.presentation.ui.orders.OrderDetailsCompact
 import com.vaibhav.robin.presentation.ui.product.ProductDetails
+import com.vaibhav.robin.presentation.ui.product.ProductViewModel
 import com.vaibhav.robin.presentation.ui.review.Review
 import com.vaibhav.robin.presentation.ui.search.SearchBar
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun RobinNavHost(
     navController: NavHostController,
-    profileUiState: ProfileData?,
-    userAuthenticated: Boolean,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     toggleDrawer: () -> Unit,
     productUiState: Response<List<Product>>,
     messageBarState: MessageBarState,
@@ -53,6 +55,7 @@ fun RobinNavHost(
     showNavContent: MutableState<Boolean>,
     orders: Response<List<OrderItem>>
 ) {
+
     NavHost(
         modifier = Modifier,
         navController = navController,
@@ -64,7 +67,7 @@ fun RobinNavHost(
         composable(RobinDestinations.HOME) {
             Home(
                 navController = navController,
-                profileUiState = profileUiState,
+                CurrentUserProfileData = currentUserProfileData,
                 toggleDrawer = toggleDrawer,
                 productUiState = productUiState,
                 messageBarState = messageBarState,
@@ -81,7 +84,7 @@ fun RobinNavHost(
         ) { SearchBar(navController) }
 
         composable(RobinDestinations.CART) {
-            if (userAuthenticated) {
+            if (currentUserProfileData.collectAsStateWithLifecycle().value.userAuthenticated) {
                 val viewModel: CartViewModel = hiltViewModel()
                 viewModel.setMessageBarState(messageBarState)
                 Cart(
@@ -136,12 +139,29 @@ fun RobinNavHost(
             listOf(navArgument("Id") { type = NavType.StringType })
         ) {
             if (selectedProduct != null) {
+                val viewModel: ProductViewModel = hiltViewModel()
                 ProductDetails(
-                    navController = navController,
-                    viewModel = hiltViewModel(),
-                    selectedProductUiState = selectedProduct,
+                    currentUserProfileData = currentUserProfileData,
+                    product = selectedProduct,
                     cartItems = cartUiState as? CartUiState.Success,
                     messageBarState = messageBarState,
+                    reviewsResponse =viewModel.reviewsResponse,
+                    userReviewResponse = viewModel.userReviewResponse,
+                    productIsFavourite = viewModel.favouriteToggleButtonState,
+                    routeToLogin = {
+                        navController.navigate(RobinDestinations.LOGIN_ROUTE) {
+                            popUpTo(RobinDestinations.LOGIN_ROUTE) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    onBackPressed = {
+                        navController.navigateUp()
+                    },
+                    loadProductDetails = { productId ->
+                        viewModel.loadProductDetails(productId)
+                    },
+                    addItemToCart = {}
                 )
             }
         }

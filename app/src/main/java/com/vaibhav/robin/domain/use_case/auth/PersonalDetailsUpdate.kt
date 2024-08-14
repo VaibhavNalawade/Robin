@@ -18,7 +18,7 @@ class PersonalDetailsUpdate @Inject constructor(private val repository: AuthRepo
         firstName.value=Validators.personalDetails(firstName.value)
         lastname.value=Validators.personalDetails(lastname.value)
         if (!firstName.value.error && !lastname.value.error)
-        return repository.UpdateProfile(firstName.value.text+" "+ lastname.value.text,null)
+        return repository.updateProfile(firstName.value.text+" "+ lastname.value.text,null)
        return flow { emit(Response.Error(ValidationFailedException())) }
     }
 }

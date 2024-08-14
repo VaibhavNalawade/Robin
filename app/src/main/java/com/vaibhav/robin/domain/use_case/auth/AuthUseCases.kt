@@ -4,7 +4,7 @@ data class AuthUseCases(
     val isUserAuthenticated: IsUserAuthenticated,
     val signInWithEmailPassword: SignInWithEmailPassword,
     val signOut: SignOut,
-    val getAuthState: GetAuthState,
+    val getAuthState: ListenToAuthState,
     val signUpWithEmailPassword: SignUpWithEmailPassword,
     val personalDetailsUpdate: PersonalDetailsUpdate,
     val getProfileData:GetUserProfileData,

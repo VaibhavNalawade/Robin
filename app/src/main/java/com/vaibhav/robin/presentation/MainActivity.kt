@@ -2,30 +2,20 @@ package com.vaibhav.robin.presentation
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.ui.common.splashFinishAnimation
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.concurrent.timer
-import kotlin.system.measureNanoTime
 
 
 @AndroidEntryPoint
@@ -50,8 +40,7 @@ class MainActivity : ComponentActivity() {
                 Surface {
                     RobinApp(
                         windowSize = windowSize,
-                        userAuthenticated = viewModel.userAuthenticated,
-                        profileUiState = viewModel.profileData,
+                        currentUserProfileData = viewModel.currentUserProfileData,
                         productUiState = viewModel.products,
                         categoriesUiState = viewModel.categories,
                         orders = viewModel.orders,

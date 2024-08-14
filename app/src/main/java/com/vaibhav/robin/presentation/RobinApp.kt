@@ -31,7 +31,7 @@ import com.vaibhav.robin.data.models.MainCategory
 import com.vaibhav.robin.data.models.OrderItem
 import com.vaibhav.robin.data.models.Product
 import com.vaibhav.robin.data.models.QueryProduct
-import com.vaibhav.robin.domain.model.ProfileData
+import com.vaibhav.robin.domain.model.CurrentUserProfileData
 import com.vaibhav.robin.domain.model.Response
 import com.vaibhav.robin.presentation.models.state.CartUiState
 import com.vaibhav.robin.presentation.models.state.FilterState
@@ -45,13 +45,13 @@ import com.vaibhav.robin.presentation.ui.common.rememberMessageBarState
 import com.vaibhav.robin.presentation.ui.navigation.RobinNavHost
 import com.vaibhav.robin.presentation.ui.theme.RobinTheme
 import com.vaibhav.robin.presentation.ui.theme.Values.Dimens
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun RobinApp(
     windowSize: WindowSizeClass,
-    userAuthenticated: Boolean,
-    profileUiState: ProfileData?,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     productUiState: Response<List<Product>>,
     orders: Response<List<OrderItem>>,
     cartUiState: CartUiState,
@@ -86,9 +86,8 @@ fun RobinApp(
     }
     RobinNavigationWrapper(
         navigationType = navigationType,
-        profileUiState = profileUiState,
+       currentUserProfileData = currentUserProfileData,
         signOut = signOut,
-        userAuthenticated = userAuthenticated,
         productUiState = productUiState,
         appBarType = appBarType,
         categoriesUiState = categoriesUiState,
@@ -106,9 +105,8 @@ fun RobinApp(
 @Composable
 fun RobinNavigationWrapper(
     navigationType: RobinNavigationType,
-    profileUiState: ProfileData?,
+    currentUserProfileData: MutableStateFlow<CurrentUserProfileData>,
     signOut: () -> Unit,
-    userAuthenticated: Boolean,
     productUiState: Response<List<Product>>,
     appBarType: RobinAppBarType,
     categoriesUiState: Response<List<MainCategory>>,
@@ -166,7 +164,7 @@ fun RobinNavigationWrapper(
         drawerContent = {
             ModalDrawerSheet() {
                 NavigationDrawer(
-                    userAuthenticated = userAuthenticated,
+                    currentUserProfileData = currentUserProfileData,
                     navController = navController,
                     signOut = signOut,
                     closeDrawer = closeDrawer,
@@ -198,7 +196,7 @@ fun RobinNavigationWrapper(
                             },
                             content = {
                                 NavigationRailsContent(
-                                    userAuthenticated = userAuthenticated,
+                                    currentUserProfileData = currentUserProfileData,
                                     navController = navController,
                                     signOut = signOut,
                                     cartItemSize=cartItemSize,
@@ -214,8 +212,7 @@ fun RobinNavigationWrapper(
                     content = {
                         RobinNavHost(
                             navController = navController,
-                            profileUiState = profileUiState,
-                            userAuthenticated = userAuthenticated,
+                            currentUserProfileData = currentUserProfileData,
                             toggleDrawer = toggleDrawer,
                             productUiState = productUiState,
                             messageBarState = state,

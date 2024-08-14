@@ -50,7 +50,7 @@ class AppModule {
         isUserAuthenticated = IsUserAuthenticated(repo),
         signInWithEmailPassword = SignInWithEmailPassword(repo),
         signOut = SignOut(repo),
-        getAuthState = GetAuthState(repo),
+        getAuthState = ListenToAuthState(repo),
         signUpWithEmailPassword = SignUpWithEmailPassword(repo),
         personalDetailsUpdate = PersonalDetailsUpdate(repo) ,
         getProfileData=GetUserProfileData(repo),
